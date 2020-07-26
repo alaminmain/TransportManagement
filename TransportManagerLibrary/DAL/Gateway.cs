@@ -10,6 +10,8 @@ namespace TransportManagerLibrary.DAL
         protected SqlCommand commandObj;
         public Gateway()
         {
+
+
             connectionObj = new SqlConnection(ConfigurationManager.ConnectionStrings["MadinaDBConnectionString"].ConnectionString);
 
         }
