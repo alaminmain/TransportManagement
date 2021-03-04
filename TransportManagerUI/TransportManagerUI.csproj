@@ -85,7 +85,7 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="TransportManagerLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TransportManagerLibrary\TransportManagerLibrary\bin\Debug\TransportManagerLibrary.dll</HintPath>
+      <HintPath>..\..\..\TransportManagerWeb\TransportManagerWeb\bin\TransportManagerLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
