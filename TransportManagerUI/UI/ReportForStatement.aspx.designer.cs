@@ -13,6 +13,15 @@ namespace TransportManagerUI.UI {
     public partial class ReportForStatement {
         
         /// <summary>
+        /// Panel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel1;
+        
+        /// <summary>
         /// CrystalReportViewer1 control.
         /// </summary>
         /// <remarks>
@@ -20,14 +29,5 @@ namespace TransportManagerUI.UI {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::CrystalDecisions.Web.CrystalReportViewer CrystalReportViewer1;
-        
-        /// <summary>
-        /// CrystalReportSource1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::CrystalDecisions.Web.CrystalReportSource CrystalReportSource1;
     }
 }

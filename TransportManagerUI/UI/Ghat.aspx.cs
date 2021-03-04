@@ -50,7 +50,7 @@ namespace TransportManagerUI.UI
                     else
                     {
                         var filtered = dt.AsEnumerable()
-    .Where(r => r.Field<String>("StoreCode").ToUpper().Contains(searchKey.ToUpper())
+    .Where(r => r.Field<Int32>("StoreCode").Equals(searchKey.ToUpper())
            || r.Field<String>("StoreName").ToUpper().Contains(searchKey.ToUpper()));
                         dt = filtered.CopyToDataTable();
                     }
@@ -154,6 +154,7 @@ namespace TransportManagerUI.UI
             dt = loadAllGhatInfo(txtSearch.Text);
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
+            upListofbasicData.Update();
             hfShowList_ModalPopupExtender.Show();
         }
 

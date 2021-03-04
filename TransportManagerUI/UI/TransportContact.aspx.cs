@@ -63,9 +63,34 @@ namespace TransportManagerUI.UI
         protected void btnSearchOrder_Click(object sender, EventArgs e)
         {
             DataTable dt = new DataTable();
-            dt = LoadAllDO(txtSearch.Text);
+            dt = LoadAllDO(txtSearchDo.Text);
             gvListofDO.DataSource = dt;
             gvListofDO.DataBind();
+
+            List<string> DOIdList = new List<string>();
+            string doId = String.Empty;
+
+            string rowCount = gvListofDOProduct.Rows.Count.ToString();
+            if (String.IsNullOrEmpty(rowCount) == false)
+            {
+                if (rowCount == "0")
+                {
+                    foreach (GridViewRow item in gvListofDOProduct.Rows)
+                    {
+                        doId = item.Cells[1].Text;
+                        foreach (GridViewRow dolist in gvListofDO.Rows)
+                        {
+                            if (dolist.Cells[1].Text == doId)
+                            {
+                                (dolist.Cells[0].FindControl("cbSelect") as CheckBox).Checked = true;
+                            }
+                            else
+                                (dolist.Cells[0].FindControl("cbSelect") as CheckBox).Checked = false;
+                        }
+
+                    }
+                }
+            }
 
             hidSelectDO_ModalPopupExtender.Show();
         }
@@ -171,61 +196,7 @@ namespace TransportManagerUI.UI
 
             }
         }
-        private void  DtinSession()
-        {
-            DataTable dt = new DataTable();
-            List<string> DOIdList = new List<string>();
-            string doId = String.Empty;
-            dt.Columns.Add("DONo");
-
-            DataTable productDt = new DataTable();
-            productDt.Columns.Add("InvNo");
-            productDt.Columns.Add("ProductCode");
-            productDt.Columns.Add("ProductName");
-            productDt.Columns.Add("DOQty");
-            productDt.Columns.Add("OrderQty");
-            
-            productDt.Columns.Add("Rent");
-            productDt.Columns.Add("TotalPrice");
-            foreach (GridViewRow item in gvListofDO.Rows)
-            {
-                if ((item.Cells[0].FindControl("cbSelect") as CheckBox).Checked)
-                {
-                    DataRow dr = dt.NewRow();
-                    doId = item.Cells[1].Text;
-                    DOIdList.Add(doId);
-                }
-
-
-            }
-            if (DOIdList != null)
-            {
-                foreach (string id in DOIdList)
-                {
-                    DataTable DoDetail = new DataTable();
-                    using (SalesProductGateway gatwayObj = new SalesProductGateway())
-                    {
-                        DoDetail = gatwayObj.GetSalesProductBySales(1,id);
-
-                        foreach (DataRow r in DoDetail.Rows)
-                        {
-                            DataRow dr = productDt.NewRow();
-                            dr["InvNo"] = r["InvNo"].ToString();
-                            dr["ProductCode"] = r["ProductCode"].ToString();
-                            dr["ProductName"] = Convert.ToString(r["ProductName"]);
-                            dr["DOQty"] = r["Quantity"].ToString();
-                            dr["OrderQty"] = r["Quantity"].ToString();
-                            dr["Rent"] = r["UnitPrice"].ToString();
-                            dr["TotalPrice"] = Convert.ToDecimal(r["Quantity"]) * Convert.ToDecimal(r["UnitPrice"]);
-                            productDt.Rows.Add(dr);
-                        }
-                    }
-                }
-            }
-            Session["myDatatable"] = productDt;
-            
-
-        }
+       
         DataTable GetProductDataTable(GridView dtg)
         {
             try
@@ -233,16 +204,22 @@ namespace TransportManagerUI.UI
                 DataTable dt = new DataTable();
 
                 // add the columns to the datatable            
-                if (dtg.HeaderRow != null)
-                {
+                //if (dtg.HeaderRow != null)
+                //{
 
-                    for (int i = 0; i < dtg.HeaderRow.Cells.Count; i++)
-                    {
-                        //if(i!=0)
-                        dt.Columns.Add(dtg.HeaderRow.Cells[i].Text);
-                    }
-                }
-
+                //    for (int i = 0; i < dtg.HeaderRow.Cells.Count; i++)
+                //    {
+                //        //if(i!=0)
+                //        dt.Columns.Add(dtg.HeaderRow.Cells[i].Text);
+                //    }
+                //}
+                dt.Columns.Add("InvNo");
+                dt.Columns.Add("ProductCode");
+                dt.Columns.Add("ProductName");
+                dt.Columns.Add("DOQty");
+                dt.Columns.Add("OrderQty");
+                dt.Columns.Add("Rent");
+                //productDt.Columns.Add("TotalPrice");
 
                 //  add each of the data rows to the table
                 foreach (GridViewRow row in dtg.Rows)
@@ -252,13 +229,13 @@ namespace TransportManagerUI.UI
                     dr = dt.NewRow();
                     string lblqty= (row.FindControl("lblDoQty") as Label).Text;
                     string OrdQty = (row.FindControl("TextBox1") as TextBox).Text;
-                    if (Convert.ToDecimal(OrdQty)<=Convert.ToDecimal(lblqty)  )
-                    {
+                    //if (Convert.ToDecimal(OrdQty)<=Convert.ToDecimal(lblqty)  )
+                    //{
                         //for (int i = 0; i < row.Cells.Count; i++)
                         //{
                         //    if (i != 0)
                         //row.FindControl("")
-                        dr["DoNo"] = row.Cells[1].Text;
+                        dr["InvNo"] = row.Cells[1].Text;
                         dr["ProductCode"] = row.Cells[2].Text;
                         dr["ProductName"] = row.Cells[3].Text;
                         dr["DOQty"] = (row.FindControl("lblDoQty") as Label).Text;
@@ -268,11 +245,11 @@ namespace TransportManagerUI.UI
 
                         //}
                         dt.Rows.Add(dr);
-                    }
-                    else
-                    {
-                        ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Order Qty is Greater Then DO Qty');", true);
-                    }
+                    //}
+                    //else
+                    //{
+                    //    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Order Qty is Greater Then DO Qty');", true);
+                    //}
                 }
                 return dt;
             }
@@ -283,59 +260,93 @@ namespace TransportManagerUI.UI
         }
         private DataTable ProductList()
         {
-            DataTable dt = new DataTable();
-            List<string> DOIdList = new List<string>();
-            string doId = String.Empty;
-            dt.Columns.Add("DONo");
-
-            DataTable productDt = new DataTable();
-            productDt.Columns.Add("InvNo");
-            productDt.Columns.Add("ProductCode");
-            productDt.Columns.Add("ProductName");
-            productDt.Columns.Add("DOQty");
-            productDt.Columns.Add("OrderQty");
-            productDt.Columns.Add("Rent");
-            productDt.Columns.Add("TotalPrice");
-
-            foreach (GridViewRow item in gvListofDO.Rows)
+            try
             {
-                if ((item.Cells[0].FindControl("cbSelect") as CheckBox).Checked)
+                DataTable PreviousDt = GetProductDataTable(gvListofDOProduct);
+                var ids = PreviousDt.AsEnumerable().Select(r => r.Field<string>("InvNo")).ToList();
+
+
+                DataTable dt = new DataTable();
+
+
+                List<string> DOIdList = new List<string>();
+                string doId = String.Empty;
+               
+
+                DataTable productDt = new DataTable();
+                productDt.Columns.Add("InvNo");
+                productDt.Columns.Add("ProductCode");
+                productDt.Columns.Add("ProductName");
+                productDt.Columns.Add("DOQty");
+                productDt.Columns.Add("OrderQty");
+                productDt.Columns.Add("Rent");
+                productDt.Columns.Add("TotalPrice");
+
+                //Add Previous Table
+                for (int i = 0; i < PreviousDt.Rows.Count; i++)
                 {
-                    DataRow dr = dt.NewRow();
-                    doId = item.Cells[1].Text;
-                    DOIdList.Add(doId);
+                    DataRow dr = productDt.NewRow();
+
+                    dr["InvNo"] = PreviousDt.Rows[i]["InvNo"].ToString();
+                    dr["ProductCode"] = PreviousDt.Rows[i]["ProductCode"].ToString();
+                    dr["ProductName"] = Convert.ToString(PreviousDt.Rows[i]["ProductName"]);
+                    dr["DOQty"] = PreviousDt.Rows[i]["DOQty"].ToString();
+                    dr["OrderQty"] = PreviousDt.Rows[i]["OrderQty"].ToString();
+                    dr["Rent"] = String.Format("{0:0.00}", PreviousDt.Rows[i]["Rent"].ToString());
+                    dr["TotalPrice"] = Convert.ToDecimal(PreviousDt.Rows[i]["OrderQty"]) * Convert.ToDecimal(PreviousDt.Rows[i]["Rent"]);
+                    productDt.Rows.Add(dr);
                 }
 
-
-            }
-            if (DOIdList != null)
-            {
-                foreach (string id in DOIdList)
+                //Add Selected Value
+                foreach (GridViewRow item in gvListofDO.Rows)
                 {
-                    DataTable DoDetail = new DataTable();
-                    using (SalesProductGateway gatwayObj = new SalesProductGateway())
+                    if ((item.Cells[0].FindControl("cbSelect") as CheckBox).Checked)
                     {
-                        DoDetail = gatwayObj.GetSalesProductBySales(1, id);
 
-                        foreach (DataRow r in DoDetail.Rows)
+                        doId = item.Cells[1].Text;
+
+                        var match = ids.FirstOrDefault(stringToCheck => stringToCheck.Contains(doId));
+
+                        if (match == null)
                         {
-                            DataRow dr = productDt.NewRow();
-                            dr["InvNo"] = r["InvNo"].ToString();
-                            dr["ProductCode"] = r["ProductCode"].ToString();
-                            dr["ProductName"] = Convert.ToString(r["ProductName"]);
-                            dr["DOQty"] = r["PendingQty"].ToString();
-                            dr["OrderQty"] = r["PendingQty"].ToString();
-                            dr["Rent"] = r["UnitPrice"].ToString();
-                            dr["TotalPrice"] = Convert.ToDecimal(r["Quantity"]) * Convert.ToDecimal(r["UnitPrice"]);
-                            productDt.Rows.Add(dr);
+
+                            using (SalesProductGateway gatwayObj = new SalesProductGateway())
+                            {
+                                DataTable DoDetail = gatwayObj.GetSalesProductBySales(1, doId);
+
+                                foreach (DataRow r in DoDetail.Rows)
+                                {
+                                    DataRow dr = productDt.NewRow();
+                                    dr["InvNo"] = r["InvNo"].ToString();
+                                    dr["ProductCode"] = r["ProductCode"].ToString();
+                                    dr["ProductName"] = Convert.ToString(r["ProductName"]);
+                                    dr["DOQty"] = r["PendingQty"].ToString();
+                                    dr["OrderQty"] = r["PendingQty"].ToString();
+                                    dr["Rent"] = String.Format("{0:0.00}", lblRent.Text);
+                                    dr["TotalPrice"] = Convert.ToDecimal(dr["OrderQty"]) * Convert.ToDecimal(dr["Rent"]);
+                                    productDt.Rows.Add(dr);
+                                }
+
+                            }
+
                         }
+
                     }
+
                 }
+
+
+
+                //Session["myDatatable"] = productDt;
+                return productDt;
             }
-            //Session["myDatatable"] = productDt;
-            return productDt;
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
         }
+
         private DataTable ProductList(DataTable Detail)
         {
             DataTable dt = new DataTable();
@@ -380,7 +391,7 @@ namespace TransportManagerUI.UI
                                     dr["ProductName"] = Convert.ToString(item["ProductName"]);
                                     dr["DOQty"] = r["PendingQty"].ToString();
                                     dr["OrderQty"] = item["OrderQty"].ToString();
-                                    dr["Rent"] = item["Rent"].ToString();
+                                    dr["Rent"] = String.Format("{0:0.00}",item["Rent"].ToString());
                                     dr["TotalPrice"] = Convert.ToDecimal(item["OrderQty"]) * Convert.ToDecimal(item["Rent"]);
                                     productDt.Rows.Add(dr);
                                 }
@@ -397,6 +408,7 @@ namespace TransportManagerUI.UI
             return productDt;
 
         }
+        
         private DataTable LoadTransportContact(string searchKey)
         {
             try
@@ -612,7 +624,7 @@ namespace TransportManagerUI.UI
         protected void btnSearchDo_Click(object sender, EventArgs e)
         {
             DataTable dt = new DataTable();
-            dt = LoadAllDO(txtSearch.Text);
+            dt = LoadAllDO(txtSearchDo.Text);
             gvListofDO.DataSource = dt;
             gvListofDO.DataBind();
             hidSelectDO_ModalPopupExtender.Show();
@@ -647,8 +659,11 @@ namespace TransportManagerUI.UI
         protected void gvCustomer_SelectedIndexChanged(object sender, EventArgs e)
         {
             GridViewRow row = gvCustomer.SelectedRow;
+
             lblCustomerName.Text = row.Cells[2].Text;
             lblCustomerCode.Text = row.Cells[1].Text;
+            lblLocation.Text= row.Cells[6].Text;
+            lblRent.Text= row.Cells[7].Text;
         }
 
         protected void gvCustomer_PageIndexChanging(object sender, GridViewPageEventArgs e)
@@ -787,19 +802,19 @@ namespace TransportManagerUI.UI
 
                 DataTable dt = (DataTable)Session["myDatatable"];
                 dt.Rows[row.RowIndex]["OrderQty"] = updateQty;
-                if (Convert.ToInt32(updateQty) <= DoQty)
-                {
+                //if (Convert.ToInt32(updateQty) <= DoQty)
+                //{
                     Session["myDatatable"] = dt;
                     gvListofDOProduct.EditIndex = -1;
 
                     gvListofDOProduct.DataSource = dt;
                     gvListofDOProduct.DataBind();
-                }
-                else
-                {
-                    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Order qty can not be greater than DO Qty');", true);
-                    dt.Rows[row.RowIndex]["OrderQty"] = DoQty.ToString();
-                }
+                //}
+                //else
+                //{
+                    //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Order qty can not be greater than DO Qty');", true);
+                    //dt.Rows[row.RowIndex]["OrderQty"] = DoQty.ToString();
+                //}
                 decimal totalqty = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"])); 
                 
                 gvListofDOProduct.FooterRow.Cells[1].Text = "Total";
@@ -816,23 +831,30 @@ namespace TransportManagerUI.UI
 
         protected void gvListofDOProduct_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
-            DataTable dt = ProductList();
-           
-
-            dt.Rows[e.RowIndex].Delete();
-
-
-            //decimal total = Convert.ToDecimal(dt.Compute("Sum(TotalPrice)", ""));
-            //txtTotalAmount.Text = total.ToString();
+            try
+            {
+                DataTable dt = GetProductDataTable(gvListofDOProduct);
 
 
-            gvListofDOProduct.DataSource = dt;
-            gvListofDOProduct.DataBind();
-            decimal total = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"]));
-            gvListofDOProduct.FooterRow.Cells[1].Text = "Total";
-            gvListofDOProduct.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
-            TextBox txttotal = (TextBox)gvListofDOProduct.FooterRow.FindControl("txtTotalQty");
-            txttotal.Text = total.ToString("0.00");
+                dt.Rows[e.RowIndex].Delete();
+
+
+                //decimal total = Convert.ToDecimal(dt.Compute("Sum(TotalPrice)", ""));
+                //txtTotalAmount.Text = total.ToString();
+
+
+                gvListofDOProduct.DataSource = dt;
+                gvListofDOProduct.DataBind();
+                decimal total = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"]));
+                gvListofDOProduct.FooterRow.Cells[1].Text = "Total";
+                gvListofDOProduct.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
+                TextBox txttotal = (TextBox)gvListofDOProduct.FooterRow.FindControl("txtTotalQty");
+                txttotal.Text = total.ToString("0.00");
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -902,6 +924,9 @@ namespace TransportManagerUI.UI
                 lblDealerName.Text = dt.Rows[0]["DealerName"].ToString();
                 lblCustomerCode.Text = dt.Rows[0]["CustId"].ToString();
                 lblCustomerName.Text = dt.Rows[0]["CustomerName"].ToString();
+                lblLocation.Text = dt.Rows[0]["LocName"].ToString();
+                //lblDistance.Text = dt.Rows[0]["LocDistance"].ToString();
+                lblRent.Text = dt.Rows[0]["LocRent"].ToString();
                 ddlPaymentMode.SelectedValue = dt.Rows[0]["Paymode"].ToString();
                 ddlGhatList.SelectedValue = dt.Rows[0]["StoreCode"].ToString();
                 txtRemarks.Text = dt.Rows[0]["Remarks"].ToString();
@@ -937,13 +962,25 @@ namespace TransportManagerUI.UI
                 Session["paramData"] = null;
                 Session["reportOn"] = null;
                 string tcno = lblTcNo.Text;
+                if (ddlPaymentMode.SelectedValue == "1")
+                {
+                   
 
-                string reporton = "TC";
+                    string reporton = "TCCNF";
 
-                Session["paramData"] = tcno;
-                Session["reportOn"] = reporton;
+                    Session["paramData"] = tcno;
+                    Session["reportOn"] = reporton;
+                }
+                else
+                {
+                    string reporton = "TC";
+
+                    Session["paramData"] = tcno;
+                    Session["reportOn"] = reporton;
+                }
                 //btnReport.PostBackUrl = "~/UI/reportViewer.aspx";
-                Response.Redirect("~/UI/reportViewer.aspx");
+                //ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/reportViewer.aspx" + "','_blank')", true);
+                ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/reportViewer.aspx" + "','_blank')", true);
             }
             else
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Please Select TC No ');", true);

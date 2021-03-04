@@ -110,31 +110,34 @@ namespace TransportManagerUI.UI
                 plOption2.Visible = true;
                 plOption2.GroupingText = "Search Ghat";
             }
-            else if (rblTCReports.SelectedValue == "TCStatmentDealerwise")
-            {
-                plOption1.Visible = true;
-                plOption1.GroupingText = "Search Dealer";
-                plOption2.Visible = false;
-                plOption2.GroupingText = "";
-            }
-            else if (rblTCReports.SelectedValue == "TCStatmentGhatwise")
+
+            else if (rblDoReports.SelectedValue == "DoStatmentProductwise")
             {
                 plOption1.Visible = false;
                 plOption1.GroupingText = "";
-                plOption2.Visible = true;
-                plOption2.GroupingText = "Search Ghat";
+                plOption2.Visible = false;
+                plOption2.GroupingText = "";
             }
-            
+
+            else if (rblDoReports.SelectedValue == "DoStatement")
+            {
+                plOption1.Visible = false;
+                plOption1.GroupingText = "";
+                plOption2.Visible = false;
+                plOption2.GroupingText = "";
+            }
+           
+
         }
         public void ReportOption(string Option)
         {
-            TransportManagerLibrary.DAL.CommonGateway cm = new CommonGateway();
+           
             ReportDocument cryRpt;
-            ReportDocument nreport;
+            
             string strReportName;
             string strPath;
-            string fromValue = Convert.ToDateTime(txtFromDate.Text).ToString("yyyy,MM,dd,00,00,00");
-            string ToValue = Convert.ToDateTime(txtToDate.Text).ToString("yyyy,MM,dd,00,00,00"); ;
+            string fromValue = Convert.ToDateTime(txtFromDate.Text).Date.ToString("yyyy,MM,dd");
+            string ToValue = Convert.ToDateTime(txtToDate.Text).Date.ToString("yyyy,MM,dd"); ;
             //cryRpt.Close();
             string SelectionFormula;
             try
@@ -146,12 +149,13 @@ namespace TransportManagerUI.UI
                         cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
                         strReportName = "~//report//DOStateDealer.rpt";
                         strPath = Server.MapPath(strReportName);
+                        
                         cryRpt.Load(strPath);
                         if (String.IsNullOrEmpty(lblCode.Text))
                         {
 
-                            SelectionFormula = "{Sales.InvDate} in DateTime(" +
-                                               fromValue + ")   to DateTime (" +
+                            SelectionFormula = "{Sales.InvDate} in Date(" +
+                                               fromValue + ")   to Date (" +
                                                ToValue + ")";
 
 
@@ -159,7 +163,7 @@ namespace TransportManagerUI.UI
                         else
                         {
 
-                            SelectionFormula = "{Sales.InvDate} in DateTime(" + fromValue + ")   to DateTime (" +
+                            SelectionFormula = "{Sales.InvDate} in Date(" + fromValue + ")   to Date (" +
                                                             ToValue + ") and" +
                                                                        " {Sales.CustId} = '" + lblCode.Text + "'";
 
@@ -167,15 +171,14 @@ namespace TransportManagerUI.UI
 
 
 
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
+                         cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
 
                         cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
 
                         cryRpt.RecordSelectionFormula = SelectionFormula;
 
-                        nreport = cm.ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
+                       
                         ////cryRpt.Close();
                         break;
 
@@ -189,8 +192,8 @@ namespace TransportManagerUI.UI
                         if (String.IsNullOrEmpty(lblCode2.Text))
                         {
 
-                            SelectionFormula = "{Sales.InvDate} in DateTime(" +
-                                               fromValue + ")   to DateTime (" +
+                            SelectionFormula = "{Sales.InvDate} in Date(" +
+                                               fromValue + ")   to Date (" +
                                                ToValue + ")";
 
 
@@ -198,102 +201,87 @@ namespace TransportManagerUI.UI
                         else
                         {
 
-                            SelectionFormula = "{Sales.InvDate} in DateTime(" + fromValue + ")   to DateTime (" +
+                            SelectionFormula = "{Sales.InvDate} in Date(" + fromValue + ")   to Date (" +
                                                             ToValue + ") and" +
                                                                        " {Sales.StoreCode} = '" + lblCode2.Text + "'";
 
                         }
 
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
+                         cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
 
                         cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
 
                         cryRpt.RecordSelectionFormula = SelectionFormula;
 
-
-                        nreport = cm.ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
-                        break;
-
-                    case "TCStatmentDealerwise":
 
                         
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//TCStateDealer.rpt";
-                        strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-                        if (String.IsNullOrEmpty(lblCode.Text))
-                        {
-
-                            SelectionFormula = "{TransContact.TCDate} in DateTime(" +
-                                               fromValue + ")   to DateTime (" +
-                                               ToValue + ")";
-
-
-                        }
-                        else
-                        {
-
-                            SelectionFormula = "{TransContact.TCDate} in DateTime(" + fromValue + ")   to DateTime (" +
-                                                            ToValue + ") and" +
-                                                                       " {TransContact.DealerId} = '" + lblCode.Text + "'";
-
-                        }
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-                        nreport = cm.ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
+                        Session["nreport"] = cryRpt;
                         //cryRpt.Close();
                         break;
 
-                    case "TCStatmentGhatwise":
-
+                    case "DoStatmentProductwise":
                         
                         cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//TCStateGhat.rpt";
+                        strReportName = "~//report//DOStateProd.rpt";
                         strPath = Server.MapPath(strReportName);
                         cryRpt.Load(strPath);
-                        if (String.IsNullOrEmpty(lblCode2.Text))
-                        {
-
-                            SelectionFormula = "{TransContact.TCDate} in DateTime(" +
-                                               fromValue + ")   to DateTime (" +
+                       
+                            SelectionFormula = "{Sales.InvDate} in Date(" +
+                                               fromValue + ")   to Date (" +
                                                ToValue + ")";
+                                       
+                                                
 
-
-                        }
-                        else
-                        {
-
-                            SelectionFormula = "{TransContact.TCDate} in DateTime(" + fromValue + ")   to DateTime (" +
-                                                            ToValue + ") and" +
-                                                                       " {TransContact.StoreCode} = '" + lblCode2.Text + "'";
-
-                        }
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
+                         cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
 
                         cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+
                         cryRpt.RecordSelectionFormula = SelectionFormula;
 
-                        nreport = cm.ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
+                        
+                        
+                        Session["nreport"] = cryRpt;
                         //cryRpt.Close();
                         break;
+
+                    case "DoStatement":
+                        
+                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        strReportName = "~//report//DOStatement.rpt";
+                        strPath = Server.MapPath(strReportName);
+                        cryRpt.Load(strPath);
+
+                        SelectionFormula = "{Sales.InvDate} in Date(" +
+                                           fromValue + ")   to Date (" +
+                                           ToValue + ")";
+
+
+
+                         cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
+
+                        
+                        cryRpt.RecordSelectionFormula = SelectionFormula;
+
+
+                        
+                        Session["nreport"] = cryRpt;
+                        //cryRpt.Close();
+                        break;
+
+                    
                     default:
                         throw new ArgumentException
                         (
                         "GetDataReader was given an incorrect Request for data"
                         );
                 }
+                Session["strPath"] = strPath;
+                Session["SelectionFormula"] = SelectionFormula;
+                Session["fromDate"] = fromValue;
+                Session["ToDate"] = ToValue;
 
             }
             catch (Exception ex)
@@ -319,7 +307,7 @@ namespace TransportManagerUI.UI
                     txtFromDate_CalendarExtender.SelectedDate = DateTime.Now.Date;
                     txtToDate_CalendarExtender.SelectedDate = DateTime.Now.Date;
                     hfDoTC.Value = "1";
-                    rblTCReports.ClearSelection();
+                  
                     ReportsPanelOption();
 
                 }
@@ -337,12 +325,9 @@ namespace TransportManagerUI.UI
         protected void btnSearchInfo_Click(object sender, ImageClickEventArgs e)
         {
             string reportname;
-            if (hfDoTC.Value == "1")
-            {
+           
                 reportname = rblDoReports.SelectedValue;
-            }
-            else
-                reportname = rblDoReports.SelectedValue;
+            
             DataTable dt = new DataTable();
             dt = loadAllDealerInfo(txtSearch.Text);
             hfShowList.Value = "1";
@@ -355,12 +340,9 @@ namespace TransportManagerUI.UI
         protected void btnSearch2_Click(object sender, ImageClickEventArgs e)
         {
             string reportname;
-            if (hfDoTC.Value == "1")
-            {
+           
                 reportname = rblDoReports.SelectedValue;
-            }
-            else
-                reportname = rblTCReports.SelectedValue;
+            
             DataTable dt = new DataTable();
             dt = GetGhat(txtSearch.Text);
             hfShowList.Value = "2";
@@ -394,12 +376,9 @@ namespace TransportManagerUI.UI
         protected void gvlistofBasicData_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             string reportname;
-            if (hfDoTC.Value == "1")
-            {
+           
                 reportname = rblDoReports.SelectedValue;
-            }
-            else
-                reportname = rblTCReports.SelectedValue;
+            
 
             DataTable dt = new DataTable();
             if (hfShowList.Value == "1")
@@ -424,43 +403,43 @@ namespace TransportManagerUI.UI
 
         protected void rblDoReports_SelectedIndexChanged(object sender, EventArgs e)
         {
-            rblTCReports.ClearSelection();
+          
             hfDoTC.Value = "1";
             ReportsPanelOption();
             
         }
 
-        protected void rblTCReports_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            rblDoReports.ClearSelection();
-            hfDoTC.Value = "2";
-            ReportsPanelOption();
-        }
+       
 
         protected void btnShowReport_Click(object sender, EventArgs e)
         {
             string reportname;
-            if (hfDoTC.Value == "1")
-            {
+           
                 reportname = rblDoReports.SelectedValue;
-            }
-            else
-                reportname = rblTCReports.SelectedValue;
+            
+            
             ReportOption(reportname);
-
+            Session["AllStatement"] = "1";
             //ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "~/UI/ReportForStatement.aspx" + "','_blank')", true);
-            Response.Redirect("~/UI/ReportForStatement.aspx");
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
         }
+        protected void btnShowStatment_Click(object sender, EventArgs e)
+        {
+            string option = rblDoReports.SelectedValue;
+            ReportOption(option);
+            Session["AllStatement"] = "2";
+            //ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "~/UI/ReportForStatement.aspx" + "','_blank')", true);
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
+        }
+
 
         protected void btnSearch_Click(object sender, EventArgs e)
         {
             string reportname;
-            if (hfDoTC.Value == "1")
-            {
+           
                 reportname = rblDoReports.SelectedValue;
-            }
-            else
-                reportname = rblTCReports.SelectedValue;
+            
+          
 
             DataTable dt = new DataTable();
             if (hfShowList.Value == "1")

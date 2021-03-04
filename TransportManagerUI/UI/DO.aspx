@@ -184,7 +184,7 @@ width:306px;
             </tr>
             <tr>
                 <td  align="right">
-            Payment Mode
+            Delivery Mode
             </td>
              <td align="left" colspan="3">
                 <asp:DropDownList ID="ddlPaymentMode" runat="server" AutoPostBack="True" 

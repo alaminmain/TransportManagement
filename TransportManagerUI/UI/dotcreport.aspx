@@ -1,54 +1,36 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/UI/Site.Master" AutoEventWireup="true" CodeBehind="dotcreport.aspx.cs" Inherits="TransportManagerUI.UI.dotcreport" %>
 <%@ Register assembly="AjaxControlToolkit" namespace="AjaxControlToolkit" tagprefix="ajaxToolkit" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="cphHeadContent" runat="server">
-    <style type="text/css">
-        .style1
-        {
-            text-align: left;
-        }
-    .style2
-    {
-        height: 218px;
-    }
+   
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cphMainContent" runat="server">
     <asp:Panel ID="Panel1" runat="server" BackColor="#CCCCCC">
         <table>
-            <tr class="auto-style1">
-                <td class="style2">
+            <tr>
+                <td valign="top" >
                     <table border="1" style="color: #000000; border-style: groove">
                         <tr>
-                            <td>
+                            <td valign="top">
                                 <strong>DO  Reports </strong>
                             </td>
                             
                         </tr>
                         <tr>
-                            <td class="style1">
+                            <td align="left" valign="top">
                                 <asp:RadioButtonList ID="rblDoReports" runat="server" ForeColor="Black" 
                                     AutoPostBack="True" onselectedindexchanged="rblDoReports_SelectedIndexChanged">
                                     <asp:ListItem Text="DO Statement (Dealerwise)" Value="DoStatmentDealerwise" Selected="True"></asp:ListItem>
                                     <asp:ListItem Text="DO Statement (Ghatwise)" Value="DoStatmentGhatwise"></asp:ListItem>
-                                                                    
+                                    <asp:ListItem Text="DO Statement (Productwise)" Value="DoStatmentProductwise"></asp:ListItem>
+                                    <asp:ListItem Text="DO Statement" Value="DoStatement"></asp:ListItem>
+                                                                  
                                                                        
                                    
                                 </asp:RadioButtonList>
                                 </td>
                         </tr>
-                        <tr>
-                        <td>  <strong>TC  Reports </strong></td>
-                        </tr>
-                        <tr>
-                        <td class="style1">
-                                <asp:RadioButtonList ID="rblTCReports" runat="server" ForeColor="Black" 
-                                    AutoPostBack="True" onselectedindexchanged="rblTCReports_SelectedIndexChanged">
-                                    <asp:ListItem Text="TC Statement (Dealerwise)" Value="TCStatmentDealerwise" Selected="True"></asp:ListItem>
-                                    <asp:ListItem Text="TC Statement (Ghatwise)" Value="TCStatmentGhatwise"></asp:ListItem>
-                                    
-                                </asp:RadioButtonList>
-                                </td>
-                        </tr>
+                       
                     </table>
                 </td>
                 <td valign="top" class="style2">
@@ -111,6 +93,9 @@
                         <tr>
                             <td>
                                 <asp:Button ID="btnShowReport" runat="server" Text="Show Report" OnClick="btnShowReport_Click" OnClientClick="NewWindow();"/>
+                            </td>
+                             <td>
+                                <asp:Button ID="btnShowStatment" runat="server" Text="Show Report(Onscreen)" OnClick="btnShowStatment_Click" />
                             </td>
                             <td> 
                                 <asp:HiddenField ID="hfDoTC" runat="server" Value="1" />

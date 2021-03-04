@@ -8,6 +8,8 @@ using System.Data;
 using TransportManagerLibrary.DAL;
 using TransportManagerLibrary.UtilityClass;
 using System.IO;
+using System.Net;
+using System.Text;
 
 namespace TransportManagerUI.UI
 {
@@ -193,7 +195,7 @@ namespace TransportManagerUI.UI
                     DataRow[] foundRows;
 
                     // Use the Select method to find all rows matching the filter.
-                    foundRows = dt2.Select("[TripStatus]= '0'");
+                    foundRows = dt2.Select("[TripStatus]= '0' AND IsOtherTrip=0");
                     if (foundRows.Length > 0)
                         dt = foundRows.CopyToDataTable();
                     if (String.IsNullOrEmpty(searchKey))
@@ -220,6 +222,52 @@ namespace TransportManagerUI.UI
         {
             try
             {
+                DataTable dt=null;
+                DataTable dt2;
+
+
+                using (TransContactGateway gatwayObj = new TransContactGateway())
+                {
+
+                    //dt = gatwayObj.GetAllTransContactForGridView(1,hfDealer.Value);
+
+                    dt2 = gatwayObj.GetAllTransContactByTripNo(1,hfTrip.Value);
+                    DataRow[] foundRows;
+
+                    // Use the Select method to find all rows matching the filter.
+                    foundRows = dt2.Select("[TCStatus]= '1'");
+
+                    if (foundRows.Length > 0)
+                        dt = foundRows.CopyToDataTable();
+                    if (String.IsNullOrEmpty(searchKey))
+                    {
+
+
+                    }
+                    else
+                    {
+                        var filtered = dt.AsEnumerable()
+    .Where(r => r.Field<String>("TCNo").Contains(searchKey) ||
+    r.Field<String>("CustName").Contains(searchKey));
+                        dt = filtered.CopyToDataTable();
+
+
+                    }
+                    return dt;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.ToString(), new object[0]);
+                return null;
+            }
+        }
+
+        private DataTable LoadTransportContactWhenEdit(string searchKey)
+        {
+            try
+            {
                 DataTable dt;
 
 
@@ -227,8 +275,8 @@ namespace TransportManagerUI.UI
                 {
 
                     //dt = gatwayObj.GetAllTransContactForGridView(1,hfDealer.Value);
-                    dt = gatwayObj.GetAllTransContactByTripNo(1,hfTrip.Value);
-
+                    dt = gatwayObj.GetAllTransContactByTripNo(1, hfTrip.Value);
+                                   
                     if (String.IsNullOrEmpty(searchKey))
                     {
 
@@ -308,7 +356,7 @@ namespace TransportManagerUI.UI
                     else
                     {
                         var filtered = dt.AsEnumerable()
-    .Where(r => r.Field<String>("MovementNo").Contains(searchKey) || r.Field<String>("TripNo").ToUpper().Contains(searchKey.ToUpper()));
+    .Where(r => r.Field<String>("MovementNo").ToUpper().Contains(searchKey.ToUpper()) || r.Field<String>("TripNo").ToUpper().Contains(searchKey.ToUpper()));
                         dt = filtered.CopyToDataTable();
 
                     }
@@ -348,7 +396,6 @@ namespace TransportManagerUI.UI
                 using (TripInfoGateway gatwayObj = new TripInfoGateway())
                 {
                     loadTrip = gatwayObj.GetTripInfo(hfTrip.Value);
-
                 }
 
                 dvTrip.DataSource = loadTrip;
@@ -357,19 +404,20 @@ namespace TransportManagerUI.UI
                 lblCustomerCode.Text = dt.Rows[0]["DealerId"].ToString();
                 lblCustomerName.Text = dt.Rows[0]["DealerName"].ToString();
                 lblDealerMobile.Text = loadTrip.Rows[0]["DealerMobile"].ToString();
-                lblsnmMobileNo.Text = loadTrip.Rows[0]["Phone"].ToString();
+                //lblsnmMobileNo.Text = loadTrip.Rows[0]["Phone"].ToString();
 
                 hfDealer.Value = dt.Rows[0]["DealerId"].ToString();
 
                 hfCustomerId.Value = dt.Rows[0]["CustId"].ToString();
                 //Load TC Info
                 DataTable TCinfo = new DataTable();
-                TCinfo = LoadTransportContact(dt.Rows[0]["TCNo"].ToString());
+                TCinfo = LoadTransportContactWhenEdit(dt.Rows[0]["TCNo"].ToString());
                 hfTC.Value = dt.Rows[0]["TCNo"].ToString();
                 lblTCInfo.Text = "TC No- " + TCinfo.Rows[0]["TCNo"].ToString() + " Date " + Convert.ToDateTime(TCinfo.Rows[0]["TCDate"]).Date.ToString("dd/MMM/yyyy");
                 lblCustomerCode1.Text = TCinfo.Rows[0]["CustId"].ToString();
                 lblCustomerName1.Text = TCinfo.Rows[0]["CustName1"].ToString();
                 lblCustomerMobile.Text = TCinfo.Rows[0]["CustomerMobile"].ToString();
+                lblsnmMobileNo.Text = TCinfo.Rows[0]["Phone"].ToString();
                 //Load Dealer Info
 
                 //lblDealerInfo.Text=tc
@@ -387,6 +435,7 @@ namespace TransportManagerUI.UI
                 gvListofDOProduct.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
                 gvListofDOProduct.FooterRow.Cells[2].Text = totalQty.ToString("N2");
                 gvListofDOProduct.FooterRow.Cells[4].Text = totalAmount.ToString("N2");
+                txtSearch.Text = String.Empty;
 
             }
             catch (Exception ex)
@@ -477,7 +526,7 @@ namespace TransportManagerUI.UI
             lblCustomerCode.Text = loadTrip.Rows[0]["DealerId"].ToString();
             lblCustomerName.Text = loadTrip.Rows[0]["CustName"].ToString();
             lblDealerMobile.Text = loadTrip.Rows[0]["DealerMobile"].ToString();
-            lblsnmMobileNo.Text = loadTrip.Rows[0]["Phone"].ToString();
+            
             hfDealer.Value = lblCustomerCode.Text;
             dvTrip.DataSource = loadTrip;
             dvTrip.DataBind();
@@ -531,6 +580,7 @@ namespace TransportManagerUI.UI
                 lblCustomerCode1.Text = row.Cells[4].Text;
                 lblCustomerName1.Text = row.Cells[5].Text;
                 lblCustomerMobile.Text = loadTC.Rows[0]["Mobile"].ToString();
+                lblsnmMobileNo.Text= loadTC.Rows[0]["Phone"].ToString();
                 DataTable dt = new DataTable();
                 dt = LoadTCProduct(tcno);
                 //lblCurrentCapacity.Text = Convert.ToString(dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"])));
@@ -572,7 +622,7 @@ namespace TransportManagerUI.UI
                     int ComCode_1 = 1;
                     string TripNo_2 = hfTrip.Value;
                     string MovementNo_3 = lblMovement.Text;
-                    string TransportDate_4 = txtMovmentDate.Text;
+                    string TransportDate_4 = txtMovmentDate.Text + " " + DateTime.Now.ToString("hh:mm:ss tt");
                     string TCNo_5 = hfTC.Value;
                     string DealerId_6 = hfDealer.Value;
                     string CustId_7 = hfCustomerId.Value;
@@ -610,12 +660,19 @@ namespace TransportManagerUI.UI
                        // Convert.ToInt32(dtTrip.Rows[0]["Capacity"]) + Convert.ToInt32(lblCurrentCapacity.Text);
 
                         decimal totalKm_17 = 0;
-                        
-                        if (Convert.ToDecimal(dtTrip.Rows[0]["Totalkm"]) <= Convert.ToDecimal(custLocDistance))
+
+                        if (String.IsNullOrEmpty(dtTrip.Rows[0]["Totalkm"].ToString()) == false || dtTrip.Rows[0]["Totalkm"].ToString()=="0")
+                        {
+                            totalKm_17 = Convert.ToDecimal(dtTrip.Rows[0]["Totalkm"]);
+                        }
+                        else
+                            totalKm_17 = 0;
+
+                        if (Convert.ToDecimal(custLocDistance)>= totalKm_17)
+                        {
                             totalKm_17 = Convert.ToDecimal(custLocDistance);
-
-                        string updateInof = gatwayObj.UpdateCapacityBalance(TripNo_2, totalKm_17);
-
+                            string updateInof = gatwayObj.UpdateCapacityBalance(TripNo_2, totalKm_17);
+                        }
                     }
 
 
@@ -640,9 +697,11 @@ namespace TransportManagerUI.UI
         protected void btnShowList_Click(object sender, EventArgs e)
         {
             DataTable dt = new DataTable();
+            
             dt = loadAllMovement(txtSearch.Text);
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
+            upListofbasicData.Update();
             hfShowList_ModalPopupExtender.Show();
         }
 
@@ -674,6 +733,9 @@ namespace TransportManagerUI.UI
         {
             if (String.IsNullOrEmpty(lblMovement.Text) == false)
             {
+                Session["paramData"] = null;
+                Session["reportOn"] = null;
+
                 string movementno = lblMovement.Text;
 
                 string reporton = "MovementChalan";
@@ -681,7 +743,8 @@ namespace TransportManagerUI.UI
                 Session["Movement"] = movementno;
                 Session["reportOn"] = reporton;
                 //btnReport.PostBackUrl = "~/UI/reportViewer.aspx";
-                Response.Redirect("~/UI/reportViewer.aspx");
+               
+                ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/reportViewer.aspx" + "','_blank')", true);
             }
             else
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Please Select Movement No');", true);
@@ -761,22 +824,27 @@ namespace TransportManagerUI.UI
         protected void btnSendSms_Click(object sender, EventArgs e)
         {
            
-               
+
+            List<string> mobileNo = new List<string>();
                 if (String.IsNullOrEmpty(lblCustomerMobile.Text))
                 {
                     ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('No Mobile No');", true);
+                    
                 }
                 else
                 {
-                    SendSMS(lblCustomerMobile.Text);
+                 
+                    mobileNo.Add(lblCustomerMobile.Text);
                 }
+
                 if (String.IsNullOrEmpty(lblDealerMobile.Text))
                 {
                     ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('No Mobile No');", true);
                 }
                 else
                 {
-                    SendSMS(lblDealerMobile.Text);
+
+                mobileNo.Add(lblDealerMobile.Text);
                 }
                 if (String.IsNullOrEmpty(lblsnmMobileNo.Text))
                 {
@@ -784,54 +852,74 @@ namespace TransportManagerUI.UI
                 }
                 else
                 {
-                    SendSMS(lblsnmMobileNo.Text);
+                 mobileNo.Add(lblsnmMobileNo.Text);
                 }
-            
+
+            SendSMS(mobileNo);
         }
 
 
-        private void SendSMS(string ToPhoneNo)
+        private void SendSMS(List<string> ToPhoneNo)
         {
            
 
             //string smsBody = "Dear Concern, Delivery Info: Product:"+dgvProduct[1, 0].Value.ToString()+" Qty:"+dgvProduct[2, 0].Value.ToString()+" Cargo:" + txtVehicle.Text + " Driver :"  +txtDriver.Text+
             //    " Out Time:"+DateTime.Now.ToShortTimeString()+" Transport Division(MCIL)";
             DataTable dtDriver = new DataTable();
-           
+            DataTable product = new DataTable();
             
             try
             {
+
+               
                 using (PersonalGateway gateway = new PersonalGateway())
                 {
                     dtDriver = gateway.GetDriverById(1, dvTrip.Rows[3].Cells[1].Text);
                 }
-
-                string ProductName = gvListofDOProduct.Rows[0].Cells[1].Text;
-                string Quantity = gvListofDOProduct.FooterRow.Cells[2].Text;
+                using (ProductGateway pd = new ProductGateway())
+                {
+                  product=pd.GetProductById(gvListofDOProduct.Rows[0].Cells[0].Text);
+                }
+                string ShortProductName = product.Rows[0]["ProductName1"].ToString();
+                //string ProductName = gvListofDOProduct.Rows[0].Cells[1].Text;
+                string Quantity = Convert.ToDecimal(gvListofDOProduct.FooterRow.Cells[2].Text).ToString("0");
                 string CustomerName = lblCustomerName.Text;
                 string VehicleNo = dvTrip.Rows[2].Cells[1].Text;
                 string DriverName = dvTrip.Rows[4].Cells[1].Text;
                 string driverMobileNo = Convert.ToString(dtDriver.Rows[0]["Mobile"]);
 
-                string smsBody = "Dear Concern,\nD I:" + ProductName + " " + Quantity + " bags" + " Retailer:" + CustomerName + " VN:" + VehicleNo + " D:" + DriverName +
-                     " D M:" + driverMobileNo + " LD (MCIL)";
+                string smsBody = "Dear Sir," + " \nRetailer: " + CustomerName +" \n"+ ShortProductName + " " + Quantity + " bags"  + " \nCargo No: " + VehicleNo + " \nDriver: " + DriverName +
+                     " \nMob: " + driverMobileNo + " \nThanks by MCIL-L&D";
+                int count = 0;
+                foreach (var mono in ToPhoneNo)
+                {
 
+                    string mo = "+88" +mono;
+                string remoteUri ="https://vas.banglalinkgsm.com/sendSMS/sendSMS?msisdn="+mo.Trim()+"&message="+smsBody.Trim()+"&userID=McementBLsms&passwd=c8a8495667aae60f4b1f42d816889b05&sender=Madina Cement";
+                    WebClient MyClient = new WebClient();
+                    byte[] myDataBuffer = MyClient.DownloadData(remoteUri);
 
-                //if (cls.sendMsg(myPort, ToPhoneNo, smsBody))
-                //{
-                //    MessageBox.Show("Message has sent successfully");
-                //}
-                //else
-                //{
-                //    MessageBox.Show("Failed to send message");
-                //    //this.statusBar1.Text = "Failed to send message";
-                //}
-
+                    // Display the downloaded data.
+                    string download = Encoding.ASCII.GetString(myDataBuffer);
+                    //Stream MyStream = MyClient.OpenRead(remoteUri);
+                    //StreamReader MyReader = new StreamReader(MyStream);
+                    if(download== "Success Count : 1 and Fail Count : 0")
+                    {
+                        count++;
+                    }
+                    //string page = MyReader.ReadLine();
+                    //MyStream.Close();
+                    //MyStream.Dispose();
+                }
+                if (count>0)
+                {
+                    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('"+count+"' Message Sent Successfull!');", true);
+                }
 
             }
             catch (Exception ex)
             {
-                throw; //MessageBox.Show(ex.Message);
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Messages Sent UnSuccessfull!!');", true); //MessageBox.Show(ex.Message);
             }
         }
 
@@ -839,5 +927,46 @@ namespace TransportManagerUI.UI
         {
             Response.Redirect("~/UI/Default.aspx");
         }
+
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            DataTable dt = new DataTable();
+            dt = loadAllMovement(txtSearch.Text);
+
+            
+            gvlistofBasicData.DataSource = dt;
+            gvlistofBasicData.DataBind();
+            upListofbasicData.Update();
+            hfShowList_ModalPopupExtender.Show();
+        }
+
+        protected void btnRefresh_Click(object sender, ImageClickEventArgs e)
+        {
+            DataTable loadTC = new DataTable();
+          
+            using (TransContactGateway gatwayObj = new TransContactGateway())
+            {
+                loadTC = gatwayObj.GetAllTransContact(1, hfTC.Value);
+            }
+
+            hfCustomerId.Value = loadTC.Rows[0]["CustId"].ToString(); 
+            lblCustomerCode1.Text = loadTC.Rows[0]["CustId"].ToString(); 
+            lblCustomerName1.Text = loadTC.Rows[0]["CustomerName"].ToString();
+            lblCustomerMobile.Text = loadTC.Rows[0]["Mobile"].ToString();
+            lblsnmMobileNo.Text = loadTC.Rows[0]["Phone"].ToString();
+            DataTable dt = new DataTable();
+            dt = LoadTCProduct(hfTC.Value);
+            //lblCurrentCapacity.Text = Convert.ToString(dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"])));
+            gvListofDOProduct.DataSource = dt;
+            gvListofDOProduct.DataBind();
+            decimal totalQty = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"]));
+            decimal totalAmount = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["TotalPrice"]));
+            gvListofDOProduct.FooterRow.Cells[1].Text = "Total";
+            gvListofDOProduct.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
+            gvListofDOProduct.FooterRow.Cells[2].Text = totalQty.ToString("0");
+            gvListofDOProduct.FooterRow.Cells[4].Text = totalAmount.ToString("0.00");
+        }
+
+       
     }
 }

@@ -301,6 +301,15 @@ namespace TransportManagerUI.UI {
         protected global::System.Web.UI.WebControls.TextBox txtAddress3;
         
         /// <summary>
+        /// ddlLocation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlLocation;
+        
+        /// <summary>
         /// txtLocDistance control.
         /// </summary>
         /// <remarks>

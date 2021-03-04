@@ -129,7 +129,7 @@
             </td>
             </tr>
             <tr>
-            <td align="right" class="auto-style1">
+            <td align="right" >
                 Name</td>
              <td align="left">
                  <asp:TextBox ID="txtProductName" runat="server" Width="306px" 
@@ -157,7 +157,7 @@
                 </td>
                 </tr>
             <tr>
-                <td align="right" class="auto-style1">Reorder
+                <td align="right" >Reorder
             </td>
             <td align="left">
                 <asp:TextBox ID="txtReorder" runat="server" >0</asp:TextBox>
@@ -178,7 +178,7 @@
                 
             </tr>
             <tr>
-            <td align="right" class="auto-style1">Distributor Rate  
+            <td align="right" >Distributor Rate  
             </td>
             <td align="left">
                 <asp:TextBox ID="txtDistributorRate" runat="server" >0</asp:TextBox>
@@ -194,7 +194,7 @@
                 </td>
                 </tr>
             <tr>
-                <td align="right" class="auto-style1">Sales Rate 
+                <td align="right" >Sales Rate 
             </td>
             <td align="left">
                 <asp:TextBox ID="txtSalesRate" runat="server" >0</asp:TextBox>

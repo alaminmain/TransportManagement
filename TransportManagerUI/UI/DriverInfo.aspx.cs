@@ -153,7 +153,7 @@ namespace TransportManagerUI.UI
                     DataRow[] foundRows;
 
                     // Use the Select method to find all rows matching the filter.
-                    foundRows = dt2.Select();
+                    foundRows = dt2.Select("CardNo=1");
                     if (foundRows.Length > 0)
                         dt = foundRows.CopyToDataTable();
 

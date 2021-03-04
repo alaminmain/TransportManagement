@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using CrystalDecisions.CrystalReports;
 using CrystalDecisions.CrystalReports.Engine;
 
 using CrystalDecisions.Shared;
 using TransportManagerLibrary.DAL;
-using CrystalDecisions.Web;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Data;
@@ -21,81 +17,7 @@ namespace TransportManagerUI.UI
     public partial class TripReports : System.Web.UI.Page
     {
         
-        public ReportDocument ConnectionInfo(ReportDocument rpt)
-        {
-            ReportDocument crSubreportDocument;
-            string[] strConnection = ConfigurationManager.ConnectionStrings[("TransportDBConnectionString")].ConnectionString.Split(new char[] { ';' });
-
-            Database oCRDb = rpt.Database;
-
-            Tables oCRTables = oCRDb.Tables;
-
-            CrystalDecisions.CrystalReports.Engine.Table oCRTable = default(CrystalDecisions.CrystalReports.Engine.Table);
-
-            TableLogOnInfo oCRTableLogonInfo = default(CrystalDecisions.Shared.TableLogOnInfo);
-
-            ConnectionInfo oCRConnectionInfo = new CrystalDecisions.Shared.ConnectionInfo();
-
-            oCRConnectionInfo.ServerName = strConnection[0].Split(new char[] { '=' }).GetValue(1).ToString();
-            oCRConnectionInfo.Password = strConnection[2].Split(new char[] { '=' }).GetValue(1).ToString();
-            oCRConnectionInfo.UserID = strConnection[1].Split(new char[] { '=' }).GetValue(1).ToString();
-
-            for (int i = 0; i < oCRTables.Count; i++)
-            {
-                oCRTable = oCRTables[i];
-                oCRTableLogonInfo = oCRTable.LogOnInfo;
-                oCRTableLogonInfo.ConnectionInfo = oCRConnectionInfo;
-                oCRTable.ApplyLogOnInfo(oCRTableLogonInfo);
-                if (oCRTable.TestConnectivity())
-                    //' If there is a "." in the location then remove the
-                    // ' beginning of the fully qualified location.
-                    //' Example "dbo.northwind.customers" would become
-                    //' "customers".
-                    oCRTable.Location = oCRTable.Location.Substring(oCRTable.Location.LastIndexOf(".") + 1);
-
-
-            }
-
-            for (int i = 0; i < rpt.Subreports.Count; i++)
-            {
-
-                {
-                    //  crSubreportObject = (SubreportObject);
-                    crSubreportDocument = rpt.OpenSubreport(rpt.Subreports[i].Name);
-                    oCRDb = crSubreportDocument.Database;
-                    oCRTables = oCRDb.Tables;
-                    foreach (CrystalDecisions.CrystalReports.Engine.Table aTable in oCRTables)
-                    {
-                        oCRTableLogonInfo = aTable.LogOnInfo;
-                        oCRTableLogonInfo.ConnectionInfo = oCRConnectionInfo;
-                        aTable.ApplyLogOnInfo(oCRTableLogonInfo);
-                        if (aTable.TestConnectivity())
-                            //' If there is a "." in the location then remove the
-                            // ' beginning of the fully qualified location.
-                            //' Example "dbo.northwind.customers" would become
-                            //' "customers".
-                            aTable.Location = aTable.Location.Substring(aTable.Location.LastIndexOf(".") + 1);
-
-                    }
-                }
-            }
-            //  }
-
-            rpt.Refresh();
-            return rpt;
-        }
-
-        public void loginCrystalreport(ReportDocument Report)
-        {
-            string connectionString = ConfigurationManager.ConnectionStrings["SqlServer"].ConnectionString;
-
-            SqlConnectionStringBuilder SConn =
-              new SqlConnectionStringBuilder(connectionString);
-
-            Report.DataSourceConnections[0].SetConnection(
-              SConn.DataSource, SConn.InitialCatalog, SConn.UserID, SConn.Password);
-
-        }
+      
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["UserName"] == null)
@@ -108,6 +30,7 @@ namespace TransportManagerUI.UI
             {
                 txtFromDate_CalendarExtender.SelectedDate = DateTime.Now.Date;
                 txtToDate_CalendarExtender.SelectedDate = DateTime.Now.Date;
+                POtherOptions.Visible = false;
             }
         }
 
@@ -127,6 +50,124 @@ namespace TransportManagerUI.UI
 
             }
 
+        }
+
+        private DataTable LoadAllDriver(string searchKey)
+        {
+            try
+            {
+                DataTable dt = null;
+                DataTable dt2;
+                DataView view = new DataView();
+
+                using (PersonalGateway gatwayObj = new PersonalGateway())
+                {
+                    dt2 = gatwayObj.GetAllDriver();
+                    
+
+                    DataRow[] foundRows;
+
+                    // Use the Select method to find all rows matching the filter.
+                    foundRows = dt2.Select();
+                    if (foundRows.Length > 0)
+                        dt = foundRows.CopyToDataTable();
+
+                    view = new DataView(dt);
+                    dt = view.ToTable(false, "AgentCode", "AgentName");
+                    if (String.IsNullOrEmpty(searchKey))
+                    {
+
+                    }
+                    else
+                    {
+                        var filtered = dt.AsEnumerable()
+    .Where(r => r.Field<String>("EmpCode").Contains(searchKey) || r.Field<String>("EmpName").ToUpper().Contains(searchKey.ToUpper()));
+                        dt = filtered.CopyToDataTable();
+
+                    }
+                    return dt;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                //Logger.LogError(ex.ToString(), new object[0]);
+                return null;
+            }
+        }
+
+        private DataTable loadAllAgent(string searchKey)
+        {
+            try
+            {
+                DataTable dt;
+                DataView view = new DataView();
+
+                using (VehicleAgentGateway gatwayObj = new VehicleAgentGateway())
+                {
+
+                    dt = gatwayObj.GetAllAgent();
+                    view = new DataView(dt);
+                    dt = view.ToTable(false, "AgentID", "AgentName");
+                    if (String.IsNullOrEmpty(searchKey))
+                    {
+
+
+                    }
+                    else
+                    {
+                        var filtered = dt.AsEnumerable()
+    .Where(r => r.Field<String>("AgentID").ToUpper().Contains(searchKey.ToUpper())
+           || r.Field<String>("AgentName").ToUpper().Contains(searchKey.ToUpper()));
+                        dt = filtered.CopyToDataTable();
+                    }
+                    return dt;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.ToString(), new object[0]);
+                return null;
+
+            }
+        }
+
+        private DataTable loadGhatList(string searchKey)
+        {
+            try
+            {
+                DataTable dt;
+                DataView view = new DataView();
+
+                using (StoreLocation gatwayObj = new StoreLocation())
+                {
+
+                    dt = gatwayObj.GetAllStoreLocation(1);
+                    view = new DataView(dt);
+                    dt = view.ToTable(false, "StoreCode", "StoreName");
+                    if (String.IsNullOrEmpty(searchKey))
+                    {
+
+
+                    }
+                    else
+                    {
+                        var filtered = dt.AsEnumerable()
+    .Where(r => r.Field<String>("StoreCode").ToUpper().Contains(searchKey.ToUpper())
+           || r.Field<String>("StoreName").ToUpper().Contains(searchKey.ToUpper()));
+                        dt = filtered.CopyToDataTable();
+                    }
+                    return dt;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.ToString(), new object[0]);
+                return null;
+
+            }
         }
         private DataTable loadAllDealerInfo(string searchKey)
         {
@@ -205,85 +246,109 @@ namespace TransportManagerUI.UI
         }
         public void ReportOption(string Option)
         {
-            ReportDocument cryRpt;
-            ReportDocument nreport;
+            //ReportDocument //cryRpt;
+            //
             string strReportName;
             string strPath;
-            string fromValue = Convert.ToDateTime(txtFromDate.Text).Date.ToString("yyyy,MM,dd,00,00,00");
-            string ToValue = Convert.ToDateTime(txtToDate.Text).Date.ToString("yyyy,MM,dd,00,00,00"); ;
-            //cryRpt.Close();
-            string SelectionFormula;
+            string fromValue = Convert.ToDateTime(txtFromDate.Text).Date.ToString("yyyy,MM,dd");
+            string ToValue = Convert.ToDateTime(txtToDate.Text).Date.ToString("yyyy,MM,dd"); ;
+            ////cryRpt.Close();
+            string SelectionFormula=String.Empty;
             try
             {
                 switch (Option)
                 {
-                    case "TripDetailRpt":
 
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptTripMoveDetailState.rpt";
+                    case "TripStatementRpt": //Trip Statement
+
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        strReportName = "~//report//TripStatement.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                        //cryRpt.Load(strPath);
+                        SelectionFormula = "{TripInfo.TripDate} in Date(" +
+                                                fromValue + ")   to Date (" +
+                                                ToValue + ") And {TripInfo.TripStatus}<>2 ";
+
+                        //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                        //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
+
+                        ////cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
 
 
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
 
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
 
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        cryRpt.RecordSelectionFormula = "{Transport.TransportDate} in DateTime(" + fromValue + ")   to DateTime (" +
-                                                            ToValue + ")";
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
+                        //nreport = ConnectionInfo(//cryRpt);
+                        //Session["nreport"] = //cryRpt;
                         ////cryRpt.Close();
                         break;
 
-                    case "TripDetailDealerRpt":
+                    //case "TripTransportBy": //Report Not Found
+
+                    //    //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                    //    strReportName = "~//report//rptTripMoveDetailState.rpt";
+                    //    strPath = Server.MapPath(strReportName);
+                    //    //cryRpt.Load(strPath);
+
+
+
+                    //    //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                    //    //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date(" + ToValue + ")";
+
+                    //    //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+
+                    //    //cryRpt.RecordSelectionFormula = "{TripInfo.TripDate} in Date(" + fromValue + ")   to Date (" +
+                    //                                        ToValue + ")";
+
+                        
+                    //    //////cryRpt.Close();
+                    //    break;
+
+                    case "TripAgentwise": //Agentwise
 
 
                         if (String.IsNullOrEmpty(lblName.Text))
                         {
 
-                            SelectionFormula = "{Transport.TransportDate} in DateTime(" +
-                                               fromValue + ")   to DateTime (" +
+                            SelectionFormula = "{TripInfo.TripDate} in Date(" +
+                                               fromValue + ")   to Date (" +
                                                ToValue + ")";
                         }
                         else
 
                         {
 
-                            SelectionFormula = "{Transport.TransportDate} in DateTime(" + fromValue + ")   to DateTime (" +
+                            SelectionFormula = "{TripInfo.TripDate} in Date(" + fromValue + ")   to Date (" +
                                                             ToValue + ") and" +
-                                                                       " {Customer.CustName} = '" + lblName.Text + "'";
+                                                                       " {TripInfo.AgentID} = '" + lblCode.Text + "'";
 
                         }
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptTripMoveDetailStateDealer.rpt";
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        strReportName = "~//report//TripStateAgent.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
+                        //cryRpt.Load(strPath);
+                        //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                        //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date(" + ToValue + ")";
 
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
 
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
 
 
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
+                        //nreport = ConnectionInfo(//cryRpt);
+                        //Session["nreport"] = //cryRpt;
+                        ////cryRpt.Close();
                         break;
 
-                    case "TripDetailTruckWiseRpt":
+                    case "TripGhatwise": //Ghatwise
 
 
                         if (String.IsNullOrEmpty(lblName.Text))
                         {
                             btnSearchInfo.Enabled = false;
-                            SelectionFormula = "{Transport.TransportDate} in DateTime(" +
-                                               fromValue + ")   to DateTime (" +
-                                               ToValue + ")and {Transport.TranStatus} <> 2";
+                            SelectionFormula = "{TripInfo.TripDate} in Date(" +
+                                               fromValue + ")   to Date (" +
+                                               ToValue + ")and {TripInfo.TripStatus} <> 2";
 
 
                         }
@@ -291,307 +356,138 @@ namespace TransportManagerUI.UI
 
                         {
                             btnSearchInfo.Enabled = true;
-                            SelectionFormula = "{Transport.TransportDate} in DateTime(" + fromValue + ")   to DateTime (" +
+                            SelectionFormula = "{TripInfo.TripDate} in Date(" + fromValue + ")   to Date (" +
                                                             ToValue + ") and" +
-                                                                       " {VehicleInfo.VehicleNo} = '" + lblName.Text + "' and {Transport.TranStatus} <> 2";
+                                                                       " {TripInfo.StoreCode} = '" + lblName.Text + "' and {TripInfo.TripStatus} <> 2";
 
                         }
 
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptTripMoveDetailStateTruckwise.rpt";
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        strReportName = "~//report//TripStateGhat.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                        //cryRpt.Load(strPath);
 
 
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-                        nreport = ConnectionInfo(cryRpt);
-                        //cryRpt.Close();
-                        break;
-
-                    case "TripProductWiseRpt":
-
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptProductWiseStatement.rpt";
-                        strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-
-
-                        SelectionFormula = "{Transport.TransportDate} in DateTime(" +
-                                                fromValue + ")   to DateTime (" +
-                                                ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
-                        break;
-
-                    case "TripStateRpt":
-
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptTripMovementStatement.rpt";
-                        strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-                        SelectionFormula = "{Transport.TransportDate} in DateTime(" +
-                                                fromValue + ")   to DateTime (" +
-                                                ToValue + ")and {Transport.TranStatus} <> 2";
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
+                         //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
 
                         //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
 
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
 
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
+                        //nreport = ConnectionInfo(//cryRpt);
 
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
+                        ////cryRpt.Close();
                         break;
 
-                    case "TruckvsDate":
 
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptTruckvsDate.rpt";
+                    case "NotBilledTrip": //PendingTrip (Not Billed)
+
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        strReportName = "~//report//TripStatement.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                        //cryRpt.Load(strPath);
+                        SelectionFormula = "{TripInfo.TripDate} in Date(" +
+                                                fromValue + ")   to Date (" +
+                                                ToValue + ") and {TripInfo.TripStatus} = 1";
+
+                        //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
+
+                        ////cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
 
 
-                        //SelectionFormula = "{Transport.TransportDate} in DateTime(" +
-                        //                           fromValue + ")   to DateTime (" +
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
+
+
+                        //nreport = ConnectionInfo(//cryRpt);
+                        //Session["nreport"] = //cryRpt;
+                        ////cryRpt.Close();
+                        break;
+
+
+
+                    case "PendingVehiclewise": //Pending Trip(VehicleWise)
+
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        strReportName = "~//report//TripStatement.rpt";
+                        strPath = Server.MapPath(strReportName);
+                        //cryRpt.Load(strPath);
+
+
+                        //SelectionFormula = "{Transport.TransportDate} in Date(" +
+                        //                           fromValue + ")   to Date (" +
                         //                           ToValue + ")and {Transport.TranStatus} <> 2";
                         if (String.IsNullOrEmpty(lblName.Text))
                         {
                             btnSearchInfo.Enabled = false;
-                            SelectionFormula = "{Transport.TransportDate} in DateTime(" +
-                                               fromValue + ")   to DateTime (" +
-                                               ToValue + ")and {Transport.TranStatus} <> 2";
+                            SelectionFormula = "{TripInfo.TripDate} in Date(" +
+                                               fromValue + ")   to Date (" +
+                                               ToValue + ")and {TripInfo.TripStatus} = 1";
 
 
                         }
                         else
                         {
                             btnSearchInfo.Enabled = true;
-                            SelectionFormula = "{Transport.TransportDate} in DateTime(" + fromValue + ")   to DateTime (" +
+                            SelectionFormula = "{TripInfo.TripDate} in Date(" + fromValue + ")   to Date(" +
                                                             ToValue + ") and" +
-                                                                       " {VehicleInfo.VehicleNo} = '" + lblName.Text + "' and {Transport.TranStatus} <> 2";
+                                                                       " {TripInfo.VehicleID} = '" + lblCode.Text + "' and {TripDate.TripStatus} = 1";
 
                         }
 
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+                         //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
+                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
 
 
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
+                        //nreport = ConnectionInfo(//cryRpt);
+                        //Session["nreport"] = //cryRpt;
+                        ////cryRpt.Close();
                         break;
+                                                        
+                   
 
-                    case "CancelTripStatement":
-
-
-
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptTripMoveDetailState.rpt";
+                    case "VehicleWorkshopStatement": //Workshop Statement
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        strReportName = "~//report//VehicleMoveState.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                        //cryRpt.Load(strPath);
 
 
 
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
+                        //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                        //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
 
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+                        ////cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
 
-                        cryRpt.RecordSelectionFormula = "{Transport.TransportDate} in DateTime(" + fromValue + ")   to DateTime (" +
-                                                            ToValue + ")and {Transport.TranStatus}=2";
+                      
 
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
+                            SelectionFormula = "{VehicleMovement.MoveDate} in Date(" +
+                                               fromValue + ")   to Date(" +
+                                               ToValue + ") and {VehicleMovement.VehicleStatus}=2";
+                       
                         break;
 
-                    case "TruckwiseSummery":
-
-
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rtpTruckwiseDelivery.rpt";
-                        strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-
-
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        cryRpt.RecordSelectionFormula = "{Transport.TransportDate} in DateTime(" + fromValue + ")   to DateTime (" +
-                                                            ToValue + ")and {Transport.TranStatus}<>2";
-
-                        nreport = ConnectionInfo(cryRpt);
-
-                        //cryRpt.Close();
-                        break;
-                    case "DealerwiseSummery":
-
-
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptTripMoveDetailSummeryDealer.rpt";
-                        strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-
-
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        cryRpt.RecordSelectionFormula = "{Transport.TransportDate} in DateTime(" + fromValue + ")   to DateTime (" +
-                                                            ToValue + ")and {Transport.TranStatus}<>2";
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-
-                        //cryRpt.Close();
-                        break;
-                    //---------------
-                    case "FuelTripStatement":
-
-
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptFuelTripStatement.rpt";
-                        strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-
-
-                        SelectionFormula = "{TripInfo.Date} in DateTime(" +
-                                                fromValue + ")   to DateTime (" +
-                                                ToValue + ") AND {TripInfo.Status}<>2";
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
-                        break;
-
-                    case "FuelTruckwiseStatement":
-
-
-                        if (String.IsNullOrEmpty(lblName.Text))
-                        {
-
-                            SelectionFormula = "{TripInfo.Date} in DateTime(" +
-                                               fromValue + ")   to DateTime (" +
-                                               ToValue + ") AND {TripInfo.TripStatus}<>2";
-
-
-                        }
-                        else
-
-                        {
-
-                            SelectionFormula = "{TripInfo.Date} in DateTime(" + fromValue + ")   to DateTime (" +
-                                                            ToValue + ") and" +
-                                                                       " {VehicleInfo.VehicleNo} = '" + lblName.Text + "' AND {TripInfo.TripStatus}<>2";
-
-                        }
-
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptFuelTruckwiseStatement.rpt";
-                        strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
-                        break;
-
-                    case "FuelSummeryStatement":
-
-
-                        if (String.IsNullOrEmpty(lblName.Text))
-                        {
-
-                            SelectionFormula = "{TripInfo.TripDate} in DateTime(" +
-                                               fromValue + ")   to DateTime (" +
-                                               ToValue + ") AND {TripInfo.Status}<>2";
-
-
-                        }
-                        else
-                        {
-
-                            SelectionFormula = "{TripInfo.TripDate} in DateTime(" + fromValue + ")   to DateTime (" +
-                                                            ToValue + ") and" +
-                                                                       " {VehicleInfo.VehicleNo} = '" + lblName.Text + "' AND {TripInfo.TripStatus}<>2";
-
-                        }
-
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptFuelSummery.rpt";
-                        strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
-                        break;
-                  //-------Vehicle Status Related Report
-
-                    case "VehicleMovement":
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                    case "VehicleMovement": //Vehicle Movement Register
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
                         strReportName = "~//report//VehicleMovement.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                        //cryRpt.Load(strPath);
 
 
 
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
+                         //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
 
-                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+                        ////cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
 
                         if (String.IsNullOrEmpty(lblCode.Text))
                         {
 
-                            SelectionFormula = "{VehicleMovement.MoveDate} in DateTime(" +
-                                               fromValue + ")   to DateTime (" +
+                            SelectionFormula = "{VehicleMovement.MoveDate} in Date(" +
+                                               fromValue + ")   to Date (" +
                                                ToValue + ") ";
 
 
@@ -599,38 +495,25 @@ namespace TransportManagerUI.UI
                         else
                         {
 
-                            SelectionFormula = "{VehicleMovement.MoveDate} in DateTime(" + fromValue + ")   to DateTime (" +
+                            SelectionFormula = "{VehicleMovement.MoveDate} in Date(" + fromValue + ")   to Date (" +
                                                             ToValue + ") and" +
                                                                        " {VehicleInfo.VehicleID} = '" + lblCode.Text + "'";
 
                         }
 
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
+                        //nreport = ConnectionInfo(//cryRpt);
+                        //Session["nreport"] = //cryRpt;
 
-                        //cryRpt.Close();
+                        ////cryRpt.Close();
                         break;
 
-                    case "VehicleStatus":
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                    case "VehicleStatus": //Vehicle Current Status
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
                         strReportName = "~//report//VehicleStatus.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                        //cryRpt.Load(strPath);
 
-
-
-                        //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        //cryRpt.RecordSelectionFormula = "{Transport.TransportDate} in DateTime(" + fromValue + ")   to DateTime (" +
-                        //                                    ToValue + ")and {Transport.TranStatus}<>2";
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-
-                        //cryRpt.Close();
+                        
                         break;
 
 
@@ -640,6 +523,12 @@ namespace TransportManagerUI.UI
                         "GetDataReader was given an incorrect Request for data"
                         );
                 }
+
+               // nreport = ConnectionInfo(//cryRpt);
+                Session["strPath"] = strPath;
+                Session["SelectionFormula"] = SelectionFormula;
+                Session["fromDate"] = fromValue;
+                Session["ToDate"] = ToValue;
                
             }
             catch (Exception ex)
@@ -656,52 +545,32 @@ namespace TransportManagerUI.UI
 
         protected void rblReports_SelectedIndexChanged(object sender, EventArgs e)
         {
-        
-            if(rblReports.SelectedValue== "TripStateRpt")
+            lblCode.Text = String.Empty;
+            lblName.Text = String.Empty;
+            if(rblReports.SelectedValue== "TripStatementRpt")
             {
                 POtherOptions.Visible = false;
             }
-            else if (rblReports.SelectedValue == "TripDetailRpt")
-            {
-                POtherOptions.Visible = false;
-            }
-            else if (rblReports.SelectedValue == "TripDetailDealerRpt")
+           
+            else if (rblReports.SelectedValue == "TripAgentwise")
             {
                 POtherOptions.Visible = true;
             }
-            else if (rblReports.SelectedValue == "TripDetailTruckWiseRpt")
+            else if (rblReports.SelectedValue == "TripGhatwise")
             {
                 POtherOptions.Visible = true;
             }
-            else if (rblReports.SelectedValue == "TripProductWiseRpt")
+         
+            else if (rblReports.SelectedValue == "NotBilledTrip")
             {
                 POtherOptions.Visible = false;
             }
-            else if (rblReports.SelectedValue == "TruckvsDate")
+            else if (rblReports.SelectedValue == "PendingVehiclewise")
             {
                 POtherOptions.Visible = true;
             }
-            else if (rblReports.SelectedValue == "CancelTripStatement")
-            {
-                POtherOptions.Visible = false;
-            }
-            else if (rblReports.SelectedValue == "TruckwiseSummery")
-            {
-                POtherOptions.Visible = false;
-            }
-            else if (rblReports.SelectedValue == "DealerwiseSummery")
-            {
-                POtherOptions.Visible = false;
-            }
-            else if (rblReports.SelectedValue == "FuelTripStatement")
-            {
-                POtherOptions.Visible = false;
-            }
-            else if (rblReports.SelectedValue == "FuelTruckwiseStatement")
-            {
-                POtherOptions.Visible = true;
-            }
-            else if (rblReports.SelectedValue == "FuelSummeryStatement")
+           
+            else if (rblReports.SelectedValue == "VehicleWorkshopStatement")
             {
                 POtherOptions.Visible = false;
             }
@@ -713,6 +582,7 @@ namespace TransportManagerUI.UI
             {
                 POtherOptions.Visible = false;
             }
+           
 
         }
 
@@ -727,12 +597,21 @@ namespace TransportManagerUI.UI
         {
             string reportname = rblReports.SelectedValue;
             DataTable dt = new DataTable();
-            if (reportname == "TripDetailDealerRpt" || reportname == "DealerwiseSummery")
+            if (reportname == "TripGhatwise")
             {
-                dt = loadAllDealerInfo(txtSearch.Text);
+                dt = loadGhatList(txtSearch.Text);
 
             }
-            else if (reportname == "TripDetailTruckWiseRpt" || reportname == "TruckvsDate" || reportname == "FuelTruckwiseStatement" || reportname == "VehicleMovement")
+            else if (reportname == "TripAgentwise")
+            {
+                dt = loadAllAgent(txtSearch.Text);
+            }
+            else if (reportname == "PendingDriverwise")
+            {
+                dt = LoadAllDriver(txtSearch.Text);
+            }
+
+            else if ( reportname == "PendingVehiclewise" || reportname == "VehicleMovement")
             {
                 dt = GetVehicle(txtSearch.Text);
             }
@@ -744,21 +623,32 @@ namespace TransportManagerUI.UI
             hfShowList_ModalPopupExtender.Show();
         }
 
+        
+
         protected void btnSearch_Click(object sender, EventArgs e)
         {
             string reportname = rblReports.SelectedValue;
             DataTable dt = new DataTable();
-            if (reportname == "TripDetailDealerRpt" || reportname == "DealerwiseSummery")
+            if (reportname == "TripGhatwise")
             {
-                dt = loadAllDealerInfo(txtSearch.Text);
+                dt = loadGhatList(txtSearch.Text);
 
             }
-            else if (reportname == "TripDetailTruckWiseRpt" || reportname == "TruckvsDate" || reportname == "FuelTruckwiseStatement" || reportname == "VehicleMovement")
+            else if (reportname == "TripAgentwise")
+            {
+                dt = loadAllAgent(txtSearch.Text);
+            }
+            else if (reportname == "PendingDriverwise")
+            {
+                dt = LoadAllDriver(txtSearch.Text);
+            }
+
+            else if (reportname == "PendingVehiclewise" || reportname == "VehicleMovement")
             {
                 dt = GetVehicle(txtSearch.Text);
             }
 
-            
+
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
             upListofbasicData.Update();
@@ -769,9 +659,9 @@ namespace TransportManagerUI.UI
         {
             string option = rblReports.SelectedValue;
             ReportOption(option);
-
+            Session["AllStatement"] = "1";
             //ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "~/UI/ReportForStatement.aspx" + "','_blank')", true);
-            Response.Redirect("~/UI/ReportForStatement.aspx");
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
             
         }
 
@@ -779,12 +669,21 @@ namespace TransportManagerUI.UI
         {
             string reportname = rblReports.SelectedValue;
             DataTable dt = new DataTable();
-            if (reportname== "TripDetailDealerRpt" || reportname == "DealerwiseSummery")
+            if (reportname == "TripGhatwise")
             {
-                dt = loadAllDealerInfo(txtSearch.Text);
-                
+                dt = loadGhatList(txtSearch.Text);
+
             }
-            else if (reportname == "TripDetailTruckWiseRpt" || reportname == "TruckvsDate" || reportname == "FuelTruckwiseStatement" || reportname == "VehicleMovement")
+            else if (reportname == "TripAgentwise")
+            {
+                dt = loadAllAgent(txtSearch.Text);
+            }
+            else if (reportname == "PendingDriverwise")
+            {
+                dt = LoadAllDriver(txtSearch.Text);
+            }
+
+            else if (reportname == "PendingVehiclewise" || reportname == "VehicleMovement")
             {
                 dt = GetVehicle(txtSearch.Text);
             }
@@ -792,6 +691,15 @@ namespace TransportManagerUI.UI
             gvlistofBasicData.DataBind();
             hfShowList_ModalPopupExtender.Show();
 
+        }
+
+        protected void btnShowStatment_Click(object sender, EventArgs e)
+        {
+            string option = rblReports.SelectedValue;
+            ReportOption(option);
+            Session["AllStatement"] = "2";
+            //ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "~/UI/ReportForStatement.aspx" + "','_blank')", true);
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
         }
     }
 }

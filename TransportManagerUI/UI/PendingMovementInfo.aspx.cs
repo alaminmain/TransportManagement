@@ -7,24 +7,35 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using TransportManagerLibrary.DAL;
+using CrystalDecisions.CrystalReports.Engine;
 
 namespace TransportManagerUI.UI
 {
     public partial class PendingMovementInfo : System.Web.UI.Page
     {
-        #region
+        #region Private Method
 
         private DataTable loadAllMovement(string searchKey)
         {
             try
             {
-                DataTable dt;
+                DataTable dt = null;
+                DataTable dt2;
 
 
                 using (TransportMasterGateway gatwayObj = new TransportMasterGateway())
                 {
                     
-                    dt = gatwayObj.GetAllMovementAll(1);
+                    
+                    dt2 = gatwayObj.GetAllMovementAll(1);
+
+
+                    DataRow[] foundRows;
+
+                    // Use the Select method to find all rows matching the filter.
+                    foundRows = dt2.Select();
+                    if (foundRows.Length > 0)
+                        dt = foundRows.CopyToDataTable();
                     if (String.IsNullOrEmpty(searchKey))
                     {
 
@@ -32,7 +43,9 @@ namespace TransportManagerUI.UI
                     else
                     {
                         var filtered = dt.AsEnumerable()
-    .Where(r => r.Field<String>("MovementNo").Contains(searchKey) || r.Field<String>("TripNo").ToUpper().Contains(searchKey.ToUpper()));
+    .Where(r => r.Field<String>("MovementNo").Contains(searchKey) || r.Field<String>("TripNo").ToUpper().Contains(searchKey.ToUpper())
+     || r.Field<String>("DealerName").ToUpper().Contains(searchKey.ToUpper()) || r.Field<String>("TransportDate").Contains(searchKey.ToUpper())
+      || r.Field<String>("VehicleNo").ToUpper().Contains(searchKey.ToUpper()) || r.Field<String>("EmpName").ToUpper().Contains(searchKey.ToUpper()));
                         dt = filtered.CopyToDataTable();
 
                     }
@@ -43,7 +56,8 @@ namespace TransportManagerUI.UI
             catch (Exception ex)
             {
                 //Logger.LogError(ex.ToString(), new object[0]);
-                return null;
+                throw ex;
+                //return null;
             }
         }
 
@@ -83,7 +97,7 @@ namespace TransportManagerUI.UI
                 gvlistofBasicData.DataSource = dt;
                 gvlistofBasicData.DataBind();
                 upListofbasicData.Update();
-                ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 30 ,true); </script>", false);
+                ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 39 ,true); </script>", false);
             }
         }
 
@@ -96,6 +110,7 @@ namespace TransportManagerUI.UI
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
             upListofbasicData.Update();
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 39 ,true); </script>", false);
         }
 
         protected void btnMovement_Click(object sender, EventArgs e)
@@ -105,7 +120,30 @@ namespace TransportManagerUI.UI
 
         protected void btnReport_Click(object sender, EventArgs e)
         {
-           
+            TransportManagerLibrary.DAL.CommonGateway cm = new CommonGateway();
+            //ReportDocument //cryRpt;
+
+            string strReportName;
+            string strPath;
+
+         
+            string SelectionFormula;
+            
+            strReportName = "~//report//rptTripMovementStatement.rpt";
+            strPath = Server.MapPath(strReportName);
+            //cryRpt.Load(strPath);
+
+            SelectionFormula = "{TripInfo.TripStatus} = 0";
+                      
+            Session["strPath"] = strPath;
+            Session["SelectionFormula"] = SelectionFormula;
+            //Session["fromDate"] = fromValue;
+            //Session["ToDate"] = ToValue;
+            Session["AllStatement"] = "1";
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
+
+            
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 39 ,true); </script>", false);
         }
 
         protected void btnCancel_Click(object sender, EventArgs e)
@@ -131,6 +169,7 @@ namespace TransportManagerUI.UI
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
             upListofbasicData.Update();
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 39 ,true); </script>", false);
         }
     }
 }

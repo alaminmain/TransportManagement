@@ -238,6 +238,15 @@ namespace TransportManagerUI.UI {
         protected global::System.Web.UI.WebControls.TextBox txtSupplier;
         
         /// <summary>
+        /// txtfuelQty control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtfuelQty;
+        
+        /// <summary>
         /// txtAdjustedFuelQty control.
         /// </summary>
         /// <remarks>
@@ -256,13 +265,31 @@ namespace TransportManagerUI.UI {
         protected global::AjaxControlToolkit.FilteredTextBoxExtender txtAdjustedFuelQty_FilteredTextBoxExtender;
         
         /// <summary>
-        /// txtfuelQty control.
+        /// txtExtraKm control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtfuelQty;
+        protected global::System.Web.UI.WebControls.TextBox txtExtraKm;
+        
+        /// <summary>
+        /// txtExtraFuelQty control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtExtraFuelQty;
+        
+        /// <summary>
+        /// lblNetFuelQty control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblNetFuelQty;
         
         /// <summary>
         /// dvTrip control.

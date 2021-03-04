@@ -13,8 +13,10 @@
             error: Error
         });
 
-    });
+        
 
+    });
+   
 //    function Error(request, status, error) {
 //        alert('Not Loggeed In');
 //        var url = "NotLoggedIn.htm";
@@ -36,7 +38,8 @@
         <asp:Button ID="btnAddNew" runat="server" Text="New" OnClick="btnAddNew_Click" formnovalidate />
         <asp:Button ID="btnShowList" runat="server" Text="List" OnClick="btnShowList_Click" formnovalidate/>
     <asp:Button ID="btnSave" runat="server" Text="Save" OnClick="btnSave_Click" />
-            <asp:Button ID="btnReport" runat="server" Text="Report" formnovalidate/>
+            <asp:Button ID="btnReport" runat="server" Text="Report" formnovalidate 
+                onclick="btnReport_Click"/>
 
 
      <asp:Button ID="btnCancel" runat="server" Text="Cancel" onclick="btnCancel_Click" formnovalidate/>
@@ -51,7 +54,7 @@
      <table >
                             <tr>
                             <td>
-                                <asp:TextBox ID="txtSearch" runat="server" Width="158px" placeholder="Search" />
+                                <asp:TextBox ID="txtSearch" runat="server" Width="158px" placeholder="Search"  />
                             </td>
                             <td>
                                 <asp:Button ID="btnSearch" runat="server" Text="Search" onclick="btnSearch_Click" formnovalidate
@@ -60,10 +63,9 @@
                             </tr>
                         </table>
         <asp:GridView ID="gvlistofBasicData" runat="server" AllowPaging="True" PageSize="15" 
-                     EmptyDataText="No Data To Show" GridLines="Horizontal" CellPadding="4" 
-                     ForeColor="#333333" AutoGenerateColumns="False" 
-                     onpageindexchanging="gvlistofBasicData_PageIndexChanging" 
-                     OnSelectedIndexChanged="gvlistofBasicData_SelectedIndexChanged">
+                     EmptyDataText="No Data To Show" AutoGenerateColumns="False" 
+                     onpageindexchanging="gvlistofBasicData_PageIndexChanging"   class="display" 
+                     OnSelectedIndexChanged="gvlistofBasicData_SelectedIndexChanged" OnPreRender="gvlistofBasicData_PreRender" CellPadding="4" ForeColor="#333333" GridLines="None">
             <AlternatingRowStyle BackColor="White" />
             <Columns>
                 <asp:CommandField ShowSelectButton="True" />
@@ -79,7 +81,7 @@
             <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
             <HeaderStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
             <PagerStyle BackColor="#2461BF" ForeColor="White" HorizontalAlign="Center" />
-            <RowStyle BackColor="#EFF3FB" HorizontalAlign="Left" />
+            <RowStyle HorizontalAlign="Left" BackColor="#EFF3FB" />
             <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
             <SortedAscendingCellStyle BackColor="#F5F7FB" />
             <SortedAscendingHeaderStyle BackColor="#6D95E1" />
@@ -175,7 +177,7 @@
                 </td>
                 </tr>
             <tr>
-                <td align="right" class="auto-style1">Address2
+                <td align="right">Address2
             </td>
             <td align="left">
                 <asp:TextBox ID="txtAddress2" runat="server" Width="306px" ></asp:TextBox>
@@ -193,14 +195,25 @@
                 
             </tr>
                        <tr>
-                <td align="right" class="auto-style1">Distance
+            
+                <td align="right">
+                    Location
+                </td>
+                 <td align="left">
+                     <asp:DropDownList ID="ddlLocation" runat="server" Width="200px"></asp:DropDownList>
+                     
+                </td>
+                
+            </tr>
+                       <tr>
+                <td align="right" >Distance
             </td>
             <td align="left">
                 <asp:TextBox ID="txtLocDistance" runat="server" required >0</asp:TextBox>
             </td>
             </tr>
             <tr>
-            <td align="right" class="auto-style1">Contact Person  
+            <td align="right" >Contact Person  
             </td>
             <td align="left">
                 <asp:TextBox ID="txtContactPerson" runat="server" Width="306px" ></asp:TextBox>
@@ -209,7 +222,7 @@
             <tr>
             
                 <td align="right">
-                    Phone
+                   Sales Person Phone
                 </td>
                  <td align="left">
                      <asp:TextBox ID="txtPhone" runat="server"></asp:TextBox>
@@ -217,7 +230,7 @@
                 </td>
                 </tr>
             <tr>
-                <td align="right" class="auto-style1">Mobile 
+                <td align="right" >Mobile 
             </td>
             <td align="left">
                 <asp:TextBox ID="txtMobile" runat="server" ></asp:TextBox>
@@ -254,7 +267,7 @@
                             </td>
                             <td style="width:90px;">
                                 <asp:Button ID="btnDearlerSearch" runat="server" Text="Search" 
-                                    CssClass="Button" onclick="btnDearlerSearch_Click" 
+                                    CssClass="Button" onclick="btnDearlerSearch_Click" formnovalidate 
                                      />
                             </td>
                             </tr>
@@ -314,6 +327,19 @@
             </div>
             </ProgressTemplate>
     </asp:UpdateProgress>
+
+        <script type="text/javascript">
+
+          <%--    $(document).ready(function () {
+                                                         
+                                                      $('#' + '<%= ddlLocation.ClientID %>').select2();
+                                                      Sys.WebForms.PageRequestManager.getInstance().add_endRequest(EndRequestHandler);
+                                                      function EndRequestHandler(sender, args) {
+                                                          $('#' + '<%= ddlLocation.ClientID %>').select2();
+                      
+                    }
+                   });--%>
+          </script>
    </asp:Panel>
 
 </asp:Content>

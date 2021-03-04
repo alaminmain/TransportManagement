@@ -30,20 +30,15 @@
                         <tr>
                             <td class="auto-style1">
                                 <asp:RadioButtonList ID="rblReports" runat="server" ForeColor="Black" OnSelectedIndexChanged="rblReports_SelectedIndexChanged" AutoPostBack="True">
-                                    <asp:ListItem Text="Trip Statement" Value="TripStateRpt" Selected="True"></asp:ListItem>
-                                    <asp:ListItem Text="Trip Detail Statement" Value="TripDetailRpt"></asp:ListItem>
-                                    <asp:ListItem Text="Dealerwise Statement" Value="TripDetailDealerRpt"></asp:ListItem>
-                                    <asp:ListItem Text="Truckwise Statement" Value="TripDetailTruckWiseRpt"></asp:ListItem>
-                                    <asp:ListItem Text="Productwise Statement" Value="TripProductWiseRpt"></asp:ListItem>
-                                    <asp:ListItem Text="Truck vs Date" Value="TruckvsDate"></asp:ListItem>
-                                    <asp:ListItem Text="Cancel Trip Statement" Value="CancelTripStatement"></asp:ListItem>
-                                    <asp:ListItem Text="Truckwise Summery" Value="TruckwiseSummery"></asp:ListItem>
-                                    <asp:ListItem Text="Dealerwise Summery" Value="DealerwiseSummery"></asp:ListItem>
-                                    <asp:ListItem Text="Fuel Trip Statement" Value="FuelTripStatement"></asp:ListItem>
-                                    <asp:ListItem Text="Fuel Truckwise Statement" Value="FuelTruckwiseStatement"></asp:ListItem>
-                                    <asp:ListItem Text="Fuel Summery Statement" Value="FuelSummeryStatement"></asp:ListItem>
+                                    <asp:ListItem Text="Trip Statement" Value="TripStatementRpt" Selected="True"></asp:ListItem>
+                                   
+                                    <asp:ListItem Text="Agentwise" Value="TripAgentwise"></asp:ListItem>
+                                    <asp:ListItem Text="Ghatwise" Value="TripGhatwise"></asp:ListItem>
+                                    <asp:ListItem Text="PendingTrip (Not Billed)" Value="NotBilledTrip"></asp:ListItem>
+                                    <asp:ListItem Text="Pending Trip(VehicleWise)" Value="PendingVehiclewise"></asp:ListItem>                                                                
+                                   <%-- <asp:ListItem Text="Workshop Statement" Value="VehicleWorkshopStatement"></asp:ListItem>
                                     <asp:ListItem Text="Vehicle Movement Register" Value="VehicleMovement"></asp:ListItem>
-                                    <asp:ListItem Text="Vehicle Current Status" Value="VehicleStatus"></asp:ListItem>
+                                    <asp:ListItem Text="Vehicle Current Status" Value="VehicleStatus"></asp:ListItem>--%>
                                     
                                    
                                 </asp:RadioButtonList>
@@ -88,6 +83,9 @@
                         <tr>
                             <td>
                                 <asp:Button ID="btnShowReport" runat="server" Text="Show Report" OnClick="btnShowReport_Click" OnClientClick="NewWindow();"/>
+                            </td>
+                            <td>
+                                <asp:Button ID="btnShowStatment" runat="server" Text="Show Report(Onscreen)" OnClick="btnShowStatment_Click" />
                             </td>
                             <td> <asp:HiddenField ID="hfShowList" runat="server" />
                                  <ajaxToolkit:ModalPopupExtender ID="hfShowList_ModalPopupExtender" runat="server" BehaviorID="hfShowList_ModalPopupExtender" DynamicServicePath="" TargetControlID="hfShowList" PopupControlID="Panel7"  CancelControlID="btnSearchCancel" BackgroundCssClass="modalBackground">

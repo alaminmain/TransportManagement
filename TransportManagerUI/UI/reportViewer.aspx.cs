@@ -121,14 +121,14 @@ namespace TransportManagerUI.UI
                 
             else
             {
-                MemoryStream oStream = new MemoryStream();
-
-                CrystalReportViewer1.ToolPanelView = ToolPanelViewType.None;
-                CrystalReportViewer1.DisplayToolbar = false;
-                CrystalReportViewer1.SeparatePages = false;
-                CrystalReportViewer1.Visible = false;
+                //MemoryStream oStream = new MemoryStream();
+                ReportDocument nreport = new ReportDocument();
+                //CrystalReportViewer1.ToolPanelView = ToolPanelViewType.None;
+                //CrystalReportViewer1.DisplayToolbar = false;
+                //CrystalReportViewer1.SeparatePages = false;
+                //CrystalReportViewer1.Visible = false;
                 ReportDocument Report;
-                ReportDocument nreport;
+                
                 string str;
 
                 string reportCase = String.Empty;
@@ -150,15 +150,15 @@ namespace TransportManagerUI.UI
                             nreport = ConnectionInfo(Report);
 
                             nreport.SetParameterValue("TransportNo", movementNo);
-                            CrystalReportViewer1.ReportSource = nreport;
+                            //CrystalReportViewer1.ReportSource = nreport;
 
-                            oStream = (MemoryStream)
-                            nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
-                            Response.Clear();
-                            Response.Buffer = true;
-                            Response.ContentType = "application/pdf";
-                            Response.BinaryWrite(oStream.ToArray());
-                            Response.End();
+                            //oStream = (MemoryStream)
+                            //nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                            //Response.Clear();
+                            //Response.Buffer = true;
+                            //Response.ContentType = "application/pdf";
+                            //Response.BinaryWrite(oStream.ToArray());
+                            //Response.End();
                             break;
 
                         case "DO":
@@ -169,15 +169,15 @@ namespace TransportManagerUI.UI
                             nreport = ConnectionInfo(Report);
 
                             nreport.SetParameterValue("dono", dono);
-                            CrystalReportViewer1.ReportSource = nreport;
+                            //CrystalReportViewer1.ReportSource = nreport;
 
-                            oStream = (MemoryStream)
-                            nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
-                            Response.Clear();
-                            Response.Buffer = true;
-                            Response.ContentType = "application/pdf";
-                            Response.BinaryWrite(oStream.ToArray());
-                            Response.End();
+                            //oStream = (MemoryStream)
+                            //nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                            //Response.Clear();
+                            //Response.Buffer = true;
+                            //Response.ContentType = "application/pdf";
+                            //Response.BinaryWrite(oStream.ToArray());
+                            //Response.End();
                             break;
 
                         case "TC":
@@ -188,17 +188,37 @@ namespace TransportManagerUI.UI
                             nreport = ConnectionInfo(Report);
 
                             nreport.SetParameterValue("tcno", tcno);
-                            CrystalReportViewer1.ReportSource = nreport;
+                            //CrystalReportViewer1.ReportSource = nreport;
 
-                            oStream = (MemoryStream)
-                            nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
-                            Response.Clear();
-                            Response.Buffer = true;
-                            Response.ContentType = "application/pdf";
-                            Response.BinaryWrite(oStream.ToArray());
-                            Response.End();
+                            //oStream = (MemoryStream)
+                            //nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                            //Response.Clear();
+                            //Response.Buffer = true;
+                            //Response.ContentType = "application/pdf";
+                            //Response.BinaryWrite(oStream.ToArray());
+                            //Response.End();
                             break;
 
+                        case "TCCNF":
+                            string tcno1 = Session["paramData"].ToString();
+                            Report = new ReportDocument();
+                            str = Server.MapPath("~//report//rptTCCNF.rpt");
+                            Report.Load(str);
+                            nreport = ConnectionInfo(Report);
+
+                            nreport.SetParameterValue("tcno", tcno1);
+                            //CrystalReportViewer1.ReportSource = nreport;
+
+                            //oStream = (MemoryStream)
+                            //nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                            //Response.Clear();
+                            //Response.Buffer = true;
+                            //Response.ContentType = "application/pdf";
+                            //Response.BinaryWrite(oStream.ToArray());
+                            //Response.End();
+                            break;
+
+                        
                         case "FuelSlip":
                             string fuelSlipno = Session["paramData"].ToString();
                             Report = new ReportDocument();
@@ -207,15 +227,15 @@ namespace TransportManagerUI.UI
                             nreport = ConnectionInfo(Report);
 
                             nreport.SetParameterValue("FuelSlipNo", fuelSlipno);
-                            CrystalReportViewer1.ReportSource = nreport;
+                            //CrystalReportViewer1.ReportSource = nreport;
 
-                            oStream = (MemoryStream)
-                            nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
-                            Response.Clear();
-                            Response.Buffer = true;
-                            Response.ContentType = "application/pdf";
-                            Response.BinaryWrite(oStream.ToArray());
-                            Response.End();
+                            //oStream = (MemoryStream)
+                            //nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                            //Response.Clear();
+                            //Response.Buffer = true;
+                            //Response.ContentType = "application/pdf";
+                            //Response.BinaryWrite(oStream.ToArray());
+                            //Response.End();
                             break;
 
                         case "Voucher":
@@ -226,15 +246,15 @@ namespace TransportManagerUI.UI
                             nreport = ConnectionInfo(Report);
 
                             nreport.SetParameterValue("VoucherNo", voucherno);
-                            CrystalReportViewer1.ReportSource = nreport;
+                            //CrystalReportViewer1.ReportSource = nreport;
 
-                            oStream = (MemoryStream)
-                            nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
-                            Response.Clear();
-                            Response.Buffer = true;
-                            Response.ContentType = "application/pdf";
-                            Response.BinaryWrite(oStream.ToArray());
-                            Response.End();
+                            //oStream = (MemoryStream)
+                            //nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                            //Response.Clear();
+                            //Response.Buffer = true;
+                            //Response.ContentType = "application/pdf";
+                            //Response.BinaryWrite(oStream.ToArray());
+                            //Response.End();
                             break;
 
                         case "TripAdvice":
@@ -245,15 +265,15 @@ namespace TransportManagerUI.UI
                             nreport = ConnectionInfo(Report);
 
                             nreport.SetParameterValue("TripNo", tripNo);
-                            CrystalReportViewer1.ReportSource = nreport;
+                            //CrystalReportViewer1.ReportSource = nreport;
 
-                            oStream = (MemoryStream)
-                            nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
-                            Response.Clear();
-                            Response.Buffer = true;
-                            Response.ContentType = "application/pdf";
-                            Response.BinaryWrite(oStream.ToArray());
-                            Response.End();
+                            //oStream = (MemoryStream)
+                            //nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                            //Response.Clear();
+                            //Response.Buffer = true;
+                            //Response.ContentType = "application/pdf";
+                            //Response.BinaryWrite(oStream.ToArray());
+                            //Response.End();
                             break;
 
                         case "VehicleWorkSlip":
@@ -264,15 +284,71 @@ namespace TransportManagerUI.UI
                             nreport = ConnectionInfo(Report);
 
                             nreport.SetParameterValue("moveRegNo", vehicleNo);
-                            CrystalReportViewer1.ReportSource = nreport;
+                            //CrystalReportViewer1.ReportSource = nreport;
 
-                            oStream = (MemoryStream)
-                            nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
-                            Response.Clear();
-                            Response.Buffer = true;
-                            Response.ContentType = "application/pdf";
-                            Response.BinaryWrite(oStream.ToArray());
-                            Response.End();
+                            //oStream = (MemoryStream)
+                            //nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                            //Response.Clear();
+                            //Response.Buffer = true;
+                            //Response.ContentType = "application/pdf";
+                            //Response.BinaryWrite(oStream.ToArray());
+                            //Response.End();
+                            break;
+
+                        case "Customer":
+                            //string vehicleNo = Session["paramData"].ToString();
+                            Report = new ReportDocument();
+                            str = Server.MapPath("~//report//CustomerList.rpt");
+                            Report.Load(str);
+                            nreport = ConnectionInfo(Report);
+
+                            //nreport.SetParameterValue("moveRegNo", vehicleNo);
+                            //CrystalReportViewer1.ReportSource = nreport;
+
+                            //oStream = (MemoryStream)
+                            //nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                            //Response.Clear();
+                            //Response.Buffer = true;
+                            //Response.ContentType = "application/pdf";
+                            //Response.BinaryWrite(oStream.ToArray());
+                            //Response.End();
+                            break;
+
+                        case "TripAdvanceAdvice":
+                            string tripadvNo = Session["paramData"].ToString();
+                            Report = new ReportDocument();
+                            str = Server.MapPath("~//report//TripAdvance.rpt");
+                            Report.Load(str);
+                            nreport = ConnectionInfo(Report);
+
+                            nreport.SetParameterValue("TripAdvNo", tripadvNo);
+                            //CrystalReportViewer1.ReportSource = nreport;
+
+                            //oStream = (MemoryStream)
+                            //nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                            //Response.Clear();
+                            //Response.Buffer = true;
+                            //Response.ContentType = "application/pdf";
+                            //Response.BinaryWrite(oStream.ToArray());
+                            //Response.End();
+                            break;
+                        case "TripOther":
+                            string TripOther = Session["paramData"].ToString();
+                            Report = new ReportDocument();
+                            str = Server.MapPath("~//report//TripChallanOther.rpt");
+                            Report.Load(str);
+                            nreport = ConnectionInfo(Report);
+
+                            nreport.SetParameterValue("TripNo", TripOther);
+                            //CrystalReportViewer1.ReportSource = nreport;
+
+                            //oStream = (MemoryStream)
+                            //nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                            //Response.Clear();
+                            //Response.Buffer = true;
+                            //Response.ContentType = "application/pdf";
+                            //Response.BinaryWrite(oStream.ToArray());
+                            //Response.End();
                             break;
 
                         default:
@@ -281,6 +357,26 @@ namespace TransportManagerUI.UI
                               "incorrect Request for data"
                             );
                     }
+
+                    System.IO.Stream oStream = null;
+                    byte[] byteArray = null;
+                    oStream = nreport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                    byteArray = new byte[oStream.Length];
+                    oStream.Read(byteArray, 0, Convert.ToInt32(oStream.Length - 1));
+                    Response.ClearContent();
+                    Response.ClearHeaders();
+                    Response.ContentType = "application/pdf";
+                    Response.BinaryWrite(byteArray);
+                    Response.Flush();
+                    Response.Close();
+
+                    nreport.Close();
+                    nreport.Dispose();
+
+                    Report.Close();
+                    Report.Dispose();
+                    GC.Collect();
+
                 }
 
             }

@@ -4,8 +4,20 @@
 
     </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cphMainContent" runat="server">
-    <asp:Panel ID="Panel1" runat="server" BackColor="#CCCCCC">
-        <table>
+    <asp:Panel ID="Panel2" runat="server" BackColor="#CCCCCC" HorizontalAlign="Left">
+        &nbsp;
+       <asp:ImageButton ID="btnRefresh" runat="server" 
+                                    ImageUrl="~/Images/1488717327_Synchronize.png" Height="22px" 
+                                    onclick="btnRefresh_Click" ToolTip="Refresh" Width="22px" />
+       
+       <asp:Button ID="btnPullReceived" runat="server" Text="Pull Received" OnClick="btnPullReceived_Click" />
+        <asp:Button ID="btnAdvanceLoad" runat="server" Text="Advance Load" 
+           onclick="btnAdvanceLoad_Click" />
+        <asp:Button ID="btnWorkShopReceived" runat="server" Text="Workshop Received" OnClick="btnWorkShopReceived_Click" />
+     </asp:Panel>
+      
+    <asp:Panel ID="Panel1" runat="server" CssClass="entry-panel">
+        <table cellpadding="3px">
             <tr>
                 <td valign="top">
                     <table border="1" style="color: #000000; border-style: groove">
@@ -25,14 +37,12 @@
                         </tr>
                         <tr>
                             <td align="left">
-                                <asp:ImageButton ID="btnRefresh" runat="server" 
-                                    ImageUrl="~/Images/1488717327_Synchronize.png" Height="22px" 
-                                    onclick="btnRefresh_Click" ToolTip="Refresh" Width="22px" />
+                                
                                 <asp:GridView ID="gvVehicleStatus" runat="server" AutoGenerateColumns="False" 
                                     Caption="Current Status" CaptionAlign="Top" CellPadding="4" ForeColor="#333333" 
                                     GridLines="Horizontal" 
                                     onselectedindexchanged="gvVehicleStatus_SelectedIndexChanged" 
-                                    DataKeyNames="VehicleStatus" ShowFooter="True">
+                                    DataKeyNames="VehicleStatus" ShowFooter="True" Width="282px">
                                     <AlternatingRowStyle BackColor="White" />
                                     <Columns>
                                         <asp:TemplateField HeaderText="Status">
@@ -70,8 +80,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <asp:Button ID="btnWorkShopReceived" runat="server" Text="Workshop Received" OnClick="btnWorkShopReceived_Click" />
-                                <asp:Button ID="btnPullReceived" runat="server" Text="Pull Received" OnClick="btnPullReceived_Click" />
+                               
                             </td>
                             
                         </tr>
@@ -96,18 +105,11 @@
     </div>
 
     <div style="overflow:scroll;" onscroll="OnScrollDiv(this)" id="DivMainContent">
-                            <asp:GridView ID="gvVehicleList" runat="server" AllowPaging="False" 
+                            <asp:GridView ID="gvVehicleList" runat="server" 
               CellPadding="4" ForeColor="#333333" GridLines="Horizontal" 
-                AutoGenerateColumns="False" Width="499px" 
-                                onpageindexchanging="gvVehicleList_PageIndexChanging" ShowFooter="True"  
+                              ShowFooter="True"  
               >
             <AlternatingRowStyle BackColor="White" />
-            <Columns>
-                <asp:BoundField DataField="VehicleID" HeaderText="VehicleID" />
-                <asp:BoundField DataField="VehicleNo" HeaderText="VehicleNo" />
-                <asp:BoundField DataField="Capacity" HeaderText="Capacity" />
-                <asp:BoundField DataField="KmPerLiter" HeaderText="KmPerLiter" />
-            </Columns>
             <EditRowStyle BackColor="#2461BF" />
             <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
             <HeaderStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />

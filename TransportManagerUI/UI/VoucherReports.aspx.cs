@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using CrystalDecisions.CrystalReports;
-using CrystalDecisions.CrystalReports.Engine;
-
+﻿using CrystalDecisions.CrystalReports.Engine;
 using CrystalDecisions.Shared;
-using TransportManagerLibrary.DAL;
-using CrystalDecisions.Web;
-using System.Data.SqlClient;
+using System;
 using System.Configuration;
 using System.Data;
-using TransportManagerLibrary.UtilityClass;
+using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using TransportManagerLibrary.DAL;
+using TransportManagerLibrary.UtilityClass;
 
 namespace TransportManagerUI.UI
 {
@@ -188,6 +183,43 @@ namespace TransportManagerUI.UI
                 return null;
             }
         }
+        private DataTable GetDriver(string searchKey)
+        {
+            try
+            {
+                DataTable dt;
+                DataTable dt2 = null;
+                DataView view = new DataView();
+
+                using (PersonalGateway gatwayObj = new PersonalGateway())
+                {
+
+
+                    dt = gatwayObj.GetAllDriver();
+                    view = new DataView(dt);
+                    dt2 = view.ToTable(false, "EmpCode", "EmpName");
+                    if (String.IsNullOrEmpty(searchKey))
+                    {
+
+                    }
+                    else
+                    {
+                        var filtered = dt2.AsEnumerable()
+    .Where(r => r.Field<String>("EmpCode").Contains(searchKey) || r.Field<String>("EmpName").ToUpper().Contains(searchKey.ToUpper()));
+
+                        dt2 = filtered.CopyToDataTable();
+
+                    }
+                    return dt2;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                //Logger.LogError(ex.ToString(), new object[0]);
+                return null;
+            }
+        }
         private DataTable LoadChartofAccounts(string searchKey)
         {
             try
@@ -227,35 +259,35 @@ namespace TransportManagerUI.UI
         }
         private string Formula()
         {
-            string fromValue = Convert.ToDateTime(txtFromDate.Text).ToString("yyyy,MM,dd,00,00,00");
-            string ToValue = Convert.ToDateTime(txtToDate.Text).ToString("yyyy,MM,dd,00,00,00");
-            //            //{Voucher.VoucherDate} in DateTime (2012, 10, 01, 00, 00, 00) to DateTime (2012, 10, 03, 00, 00, 00) and
+            string fromValue = Convert.ToDateTime(txtFromDate.Text).ToString("yyyy,MM,dd");
+            string ToValue = Convert.ToDateTime(txtToDate.Text).ToString("yyyy,MM,dd");
+            //            //{Voucher.VoucherDate} in DateTime (2012, 10, 01, 00, 00, 00) to Date (2012, 10, 03, 00, 00, 00) and
             //{VehicleInfo.VehicleNo} = "DM OU - 11-7148" and
             //{ChartofAccount.AccountCode} = "1001"
             string selectionFormula = "";
             if (String.IsNullOrEmpty(lblCode.Text)==true && String.IsNullOrEmpty(lblCode2.Text)==true)
             {
-                selectionFormula = "{Voucher.VoucherDate} in DateTime(" +
+                selectionFormula = "{Voucher.VoucherDate} in Date(" +
                                             fromValue +
-                                            ")   to DateTime (" +
+                                            ")   to Date (" +
                                             ToValue + ")";
             }
             else if (String.IsNullOrEmpty(lblCode.Text))
             {
-                selectionFormula = "{Voucher.VoucherDate} in DateTime(" + fromValue +
-                      ")   to DateTime (" + ToValue + ") And {ChartofAccount.AccountCode}='" +
+                selectionFormula = "{Voucher.VoucherDate} in Date(" + fromValue +
+                      ")   to Date (" + ToValue + ") And {ChartofAccount.AccountCode}='" +
                   lblCode2.Text + "'";
             }
             else if (String.IsNullOrEmpty(lblCode2.Text))
             {
-                selectionFormula = "{Voucher.VoucherDate} in DateTime(" + fromValue +
-                    ")   to DateTime (" + ToValue + ") And {VehicleInfo.VehicleNo}='" +
+                selectionFormula = "{Voucher.VoucherDate} in Date(" + fromValue +
+                    ")   to Date (" + ToValue + ") And {VehicleInfo.VehicleNo}='" +
                 lblName.Text + "'";
             }
             else
             {
-                selectionFormula = "{Voucher.VoucherDate} in DateTime(" + fromValue +
-                     ")   to DateTime (" + ToValue + ") And {VehicleInfo.VehicleNo}='" +
+                selectionFormula = "{Voucher.VoucherDate} in Date(" + fromValue +
+                     ")   to Date (" + ToValue + ") And {VehicleInfo.VehicleNo}='" +
                  lblName.Text + "' and{ChartofAccount.AccountCode}='" +
                  lblCode2.Text + "'";
             }
@@ -263,253 +295,179 @@ namespace TransportManagerUI.UI
         }
         public void ReportOption(string Option)
         {
-            ReportDocument cryRpt;
-            ReportDocument nreport;
+            //ReportDocument //cryRpt;
+            
             string strReportName;
             string strPath;
-            string fromValue = Convert.ToDateTime(txtFromDate.Text).ToString("yyyy,MM,dd,00,00,00");
-            string ToValue = Convert.ToDateTime(txtToDate.Text).ToString("yyyy,MM,dd,00,00,00"); ;
-            //cryRpt.Close();
+            string fromValue = Convert.ToDateTime(txtFromDate.Text).ToString("yyyy,MM,dd");
+            string ToValue = Convert.ToDateTime(txtToDate.Text).ToString("yyyy,MM,dd");
+            ////cryRpt.Close();
             string SelectionFormula;
             try
             {
                 switch (Option)
                 {
-                    case "VoucherStatement":
+                    case "VoucherStatement": //Voucher Statement
 
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
                         strReportName = "~//report//rptVoucherStatement.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-                        SelectionFormula = "{Voucher.VoucherDate} in DateTime(" +
-                                          fromValue + ")   to DateTime (" +
+                        //cryRpt.Load(strPath);
+                        SelectionFormula = "{Voucher.VoucherDate} in Date(" +
+                                          fromValue + ")   to Date (" +
                                            ToValue + ")";
                    
 
 
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        ////cryRpt.Close();
-                        break;
-
-                    case "VoucherStatementDetail":
-
-
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptVoucherStatementDetail.rpt";
-                    strPath = Server.MapPath(strReportName);
-                    cryRpt.Load(strPath);
-                    SelectionFormula = "{Voucher.VoucherDate} in DateTime(" +
-                                           fromValue + ")   to DateTime (" +
-                                           ToValue + ")";
-
-                    cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                    cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                    cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                    cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
-                        break;
-
-                    case "VoucherStateTruckwise":
-
-                    if (String.IsNullOrEmpty(lblCode.Text))
-                    {
-                        
-                        SelectionFormula = "{Voucher.VoucherDate} in DateTime(" +
-                                           fromValue + ")   to DateTime (" +
-                                           ToValue + ")";
-                        
-
-                    }
-                    else
-
-                    {
-                        
-                        SelectionFormula = "{Voucher.VoucherDate} in DateTime(" + fromValue + ")   to DateTime (" +
-                                                        ToValue + ") and" +
-                                                                   " {VehicleInfo.VehicleNo} = '" + lblName.Text + "'";
-
-                    }
-                    cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                    strReportName = "~//report//rptVoucherStateTruckwise.rpt";
-                    strPath = Server.MapPath(strReportName);
-                    cryRpt.Load(strPath);
-
-
-                    cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                     cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                    cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-                    cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-                        nreport = ConnectionInfo(cryRpt);
-                        //cryRpt.Close();
-                        break;
-
-                    case "VoucherStateTruckwiseDetail":
-
-                        if (String.IsNullOrEmpty(lblCode.Text))
-                    {
-                        btnSearch.Enabled = false;
-                        SelectionFormula = "{Voucher.VoucherDate} in DateTime(" +
-                                           fromValue + ")   to DateTime (" +
-                                           ToValue + ")";
-
-
-                    }
-                    else
-                    {
-                        btnSearch.Enabled = true;
-                        SelectionFormula = "{Voucher.VoucherDate} in DateTime(" + fromValue + ")   to DateTime (" +
-                                                        ToValue + ") and" +
-                                                                   " {VehicleInfo.VehicleNo} = '" + lblName.Text + "'";
-
-                    }
-                    cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                    strReportName = "~//report//rptVoucherStatementDetailTruck.rpt";
-                    strPath = Server.MapPath(strReportName);
-                    cryRpt.Load(strPath);
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
-                        break;
-
-                    case "VoucherStateTruckwiseMonthly":
-
-                        if (String.IsNullOrEmpty(lblCode.Text))
-                    {
-                        
-                        SelectionFormula = "{Voucher.VoucherDate} in DateTime(" +
-                                           fromValue + ")   to DateTime (" +
-                                           ToValue + ")";
-
-
-                    }
-                    else
-                    {
-                        
-                        SelectionFormula = "{Voucher.VoucherDate} in DateTime(" + fromValue + ")   to DateTime (" +
-                                                        ToValue + ") and" +
-                                                                   " {VehicleInfo.VehicleNo} = '" + lblName.Text + "'";
-
-                    }
-                    cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                    strReportName = "~//report//rptVoucherStatementDetailwithTruck.rpt";
-                    strPath = Server.MapPath(strReportName);
-                    cryRpt.Load(strPath);
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
+                         //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
 
                         //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
 
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
 
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
+                       
+                        //////cryRpt.Close();
                         break;
 
-                    case "VoucherStatementSummeryTruck":
+                    case "VoucherStateDealerwise": //VoucherStateDealerwise
 
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptVoucherSummeryTruckwise.rpt";
+
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        strReportName = "~//report//rptVoucherStateDealerwise.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-                        SelectionFormula = "{Voucher.VoucherDate} in DateTime(" +
-                                           fromValue + ")   to DateTime (" +
-                                           ToValue + ")";
+                        //cryRpt.Load(strPath);
 
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+                        if (String.IsNullOrEmpty(lblCode.Text))
+                        {
+
+                            SelectionFormula = "{Voucher.VoucherDate} in Date(" +
+                                               fromValue + ")   to Date (" +
+                                               ToValue + ")";
 
 
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
+                        }
+                        else
+                        {
+
+                            SelectionFormula = "{Voucher.VoucherDate} in Date(" + fromValue + ")   to Date (" +
+                                                            ToValue + ") and" +
+                                                                       " {TripInfo.DealerId} = '" + lblCode.Text + "'";
+
+                        }
+
+                        //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                        //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
+
+                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
+
+
+
+                        ////cryRpt.Close();
+                        break;
+                   
+                    case "VoucherStateTruckwise": //Voucher Statement (Vehiclewise)
+
+                        if (String.IsNullOrEmpty(lblCode.Text))
+                        {
+
+                            SelectionFormula = "{Voucher.VoucherDate} in Date(" +
+                                               fromValue + ")   to Date (" +
+                                               ToValue + ")";
+                        }
+                        else
+                        {
+                            SelectionFormula = "{Voucher.VoucherDate} in Date(" + fromValue + ")   to Date (" +
+                                                            ToValue + ") and" +
+                                                                       " {VehicleInfo.VehicleNo} = '" + lblName.Text + "'";
+                        }
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        strReportName = "~//report//rptVoucherStatementtruckwise.rpt";
+                        strPath = Server.MapPath(strReportName);
+                        //cryRpt.Load(strPath);
+
+
+                        //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                        //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
+
+                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
+
+
+
+                        ////cryRpt.Close();
+                        break;
+                    case "VoucherStatementDriverwise": //VoucherStatementDriverwise
+
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        strReportName = "~//report//rptVoucherStatementDriverwise.rpt";
+                        strPath = Server.MapPath(strReportName);
+
+                        //cryRpt.Load(strPath);
+
+                        if (String.IsNullOrEmpty(lblCode.Text))
+                        {
+                            btnSearch.Enabled = false;
+                            SelectionFormula = "{Voucher.VoucherDate} in Date(" +
+                                               fromValue + ")   to Date (" +
+                                               ToValue + ")";
+
+
+                        }
+                        else
+                        {
+                            btnSearch.Enabled = true;
+                            SelectionFormula = "{Voucher.VoucherDate} in Date(" + fromValue + ")   to Date (" +
+                                                            ToValue + ") and" +
+                                                                       " {TripInfo.EmpCode} = '" + lblCode.Text + "'";
+
+                        }
+
+
+                        //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                        //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
+
+                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
+
+
+                        ////cryRpt.Close();
                         break;
 
-                    case "VoucherStatementDriverwise":
+
+                    case "VoucherStatementDetail": //Voucher Statement(Dealerwise)
 
 
-
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                    strReportName = "rptVoucherStatementDriverwise.rpt";
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        strReportName = "~//report//rptVoucherStatementDetail.rpt";
                     strPath = Server.MapPath(strReportName);
-                    
-                    cryRpt.Load(strPath);
-                    SelectionFormula = "{Voucher.VoucherDate} in DateTime(" +
-                                           fromValue + ")   to DateTime (" +
+                    //cryRpt.Load(strPath);
+                    SelectionFormula = "{Voucher.VoucherDate} in Date(" +
+                                           fromValue + ")   to Date (" +
                                            ToValue + ")";
+
+                     //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                     //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
+
+                    //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+
+                    //cryRpt.RecordSelectionFormula = SelectionFormula;
+
+                        break;
+
                     
 
+                   
 
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
-                        break;
-
-                    case "ExpenseStateTruckwiseDetail":
-
-
-                            cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-
-                            strReportName = "~//report//rptExpenseStatementTruckex.rpt";
-                        strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime("+ fromValue+")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-                        SelectionFormula = Formula();
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-                        nreport = ConnectionInfo(cryRpt);
-
-                        //cryRpt.Close();
-                        break;
-                    case "ExpenseStatementSummery":
-
+                    case "VoucherStateTruckwiseDetail": //Voucher Statement Detail(Vehiclewise)
 
                         if (String.IsNullOrEmpty(lblCode.Text))
                     {
                         btnSearch.Enabled = false;
-                        SelectionFormula = "{Voucher.VoucherDate} in DateTime(" +
-                                           fromValue + ")   to DateTime (" +
+                        SelectionFormula = "{Voucher.VoucherDate} in Date(" +
+                                           fromValue + ")   to Date (" +
                                            ToValue + ")";
 
 
@@ -517,77 +475,175 @@ namespace TransportManagerUI.UI
                     else
                     {
                         btnSearch.Enabled = true;
-                        SelectionFormula = "{Voucher.VoucherDate} in DateTime(" + fromValue + ")   to DateTime (" +
+                        SelectionFormula = "{Voucher.VoucherDate} in Date(" + fromValue + ")   to Date (" +
                                                         ToValue + ") and" +
                                                                    " {VehicleInfo.VehicleNo} = '" + lblName.Text + "'";
 
                     }
-                    cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                    strReportName = "~//report//rptExpenseStatementAcc.rpt";
+                    //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                    strReportName = "~//report//rptVoucherStatementDetailTW.rpt";
                     strPath = Server.MapPath(strReportName);
-                    cryRpt.Load(strPath);
+                    //cryRpt.Load(strPath);
 
+                         //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
 
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
+                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
 
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-
-                        //cryRpt.Close();
-                        break;
-                    
-                    case "VoucherStateDealerwise":
-
-
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-                        strReportName = "~//report//rptFuelTripStatement.rpt";
-                        strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
-
-
-                        SelectionFormula = "{TripInfo.Date} in DateTime(" +
-                                                fromValue + ")   to DateTime (" +
-                                                ToValue + ") AND {TripInfo.Status}<>2";
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
+                      
+                        ////cryRpt.Close();
                         break;
 
+                    case "VoucherStateTruckwiseMonthly"://VoucherStateTruckwiseMonthly
+
+                        if (String.IsNullOrEmpty(lblCode.Text))
+                    {
+                        
+                        SelectionFormula = "{Voucher.VoucherDate} in Date(" +
+                                           fromValue + ")   to Date (" +
+                                           ToValue + ")";
+
+
+                    }
+                    else
+                    {
+                        
+                        SelectionFormula = "{Voucher.VoucherDate} in Date(" + fromValue + ")   to Date (" +
+                                                        ToValue + ") and" +
+                                                                   " {VehicleInfo.VehicleNo} = '" + lblName.Text + "'";
+
+                    }
+                    //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                    strReportName = "~//report//rptVoucherStatementDetailwithTruck.rpt";
+                    strPath = Server.MapPath(strReportName);
+                    //cryRpt.Load(strPath);
+
+                         //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
+
+                        ////cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+
+
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
+
+
+                       
+                        break;
                     case "ExpenseStateTruckwise":
 
 
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
 
                         strReportName = "~//report//rptExpenseStatementTruck.rpt";
-                    strPath = Server.MapPath(strReportName);
-                    cryRpt.Load(strPath);
+                        strPath = Server.MapPath(strReportName);
+                        //cryRpt.Load(strPath);
 
 
-                    cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-                    cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
+                        //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                        //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
 
-                    cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-                    SelectionFormula = Formula();
-                    cryRpt.RecordSelectionFormula = SelectionFormula;
+                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+                        SelectionFormula = Formula();
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
 
 
-                        nreport = ConnectionInfo(cryRpt);
-                        Session["nreport"] = nreport;
-                        //cryRpt.Close();
+
+                        ////cryRpt.Close();
                         break;
+
+                    case "VoucherStatementSummeryTruck": //VoucherStatementSummeryTruck
+
+                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        strReportName = "~//report//rptVoucherSummeryTruckwise.rpt";
+                        strPath = Server.MapPath(strReportName);
+                        //cryRpt.Load(strPath);
+                        if (String.IsNullOrEmpty(lblCode.Text))
+                        {
+
+                            SelectionFormula = "{Voucher.VoucherDate} in Date(" +
+                                               fromValue + ")   to Date (" +
+                                               ToValue + ")";
+
+                        }
+                        else
+                        {
+                            SelectionFormula = "{Voucher.VoucherDate} in Date(" + fromValue + ")   to Date (" +
+                                                            ToValue + ") and" +
+                                                                       " {VehicleInfo.VehicleNo} = '" + lblName.Text + "'";
+                        }
+
+                         //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
+                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+
+
+                     
+                        ////cryRpt.Close();
+                        break;
+
+
+
+                    case "ExpenseStateTruckwiseDetail": //ExpenseStateTruckwiseDetail
+
+
+                            //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+
+                         strReportName = "~//report//rptExpenseStatementTruckex.rpt";
+                        strPath = Server.MapPath(strReportName);
+                        //cryRpt.Load(strPath);
+
+
+                        //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date("+ fromValue+")";
+                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date(" + ToValue + ")";
+
+                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+                        SelectionFormula = Formula();
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
+
+                       
+                        ////cryRpt.Close();
+                        break;
+                    case "ExpenseStatementSummery": //ExpenseStatementSummery
+
+
+                        if (String.IsNullOrEmpty(lblCode.Text))
+                    {
+                        btnSearch.Enabled = false;
+                        SelectionFormula = "{Voucher.VoucherDate} in Date(" +
+                                           fromValue + ")   to Date (" +
+                                           ToValue + ")";
+
+
+                    }
+                    else
+                    {
+                        btnSearch.Enabled = true;
+                        SelectionFormula = "{Voucher.VoucherDate} in Date(" + fromValue + ")   to Date (" +
+                                                        ToValue + ") and" +
+                                                                   " {VehicleInfo.VehicleNo} = '" + lblName.Text + "'";
+
+                    }
+                    //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                    strReportName = "~//report//rptVoucherExpSummeryTruck.rpt";
+                    strPath = Server.MapPath(strReportName);
+                    //cryRpt.Load(strPath);
+
+
+                         //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
+                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
+
+                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
+
+                        //cryRpt.RecordSelectionFormula = SelectionFormula;
+
+                       
+
+                        ////cryRpt.Close();
+                        break;
+                    
+                   
 
                     default:
                         throw new ArgumentException
@@ -595,6 +651,11 @@ namespace TransportManagerUI.UI
                         "GetDataReader was given an incorrect Request for data"
                         );
                 }
+
+                Session["strPath"] = strPath;
+                Session["SelectionFormula"] = SelectionFormula;
+                Session["fromDate"] = fromValue;
+                Session["ToDate"] = ToValue;
 
             }
             catch (Exception ex)
@@ -617,11 +678,17 @@ namespace TransportManagerUI.UI
             {
                 txtFromDate_CalendarExtender.SelectedDate = DateTime.Now.Date;
                 txtToDate_CalendarExtender.SelectedDate = DateTime.Now.Date;
+                POtherOptions.Visible = false;
+                pExpenses.Visible = false;
             }
         }
 
         protected void rblReports_SelectedIndexChanged(object sender, EventArgs e)
         {
+            lblCode.Text = String.Empty;
+            lblCode2.Text = String.Empty;
+            lblName.Text = String.Empty;
+            lblName2.Text = String.Empty;
             if (rblReports.SelectedValue == "VoucherStatement")
             {
                 POtherOptions.Visible = false;
@@ -671,8 +738,8 @@ namespace TransportManagerUI.UI
             }
             else if (rblReports.SelectedValue == "VoucherStatementDriverwise")
             {
-                POtherOptions.Visible = false;
-                POtherOptions.GroupingText = "Search Vehicle";
+                POtherOptions.Visible = true;
+                POtherOptions.GroupingText = "Search Driver";
                 pExpenses.Visible = false;
                 pExpenses.GroupingText = "";
             }
@@ -704,16 +771,34 @@ namespace TransportManagerUI.UI
         {
             string option = rblReports.SelectedValue;
             ReportOption(option);
-
+            Session["AllStatement"] = "1";
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
+            //ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
+        }
+        protected void btnShowStatment_Click(object sender, EventArgs e)
+        {
+            string option = rblReports.SelectedValue;
+            ReportOption(option);
+            Session["AllStatement"] = "2";
             //ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "~/UI/ReportForStatement.aspx" + "','_blank')", true);
-            Response.Redirect("~/UI/ReportForStatement.aspx");
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
         }
 
         protected void btnSearchInfo_Click(object sender, ImageClickEventArgs e)
         {
             string reportname = rblReports.SelectedValue;
             DataTable dt = new DataTable();
-            dt = GetVehicle(txtSearch.Text);
+            if (rblReports.SelectedValue == "VoucherStateDealerwise")
+            {
+                dt = loadAllDealerInfo(txtSearch.Text);
+            }
+            else if (rblReports.SelectedValue == "VoucherStatementDriverwise")
+            {
+                dt = GetDriver(txtSearch.Text);
+            }
+            else
+                dt = GetVehicle(txtSearch.Text);
+            
             hfShowList.Value = "1";
             gvlistofBasicData.SelectedIndex = -1;
             gvlistofBasicData.DataSource = dt;
@@ -746,7 +831,16 @@ namespace TransportManagerUI.UI
             DataTable dt = new DataTable();
             if (hfShowList.Value=="1")
             {
-                dt = GetVehicle(txtSearch.Text); 
+                if (rblReports.SelectedValue == "VoucherStateDealerwise")
+                {
+                    dt = loadAllDealerInfo(txtSearch.Text);
+                }
+                else if (rblReports.SelectedValue == "VoucherStatementDriverwise")
+                {
+                    dt = GetDriver(txtSearch.Text);
+                }
+                else
+                    dt = GetVehicle(txtSearch.Text);
 
             }
             else if (hfShowList.Value == "2")
@@ -771,7 +865,16 @@ namespace TransportManagerUI.UI
             DataTable dt = new DataTable();
             if (hfShowList.Value == "1")
             {
-                dt = GetVehicle(txtSearch.Text);
+                if (rblReports.SelectedValue == "VoucherStateDealerwise")
+                {
+                    dt = loadAllDealerInfo(txtSearch.Text);
+                }
+                else if (rblReports.SelectedValue == "VoucherStatementDriverwise")
+                {
+                    dt = GetDriver(txtSearch.Text);
+                }
+                else
+                    dt = GetVehicle(txtSearch.Text);
 
             }
             else if (hfShowList.Value == "2")

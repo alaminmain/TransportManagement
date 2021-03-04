@@ -65,6 +65,7 @@
             <AlternatingRowStyle BackColor="White" />
             <Columns>
                 <asp:CommandField ShowSelectButton="True" />
+                <asp:BoundField DataField="VehicleType" HeaderText="VehicleType" />
                 <asp:TemplateField HeaderText="VehicleID">
                     <EditItemTemplate>
                         <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("VehicleID") %>'></asp:TextBox>
@@ -117,6 +118,25 @@
                <asp:Panel ID="Panel6" runat="server" GroupingText="">
 
                    <table cellpadding="3px">
+                        <tr>
+        <td align="right">
+       Vehicle Type
+        </td>
+         <td colspan="3" align="left">
+             <asp:DropDownList ID="ddlVehicleType" runat="server" Width="200px">
+                 <asp:ListItem Text="Open Truck" Value="Open Truck"></asp:ListItem>
+                 <asp:ListItem Text="Covered Van" Value="Covered Van"></asp:ListItem>
+                 <asp:ListItem Text="Dump Truck" Value="Dump Truck"></asp:ListItem>
+                 <asp:ListItem Text="Vessel" Value="Vessel"></asp:ListItem>
+                  <asp:ListItem Text="Bulk Carrier" Value="Bulk Carrier"></asp:ListItem>
+                 <asp:ListItem Text="Trailer" Value="Trailer"></asp:ListItem>
+                 <asp:ListItem Text="Ready Mix" Value="Ready Mix"></asp:ListItem>
+                
+                 
+             </asp:DropDownList>
+        </td>
+        </tr>
+            <tr>
                    <tr>
         <td align="right">
         Vehicle Id
@@ -284,7 +304,8 @@
                  <td align="left">
                      <asp:DropDownList ID="ddlStatus" runat="server" Width="200px">
                      <asp:ListItem Value="0" Text="Pull"></asp:ListItem>
-                         <asp:ListItem Text="Workshop" Value="2"></asp:ListItem>
+                         <asp:ListItem Value="2" Text="Workshop" ></asp:ListItem>
+                          <asp:ListItem Value="4" Text="Advance Loading"></asp:ListItem>
                      <asp:ListItem Value="1" Text="On Trip"></asp:ListItem>
                      <asp:ListItem Value="3" Text="Not In Service"></asp:ListItem>
                      </asp:DropDownList>
@@ -292,7 +313,6 @@
                 </td>
             </tr>
 
-           
             
         </table>
                </asp:Panel>

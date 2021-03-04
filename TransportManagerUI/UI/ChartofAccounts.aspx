@@ -52,7 +52,7 @@
                                 <asp:TextBox ID="txtSearch" runat="server" Width="158px" placeholder="Search" />
                             </td>
                             <td>
-                                <asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" 
+                                <asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" formnovalidate
                                      />
                             </td>
                             </tr>

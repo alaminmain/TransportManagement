@@ -58,7 +58,7 @@ namespace TransportManagerUI.UI
                     else
                     {
                         var filtered = dt.AsEnumerable()
-    .Where(r => r.Field<String>("TripNo").Contains(searchKey));
+    .Where(r => r.Field<String>("TripNo").Contains(searchKey) || r.Field<String>("TripDate").Contains(searchKey.ToUpper()) || r.Field<String>("VehicleNo").ToUpper().Contains(searchKey.ToUpper()) || r.Field<String>("EmpName").ToUpper().Contains(searchKey.ToUpper()));
                         dt = filtered.CopyToDataTable();
 
                     }
@@ -171,7 +171,7 @@ namespace TransportManagerUI.UI
                 
                 upListofbasicData.Update();
                 Session["PendingType"] = "0";
-                ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 20 ,true); </script>", false);
+                ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 39 ,true); </script>", false);
             }
             //Vehiclewise
             else if (ddlPendingType.SelectedValue == "1")
@@ -189,7 +189,7 @@ namespace TransportManagerUI.UI
 
                 upListofbasicData.Update();
                 Session["PendingType"] = "1";
-                ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData2.ClientID + "', 410,1070, 20 ,true); </script>", false);
+                ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData2.ClientID + "', 410,1070, 39 ,true); </script>", false);
             }
             //Driverwise
             else if (ddlPendingType.SelectedValue == "2")
@@ -208,7 +208,7 @@ namespace TransportManagerUI.UI
                 upListofbasicData.Update();
                 
                 Session["PendingType"] = "2";
-                ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData2.ClientID + "', 410,1070, 20 ,true); </script>", false);
+                ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData2.ClientID + "', 410,1070, 39 ,true); </script>", false);
             }
         }
         #endregion
@@ -277,7 +277,8 @@ namespace TransportManagerUI.UI
 
         protected void btnReport_Click(object sender, EventArgs e)
         {
-
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 39 ,true); </script>", false);
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData2.ClientID + "', 410,1070, 39 ,true); </script>", false);
         }
 
         protected void btnCancel_Click(object sender, EventArgs e)

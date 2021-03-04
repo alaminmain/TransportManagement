@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/UI/Site.Master" AutoEventWireup="true" CodeBehind="PendingTripForVoucher.aspx.cs" Inherits="TransportManagerUI.UI.PendingTripForVoucher" %>
 <%@ Register assembly="AjaxControlToolkit" namespace="AjaxControlToolkit" tagprefix="ajaxToolkit" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="cphHeadContent" runat="server">
-    <meta http-equiv="refresh" content="30">
+  
     <script type="text/javascript">
 
         $(document).ready(function () {
@@ -107,23 +107,29 @@ width:306px;
         <asp:GridView ID="gvlistofBasicData" runat="server" 
                      EmptyDataText="No Data To Show" GridLines="Horizontal" CellPadding="4" 
                      ForeColor="#333333" AutoGenerateColumns="False" 
-                     onpageindexchanging="gvlistofBasicData_PageIndexChanging" Width="100%" 
-                     AllowPaging="False" Font-Size="Small" AllowSorting="False" 
-            RowStyle-CssClass="GvGrid" ShowFooter="True" ShowHeader="True">
+                     onpageindexchanging="gvlistofBasicData_PageIndexChanging" Width="100%" Font-Size="Small" 
+            RowStyle-CssClass="GvGrid" ShowFooter="True">
             <AlternatingRowStyle BackColor="White" />
             <Columns>
                
-               <asp:BoundField DataField="TripNo" HeaderText="Trip No" />
+               <asp:BoundField DataField="TripNo" HeaderText="Trip No" >
                  
-                <asp:BoundField DataField="TripDate" DataFormatString="{0:dd/MMM/yyyy}" 
+                <ItemStyle Wrap="False" />
+                </asp:BoundField>
+                 
+                <asp:BoundField DataField="TripDate"
                     HeaderText="Date" />
               
                 
                
-                <asp:BoundField DataField="VehicleNo" HeaderText="VehicleNo" />
+                <asp:BoundField DataField="VehicleNo" HeaderText="VehicleNo" >
+                <ItemStyle Wrap="False" />
+                </asp:BoundField>
                 <asp:BoundField DataField="CapacityBal" HeaderText="Load Capacity" />
                 <asp:BoundField DataField="EmpName" HeaderText="Driver" />
-                  <asp:BoundField DataField="CustName" HeaderText="Dealer Name" />
+                <asp:BoundField DataField="CustName" HeaderText="Dealer Name" />
+                <asp:BoundField DataField="RetailerAddress" HeaderText="Delivery Location" />
+                <asp:BoundField DataField="Totalkm" HeaderText="Distance (KM)" DataFormatString="{0:00}" />
                
             </Columns>
             <EditRowStyle BackColor="#2461BF" />

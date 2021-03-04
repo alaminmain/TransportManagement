@@ -8,6 +8,7 @@ using System.Data;
 using System.IO;
 using TransportManagerLibrary.DAL;
 using TransportManagerLibrary.UtilityClass;
+using CrystalDecisions.CrystalReports.Engine;
 
 namespace TransportManagerUI.UI
 {
@@ -58,7 +59,8 @@ namespace TransportManagerUI.UI
                     else
                     {
                         var filtered = dt.AsEnumerable()
-    .Where(r => r.Field<String>("TripNo").Contains(searchKey));
+    .Where(r => r.Field<String>("TripNo").Contains(searchKey) || r.Field<String>("TripDate").Contains(searchKey.ToUpper())
+           || r.Field<String>("VehicleNo").ToUpper().Contains(searchKey.ToUpper()) || r.Field<String>("CustName").ToUpper().Contains(searchKey.ToUpper()));
                         dt = filtered.CopyToDataTable();
 
                     }
@@ -94,7 +96,7 @@ namespace TransportManagerUI.UI
                     gvlistofBasicData.DataSource = dt;
                     gvlistofBasicData.DataBind();
                     upListofbasicData.Update();
-                    ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 20 ,true); </script>", false);
+                    ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 30 ,true); </script>", false);
                 }
             }
             catch (Exception ex)
@@ -130,6 +132,7 @@ namespace TransportManagerUI.UI
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
             upListofbasicData.Update();
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 30 ,true); </script>", false);
         }
 
         protected void btnRefresh_Click(object sender, EventArgs e)
@@ -141,6 +144,7 @@ namespace TransportManagerUI.UI
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
             upListofbasicData.Update();
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 20 ,true); </script>", false);
         }
 
         protected void txtNewTrip_Click(object sender, EventArgs e)
@@ -150,7 +154,29 @@ namespace TransportManagerUI.UI
 
         protected void btnReport_Click(object sender, EventArgs e)
         {
+            //ReportDocument //cryRpt;
+            
+            string strReportName;
+            string strPath;
+            
+            ////cryRpt.Close();
+            string SelectionFormula;
 
+            //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+            strReportName = "~//report//TripStatement.rpt";
+            strPath = Server.MapPath(strReportName);
+            //cryRpt.Load(strPath);
+            SelectionFormula = "{TripInfo.TripStatus} = 0";
+
+           
+           
+            Session["strPath"] = strPath;
+            Session["SelectionFormula"] = SelectionFormula;
+         
+            
+            Session["AllStatement"] = "1";
+            //Session["nreport"] = //cryRpt;
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
         }
 
         protected void btnCancel_Click(object sender, EventArgs e)

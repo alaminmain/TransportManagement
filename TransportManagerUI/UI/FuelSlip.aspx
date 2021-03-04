@@ -24,6 +24,12 @@
 
   </script>
     
+    <style type="text/css">
+        .auto-style1 {
+            text-align: left;
+        }
+    </style>
+    
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cphMainContent" runat="server">
     
@@ -152,30 +158,50 @@
                  <asp:TextBox ID="txtSupplier" runat="server" Width="202px" required>Madina Filling Station</asp:TextBox>
             </td>
             </tr>
-           
             <tr>
+            <td align="right">
+                Fuel Quantity
+            </td>
+             <td align="left">
+               <asp:TextBox ID="txtfuelQty" runat="server" ReadOnly="True" Font-Bold="True" ForeColor="Red" ></asp:TextBox>
+            </td>
+            </tr>
+             <tr>
             <td align="right">
             Adjusted Fuel Qty
             </td>
              <td align="left">
-               <asp:TextBox ID="txtAdjustedFuelQty" runat="server" AutoPostBack="True" ViewStateMode="Enabled" OnTextChanged="txtAdjustedFuelQty_TextChanged"></asp:TextBox>
+               <asp:TextBox ID="txtAdjustedFuelQty" runat="server" AutoPostBack="True" ViewStateMode="Enabled" OnTextChanged="txtAdjustedFuelQty_TextChanged" Width="100px"></asp:TextBox>
                  <ajaxToolkit:FilteredTextBoxExtender ID="txtAdjustedFuelQty_FilteredTextBoxExtender" runat="server" BehaviorID="txtAdjustedFuelQty_FilteredTextBoxExtender" TargetControlID="txtAdjustedFuelQty" ValidChars="1234567890." />
             </td>
             </tr>
             <tr>
             <td align="right">
-            Total Fuel Quantity
+            Extra K.M
             </td>
              <td align="left">
-               <asp:TextBox ID="txtfuelQty" runat="server" ReadOnly="True" ></asp:TextBox>
+               <asp:TextBox ID="txtExtraKm" runat="server" AutoPostBack="True" ViewStateMode="Enabled" OnTextChanged="txtExtraKm_TextChanged" Width="100px"></asp:TextBox>
+                 
             </td>
-            </tr
-
-            
+            </tr>
+            <tr>
+                <td align="right">
+            Extra Qty
+            </td>
+             <td align="left">
+               <asp:TextBox ID="txtExtraFuelQty" runat="server" AutoPostBack="True" ViewStateMode="Enabled" OnTextChanged="txtAdjustedFuelQty_TextChanged" ReadOnly="True" Width="100px"></asp:TextBox>
+            </td>
+            </tr>
            
-            
-   
-            
+            <tr>
+                <td>
+                     Net Fuel Qty
+                </td>
+                <td class="auto-style1">
+                    <asp:Label ID="lblNetFuelQty" runat="server" BackColor="#009933" Font-Bold="True" Font-Size="Medium" ForeColor="White"></asp:Label>
+                </td>
+            </tr>
+
             </table>
             <table>
                 <tr>
@@ -199,7 +225,7 @@
                                 DataFormatString="{0:dd/MMM/yyyy}" />
                             <asp:BoundField DataField="KmPerLiter" DataFormatString="{0:N}" HeaderText="KM PER Ltr" />
                             <asp:BoundField DataField="Totalkm" HeaderText="Total km" />
-                            <asp:BoundField DataField="Additionalkm" HeaderText="Additionalkm" />
+                           
                         </Fields>
                         <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
                         <HeaderStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -221,7 +247,7 @@
                                 <asp:TextBox ID="txtSearchTrip" runat="server"/>
                             </td>
                             <td style="width:90px;">
-                                <asp:Button ID="btnSearchdTrip" runat="server" Text="Search" CssClass="Button" 
+                                <asp:Button ID="btnSearchdTrip" runat="server" Text="Search" CssClass="Button" OnClick="btnSearchdTrip_Click" 
                                      />
                             </td>
                             </tr>

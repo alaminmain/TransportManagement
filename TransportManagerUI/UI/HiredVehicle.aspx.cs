@@ -121,14 +121,22 @@ namespace TransportManagerUI.UI
         {
             try
             {
-                DataTable dt;
+                DataTable dt = null;
+                DataTable dt2;
 
 
                 using (VehicleInfoGateway gatwayObj = new VehicleInfoGateway())
                 {
 
+                    dt2 = gatwayObj.GetAllVehicle(1);
+                    DataRow[] foundRows;
 
-                    dt = gatwayObj.GetAllVehicle(1);
+                    // Use the Select method to find all rows matching the filter.
+                    foundRows = dt2.Select("[IsHired]='1'");
+                    if (foundRows.Length > 0)
+                        dt = foundRows.CopyToDataTable();
+
+                    //dt = gatwayObj.GetAllVehicle(1);
                     if (String.IsNullOrEmpty(searchKey))
                     {
 
@@ -187,14 +195,11 @@ namespace TransportManagerUI.UI
 
                 using (StoreLocation gatwayObj = new StoreLocation())
                 {
-
-
                     dt = gatwayObj.GetAllStoreLocation(1);
                     ddlGhatList.DataSource = dt;
                     ddlGhatList.DataValueField = "StoreCode";
                     ddlGhatList.DataTextField = "StoreName";
                     ddlGhatList.DataBind();
-
                 }
             }
             catch (Exception ex)
@@ -232,14 +237,15 @@ namespace TransportManagerUI.UI
             try
             {
                 int comCode = 1;
+                string VehicleType = ddlVehicleType.SelectedValue.ToString();
                 string VehicleID_1 = lblVehicleId.Text;
                 string VehicleNo_2 = txtVehicleNo.Text;
-                string ChesisNo_3 = txtChesisNo.Text;
-                string ModelNo_4 = txtModelNo.Text;
-                string EngineNo_5 = txtEngineNo.Text;
-                string EngineVolume_16 = txtEngineVolume.Text;
-                string PurchaseDate_17 = txtPurchaseDate.Text;
-                string VehicleDesc_6 = txtVehicleDescription.Text;
+                string ChesisNo_3 = String.Empty;// txtChesisNo.Text;
+                string ModelNo_4 = String.Empty;//txtModelNo.Text;
+                string EngineNo_5 = String.Empty;//txtEngineNo.Text;
+                string EngineVolume_16 = String.Empty;//txtEngineVolume.Text;
+                string PurchaseDate_17 = String.Empty;//txtPurchaseDate.Text;
+                string VehicleDesc_6 = String.Empty;
                 string Mobile_7 = txtMobileNo.Text;
                 string Capacity_8 = txtCapacity.Text;
                 decimal KmPerLiter_9;
@@ -252,15 +258,15 @@ namespace TransportManagerUI.UI
                 int StoreCode_11 = Convert.ToInt32(ddlGhatList.SelectedValue);
                 int IsHired_12;
 
-                IsHired_12 = 0;
+                IsHired_12 = 1;
 
                 int VehicleStatus_13 = Convert.ToInt32(ddlStatus.SelectedValue);
                 string userId = Session["UserName"].ToString();
                 string capacityUnit = ddlCapacityUnit.SelectedItem.Text;
-                string Remarks_18 = txtRemarks.Text;
+                string Remarks_18 = String.Empty;
                 using (VehicleInfoGateway gatwayObj = new VehicleInfoGateway())
                 {
-                    VehicleID_1 = gatwayObj.InsertUpdateVehicle(comCode, VehicleID_1, VehicleNo_2, ChesisNo_3, ModelNo_4, EngineNo_5, VehicleDesc_6,
+                    VehicleID_1 = gatwayObj.InsertUpdateVehicle(comCode,VehicleType, VehicleID_1, VehicleNo_2, ChesisNo_3, ModelNo_4, EngineNo_5, VehicleDesc_6,
                        Mobile_7, Capacity_8, KmPerLiter_9, FuelCode_10, StoreCode_11, IsHired_12, VehicleStatus_13, userId, capacityUnit, EngineVolume_16, PurchaseDate_17, Remarks_18);
                     lblVehicleId.Text = VehicleID_1;
 
@@ -292,9 +298,10 @@ namespace TransportManagerUI.UI
                 //Capacity, KmPerLiter, FuelCode, IsHired, VehicleStatus FROM            VehicleInfo where VehicleID=@VehicleId and comCode=@ComCode
                 if (dt != null)
                 {
+                    ddlVehicleType.SelectedValue = dt.Rows[0]["VehicleType"].ToString();
                     lblVehicleId.Text = dt.Rows[0]["VehicleID"].ToString();
                     txtVehicleNo.Text = dt.Rows[0]["VehicleNo"].ToString();
-                    txtChesisNo.Text = dt.Rows[0]["ChesisNo"].ToString();
+                    //txtChesisNo.Text = dt.Rows[0]["ChesisNo"].ToString();
                     txtModelNo.Text = dt.Rows[0]["ModelNo"].ToString();
                     if (String.IsNullOrEmpty(dt.Rows[0]["StoreCode"].ToString()) == false)
                     {
@@ -308,10 +315,10 @@ namespace TransportManagerUI.UI
                         ddlGhatList.SelectedValue = dt.Rows[0]["StoreCode"].ToString();
 
 
-                    txtEngineNo.Text = dt.Rows[0]["EngineNo"].ToString();
-                    txtEngineVolume.Text = dt.Rows[0]["EngineVolume"].ToString();
-                    txtPurchaseDate_CalendarExtender.SelectedDate = Convert.ToDateTime(dt.Rows[0]["PurchaseDate"].ToString());
-                    txtVehicleDescription.Text = dt.Rows[0]["VehicleDesc"].ToString();
+                    //txtEngineNo.Text = dt.Rows[0]["EngineNo"].ToString();
+                    //txtEngineVolume.Text = dt.Rows[0]["EngineVolume"].ToString();
+                    //txtPurchaseDate_CalendarExtender.SelectedDate = Convert.ToDateTime(dt.Rows[0]["PurchaseDate"].ToString());
+                    //txtVehicleDescription.Text = dt.Rows[0]["VehicleDesc"].ToString();
                     txtMobileNo.Text = dt.Rows[0]["MobileNo"].ToString();
                     txtCapacity.Text = dt.Rows[0]["Capacity"].ToString();
 
@@ -324,7 +331,7 @@ namespace TransportManagerUI.UI
 
 
 
-                    txtRemarks.Text = dt.Rows[0]["Remarks"].ToString();
+                    //txtRemarks.Text = dt.Rows[0]["Remarks"].ToString();
                     ddlStatus.SelectedValue = dt.Rows[0]["VehicleStatus"].ToString();
                 }
                 hfShowList_ModalPopupExtender.Hide();

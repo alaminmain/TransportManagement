@@ -23,17 +23,21 @@
                             <td class="auto-style1">
                                 <asp:RadioButtonList ID="rblReports" runat="server" ForeColor="Black" OnSelectedIndexChanged="rblReports_SelectedIndexChanged" AutoPostBack="True">
                                     <asp:ListItem Text="Voucher Statement" Value="VoucherStatement" Selected="True"></asp:ListItem>
-                                    <asp:ListItem Text="Voucher Statement Detail" Value="VoucherStatementDetail"></asp:ListItem>
+                                    <asp:ListItem Text="Voucher Statement(Dealerwise)" Value="VoucherStateDealerwise"></asp:ListItem>
                                     <asp:ListItem Text="Voucher Statement (Vehiclewise)" Value="VoucherStateTruckwise"></asp:ListItem>
-                                    <asp:ListItem Text="Vehiclewise Detail" Value="VoucherStateTruckwiseDetail"></asp:ListItem>
-                                    <asp:ListItem Text="Monthly Income/Expnese" Value="VoucherStateTruckwiseMonthly"></asp:ListItem>
+                                    <asp:ListItem Text="Voucher Statement Driverwise" Value="VoucherStatementDriverwise"></asp:ListItem>
+                                    
+                                    <asp:ListItem Text="Voucher Statement Detail" Value="VoucherStatementDetail"></asp:ListItem>
+                                    <asp:ListItem Text="Voucher Statement Detail(Vehiclewise)" Value="VoucherStateTruckwiseDetail"></asp:ListItem>
+                                    <asp:ListItem Text="Voucher Detail(Cross Tab)" Value="VoucherStateTruckwiseMonthly"></asp:ListItem>
+                                    <asp:ListItem Text="Vehicle Expenditure Summery" Value="ExpenseStateTruckwise"></asp:ListItem>
                                     <asp:ListItem Text="Vehiclewise Summery" Value="VoucherStatementSummeryTruck"></asp:ListItem>
                                     
-                                    <asp:ListItem Text="Voucher Statement Driverwise" Value="VoucherStatementDriverwise"></asp:ListItem>
+                                    
                                     <asp:ListItem Text="Expense Statement" Value="ExpenseStateTruckwiseDetail"></asp:ListItem>
                                     <asp:ListItem Text="Expense Statement Summery" Value="ExpenseStatementSummery"></asp:ListItem>
-                                    <asp:ListItem Text="Expense Statement(Dealerwise)" Value="VoucherStateDealerwise"></asp:ListItem>
-                                    <asp:ListItem Text="Expense Statement (Vehiclewise)" Value="ExpenseStateTruckwise"></asp:ListItem>
+                                    
+                                    
                                     
         
                                     
@@ -104,6 +108,9 @@
                         <tr>
                             <td>
                                 <asp:Button ID="btnShowReport" runat="server" Text="Show Report" OnClick="btnShowReport_Click" OnClientClick="NewWindow();"/>
+                            </td>
+                             <td>
+                                <asp:Button ID="btnShowStatment" runat="server" Text="Show Report(Onscreen)" OnClick="btnShowStatment_Click" />
                             </td>
                             <td> <asp:HiddenField ID="hfShowList" runat="server" />
                                  <ajaxToolkit:ModalPopupExtender ID="hfShowList_ModalPopupExtender" runat="server" BehaviorID="hfShowList_ModalPopupExtender" DynamicServicePath="" TargetControlID="hfShowList" PopupControlID="Panel7"  CancelControlID="btnSearchCancel" BackgroundCssClass="modalBackground">

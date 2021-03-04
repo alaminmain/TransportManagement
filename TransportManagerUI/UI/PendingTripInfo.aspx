@@ -2,7 +2,7 @@
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="cphHeadContent" runat="server">
-    <meta http-equiv="refresh" content="30">
+  
     <script type="text/javascript">
 
         $(document).ready(function () {
@@ -61,7 +61,7 @@
                         <asp:Button ID="txtNewTrip" runat="server" Text="New Trip" OnClick="txtNewTrip_Click" />
 
                         <asp:Button ID="btnReport" runat="server" Text="Report"
-                            OnClick="btnReport_Click" Style="height: 26px" />
+                            OnClick="btnReport_Click"  />
 
                         <asp:Button ID="btnCancel" runat="server" Text="Cancel" formnovalidate OnClick="btnCancel_Click" />
 
@@ -91,14 +91,22 @@
                                         <asp:GridView ID="gvlistofBasicData" runat="server"
                                             EmptyDataText="No Data To Show" GridLines="Horizontal" CellPadding="4"
                                             ForeColor="#333333" AutoGenerateColumns="False"
-                                            OnPageIndexChanging="gvlistofBasicData_PageIndexChanging" Font-Size="Small" AllowSorting="True" RowStyle-CssClass="GvGrid" ShowFooter="True">
+                                            OnPageIndexChanging="gvlistofBasicData_PageIndexChanging" 
+                                            Font-Size="Small" AllowSorting="True" RowStyle-CssClass="GvGrid" 
+                                            ShowFooter="True" Width="100%">
                                             <AlternatingRowStyle BackColor="White" />
                                             <Columns>
 
                                                 <asp:BoundField DataField="TripNo" HeaderText="Trip No" />
 
-                                                <asp:BoundField DataField="TripDate" DataFormatString="{0:dd/MMM/yyyy}"
+                                                <asp:BoundField DataField="TripDate" 
                                                     HeaderText="Date" />
+
+                                                <asp:BoundField DataField="TripTime" 
+                                                    HeaderText="Time" >
+
+                                                <ItemStyle Width="100px" />
+                                                </asp:BoundField>
 
                                                 <asp:BoundField DataField="VehicleNo" HeaderText="VehicleNo" />
                                                 <asp:BoundField DataField="Capacity" HeaderText="Capacity" />

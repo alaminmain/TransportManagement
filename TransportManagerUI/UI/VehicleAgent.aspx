@@ -33,7 +33,7 @@
                             </td>
                             <td>
                                 <asp:Button ID="btnSearch" runat="server" Text="Search" onclick="btnSearch_Click" 
-                                     />
+                                    formnovalidate />
                             </td>
                             </tr>
                         </table>
@@ -122,7 +122,7 @@
                 </td>
                 </tr>
             <tr>
-                <td align="right" class="auto-style1">Address2
+                <td align="right" >Address2
             </td>
             <td align="left">
                 <asp:TextBox ID="txtAddress2" runat="server" Width="306px" ></asp:TextBox>
@@ -140,7 +140,7 @@
                 
             </tr>
             <tr>
-            <td align="right" class="auto-style1">PostCode</td>
+            <td align="right" >PostCode</td>
             <td align="left">
                 <asp:TextBox ID="txtPostCode" runat="server" ></asp:TextBox>
             </td>
@@ -166,28 +166,28 @@
                 </td>
                 </tr>
             <tr>
-                <td align="right" class="auto-style1">Mobile 
+                <td align="right" >Mobile 
             </td>
             <td align="left">
                 <asp:TextBox ID="txtMobile" runat="server" ></asp:TextBox>
             </td>
             </tr>
              <tr>
-                <td align="right" class="auto-style1">Email 
+                <td align="right" >Email 
             </td>
             <td align="left">
                 <asp:TextBox ID="txtEmail" runat="server" ></asp:TextBox>
             </td>
             </tr>
              <tr>
-                <td align="right" class="auto-style1">Web Addres 
+                <td align="right" >Web Addres 
             </td>
             <td align="left">
                 <asp:TextBox ID="txtWebAddress" runat="server" Width="306px" ></asp:TextBox>
             </td>
             </tr>
             <tr>
-                <td align="right" class="auto-style1">Remarks 
+                <td align="right" >Remarks 
             </td>
             <td align="left">
                 <asp:TextBox ID="txtRemarks" runat="server" Width="306px" ></asp:TextBox>

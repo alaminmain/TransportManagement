@@ -51,13 +51,17 @@ namespace TransportManagerUI.UI
                 dt = gatwayObj.GetTripInfo(row.Cells[1].Text);
 
             }
-
+            DataTable movementIncome = new DataTable();
             dvTrip.DataSource = dt;
             dvTrip.DataBind();
-            DataTable movementIncome = new DataTable();
+            
+            
             using (TransportDetailGateway gatwayObj = new TransportDetailGateway())
             {
-                movementIncome = gatwayObj.GetMovmentDetailForVoucherIncome(row.Cells[1].Text);
+                if (dt.Rows[0]["IsOtherTrip"].ToString() == "0")
+                    movementIncome = gatwayObj.GetMovmentDetailForVoucherIncome(row.Cells[1].Text);
+                else
+                    movementIncome = gatwayObj.GetTripDetailForVoucherIncome(row.Cells[1].Text);
             }
            decimal totalRent = movementIncome.AsEnumerable().Sum(x => Convert.ToDecimal(x["Rent"]));
             gvIncome.DataSource = movementIncome;
@@ -192,6 +196,8 @@ namespace TransportManagerUI.UI
             txtNetIncome.Text = "0.00";
             txtTotalExpense.Text = "0.00";
             txtTotalAmount.Text = "0.00";
+            txtAdditionalKM.Text = "0.00";
+            txtAdvance.Text = "0.00";
             
             loadChartofAccounts();
         }
@@ -204,8 +210,6 @@ namespace TransportManagerUI.UI
 
                 using (VoucherGateway gatwayObj = new VoucherGateway())
                 {
-
-
                     dt = gatwayObj.GetVoucher(1);
                     if (String.IsNullOrEmpty(searchKey))
                     {
@@ -214,7 +218,8 @@ namespace TransportManagerUI.UI
                     else
                     {
                         var filtered = dt.AsEnumerable()
-    .Where(r => r.Field<String>("VoucherNo").Contains(searchKey));
+    .Where(r => r.Field<String>("VoucherNo").Contains(searchKey) || r.Field<String>("TripNo").Contains(searchKey.ToUpper())
+           || r.Field<String>("EmpName").ToUpper().Contains(searchKey.ToUpper()) || r.Field<String>("VehicleNo").ToUpper().Contains(searchKey.ToUpper()));
                         dt = filtered.CopyToDataTable();
 
                     }
@@ -307,7 +312,7 @@ namespace TransportManagerUI.UI
             if (dtg.HeaderRow != null)
             {
 
-                for (int i = 1; i < dtg.HeaderRow.Cells.Count; i++)
+                for (int i = 0; i < dtg.HeaderRow.Cells.Count; i++)
                 {
                     //if(i!=0)
                     dt.Columns.Add(dtg.HeaderRow.Cells[i].Text);
@@ -323,11 +328,11 @@ namespace TransportManagerUI.UI
                 //for (int i = 0; i < row.Cells.Count; i++)
                 //{
                 //    if (i != 0)
-                dr["Date"] = (row.FindControl("TextBox1") as TextBox).Text; //row.Cells[1].Text;
-                dr["Product"] = row.Cells[2].Text;
-                dr["TripFrom"] = row.Cells[3].Text;
-                dr["TripTo"] = row.Cells[4].Text;
-                dr["Rent"] = row.Cells[5].Text;
+                dr["Date"] = Convert.ToDateTime((row.FindControl("TextBox1") as TextBox).Text).ToString("dd/MMM/yyyy"); //row.Cells[1].Text;
+                dr["Product"] = row.Cells[1].Text;
+                dr["TripFrom"] = row.Cells[2].Text;
+                dr["TripTo"] = row.Cells[3].Text;
+                dr["Rent"] = row.Cells[4].Text;
 
                 //}
                 dt.Rows.Add(dr);
@@ -395,7 +400,11 @@ namespace TransportManagerUI.UI
                     {
                         string tripno = dvTrip.Rows[0].Cells[1].Text.ToString();
                         dttrip = gatwayObj.GetTripInfo(tripno);
-                        totalFuelAmount = (Convert.ToDecimal(dttrip.Rows[0]["FuelQty"]) - Convert.ToDecimal(dttrip.Rows[0]["AdjFuelQty"])) * Convert.ToDecimal(dttrip.Rows[0]["FuelRate"]);
+                       
+
+                        decimal ExtraFuelQty = Convert.ToDecimal(dttrip.Rows[0]["ExtraFuelQty"]);
+                        
+                        totalFuelAmount = (Convert.ToDecimal(dttrip.Rows[0]["FuelQty"])+ ExtraFuelQty - Convert.ToDecimal(dttrip.Rows[0]["AdjFuelQty"])) * Convert.ToDecimal(dttrip.Rows[0]["FuelRate"]);
                     }
 
                 }
@@ -407,7 +416,6 @@ namespace TransportManagerUI.UI
                         dr["Amount"] = Convert.ToDecimal(totalFuelAmount.ToString("0.00"));
                         dr["Comments"] = String.Empty;
                     }
-
                     else
                     {
                         dr["Amount"] = 0;
@@ -470,7 +478,7 @@ namespace TransportManagerUI.UI
                     dt.Columns.Add("Rent");
 
                     DataRow dr = dt.NewRow();
-                    dr["Date"] = DateTime.Now;
+                    dr["Date"] = DateTime.Now.ToString("dd/MMM/yyyy");
                     dr["Product"] = txtProduct.Text;
                     dr["TripFrom"] = txtTripFrom.Text;
                     dr["TripTo"] = txtTripTo.Text;
@@ -484,7 +492,7 @@ namespace TransportManagerUI.UI
                     {
                         dt = GetTripDataTable(gvIncome);
                         DataRow dr1 = dt.NewRow();
-                        dr1["Date"] = txtVoucherDate.Text;
+                        dr1["Date"] = Convert.ToDateTime(txtVoucherDate.Text).ToString("dd/MMM/yyyy");
                         dr1["Product"] = txtProduct.Text;
                         dr1["TripFrom"] = txtTripFrom.Text;
                         dr1["TripTo"] = txtTripTo.Text;
@@ -522,17 +530,31 @@ namespace TransportManagerUI.UI
                     NetPayment();
                     int comcode_1 = 1;
                     string VoucherNo_2 = lblVoucherNo.Text;
-                    string VoucherDate_3 = txtVoucherDate.Text;
+                    string VoucherDate_3 = txtVoucherDate.Text + " " + DateTime.Now.ToString("hh:mm:ss tt");
 
                     string TripNo_4 = dvTrip.Rows[0].Cells[1].Text.ToString();
                     decimal Income_5 = Convert.ToDecimal(txtIncome.Text);
-                    decimal Advance_6 = Convert.ToDecimal(txtAdvance.Text);
+                    decimal Advance_6 = 0;
+                    if (String.IsNullOrEmpty(txtAdvance.Text))
+                    {
+                        Advance_6 = 0;
+                    }
+                    else
+                        Advance_6 = Convert.ToDecimal(txtAdvance.Text);
                     decimal TotExpense_7 = Convert.ToDecimal(txtTotalAmount.Text);
                     string Narration_8 = txtRemarks.Text;
-                    string ReturnDate_12 = txtReturnDate.Text;
+                    string ReturnDate_12 = txtReturnDate.Text + " " + DateTime.Now.ToString("hh:mm:ss tt");
                     int VoucherStatus_10 = Convert.ToInt32(ddlStatus.SelectedValue);
                     string userId = Session["UserName"].ToString();
-                    decimal additionalKm = Convert.ToDecimal(txtAdditionalKM.Text);
+
+                    decimal additionalKm = 0;
+                    if (String.IsNullOrEmpty(txtAdditionalKM.Text))
+                    {
+                        additionalKm = 0;
+                    }
+                    else
+                        additionalKm = Convert.ToDecimal(txtAdditionalKM.Text);
+                   
 
                     DataTable income = new DataTable();
                     DataTable expenses = new DataTable();
@@ -583,19 +605,19 @@ namespace TransportManagerUI.UI
 
         protected void gvIncome_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
-            DataTable dt = new DataTable();
-            dt = GetTripDataTable(gvIncome);
+            //DataTable dt = new DataTable();
+            //dt = GetTripDataTable(gvIncome);
 
-            dt.Rows[e.RowIndex].Delete();
-
-
-            //decimal total = Convert.ToDecimal(dt.Compute("Sum(TotalPrice)", ""));
-            //txtTotalAmount.Text = total.ToString();
+            //dt.Rows[e.RowIndex].Delete();
 
 
-            gvIncome.DataSource = dt;
-            gvIncome.DataBind();
-            txtIncome.Text = Convert.ToString(dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["Rent"])));
+            ////decimal total = Convert.ToDecimal(dt.Compute("Sum(TotalPrice)", ""));
+            ////txtTotalAmount.Text = total.ToString();
+
+
+            //gvIncome.DataSource = dt;
+            //gvIncome.DataBind();
+            //txtIncome.Text = Convert.ToString(dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["Rent"])));
 
         }
         public void NetPayment()
@@ -624,7 +646,7 @@ namespace TransportManagerUI.UI
                 totalExpense = totalExpense + advance;
                 txtTotalIncome.Text = txtIncome.Text;
                 txtTotalExpense.Text = txtTotalAmount.Text;
-                txtTotalAdvance.Text = txtAdvance.Text;
+                //txtTotalAdvance.Text = txtAdvance.Text;
 
                 decimal netPayment = Convert.ToDecimal(txtIncome.Text) - totalExpense;
                 txtNetIncome.Text = netPayment.ToString("0.00");
@@ -650,7 +672,7 @@ namespace TransportManagerUI.UI
                 //btnReport.PostBackUrl = "~/UI/reportViewer.aspx";
 
                 //Response.Write("<script>window.open('~/UI/reportViewer.aspx','_blank');</script>");
-                Response.Redirect("~/UI/reportViewer.aspx");
+                ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/reportViewer.aspx" + "','_blank')", true);
             }
             else
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Please Select Voucher No');", true);
@@ -772,6 +794,17 @@ namespace TransportManagerUI.UI
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             Response.Redirect("~/UI/Default.aspx");
+        }
+
+        protected void btnSearchdTrip_Click(object sender, EventArgs e)
+        {
+            DataTable dt = new DataTable();
+            dt = LoadAllTrip(txtSearchTrip.Text);
+
+            gvTrip.DataSource = dt;
+            gvTrip.DataBind();
+            upTrip.Update();
+            hfTC_ModalPopupExtender.Show();
         }
     }
 }

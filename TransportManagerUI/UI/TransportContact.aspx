@@ -29,6 +29,12 @@
        
 
        
+        .auto-style2 {
+            text-align: left;
+        }
+       
+
+       
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cphMainContent" runat="server">
@@ -145,8 +151,8 @@
         </tr>
             
         <tr valign="middle">
-        <td align="right" nowrap="nowrap">
-            Dealer&nbsp;
+        <td align="right" nowrap="nowrap" class="auto-style1">
+            Dealer
         </td>
             <td align="left"  colspan="2" class="auto-style1" nowrap="nowrap">
                 <asp:Label ID="lblDealerCode" runat="server" Font-Bold="True" 
@@ -166,8 +172,8 @@
            
         </tr>
         <tr valign="middle">
-        <td align="right" valign="middle" class="auto-style1">Customer</td>
-                <td align="left" valign="middle" class="auto-style1" >
+        <td align="right" valign="top" class="auto-style1">Customer</td>
+                <td valign="middle" class="auto-style2" >
                      
                     <asp:Label ID="lblCustomerCode" runat="server" 
                         CssClass="lblInformation1" required></asp:Label>*&nbsp;
@@ -178,6 +184,13 @@
                       
                         &nbsp;<asp:Label ID="lblCustomerName" runat="server" 
                         CssClass="lblInformation2"></asp:Label>
+                     
+
+                    <br />
+                    <br />
+                    Location:<asp:Label ID="lblLocation" runat="server" BackColor="White" BorderColor="#33CCCC" BorderStyle="Solid" BorderWidth="1px" Font-Bold="True" ForeColor="#FF3300" Visible="True"></asp:Label>
+                   <%-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Distance (KM):--%>
+                    Rent: <asp:Label ID="lblRent" runat="server" BackColor="White" BorderColor="#33CCCC" BorderStyle="Solid" BorderWidth="1px" Font-Bold="True" ForeColor="#FF3300" Width="100px" Visible="True"></asp:Label>
                      
 
                 </td>
@@ -221,8 +234,9 @@
             <asp:DropDownList ID="ddlStatus" runat="server" AutoPostBack="True">
             <asp:ListItem Value="0" Text="Open"></asp:ListItem>
             <asp:ListItem Value="1" Text="Confirm"></asp:ListItem>
-            <asp:ListItem Value="2" Text="Cancel"></asp:ListItem>
-                <asp:ListItem Value="3" Text="Close"></asp:ListItem>
+            <asp:ListItem Value="2" Text="On Trip"></asp:ListItem>
+            <asp:ListItem Value="3" Text="Cancel"></asp:ListItem>
+                
                 </asp:DropDownList>
         </td>
             </tr> 
@@ -284,6 +298,7 @@
             <asp:BoundField DataField="CustName" HeaderText="Dealer Name" >
             <ItemStyle HorizontalAlign="Left" />
             </asp:BoundField>
+            <asp:BoundField DataField="ProductName" HeaderText="ProductName" />
             <asp:BoundField DataField="TotalQty" HeaderText="TotalQty" />
             <asp:BoundField DataField="BalQty" DataFormatString="{0:0}" HeaderText="BalQty" />
         </Columns>
@@ -408,6 +423,8 @@
                     </asp:BoundField>
             <asp:BoundField DataField="Mobile" HeaderText="Mobile" />
                     <asp:BoundField DataField="LocDistance" HeaderText="Distance" />
+                    <asp:BoundField DataField="LocName" HeaderText="Location" />
+                    <asp:BoundField DataField="LocRent" HeaderText="Rent" />
                 </Columns>
                 <EditRowStyle BackColor="#2461BF" />
                 <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -543,37 +560,37 @@
             </div>
             </ProgressTemplate>
     </asp:UpdateProgress>
-        </asp:Panel>
+
     <script type="text/javascript">
         function CheckNumber() {
 
             var gv = document.getElementById("cphMainContent_gvlistofBasicData");
-             alert(gv);
-             var rowCount = $("cphMainContent_gvlistofBasicData tr").length - 1; //minus the header tand footer row
-        var prefixID = "cphMainContent_gvListofDOProduct"; // view source to get the actual prefixed id
-        var tbID = "_Text1"; //id of TextBox to compare
-        var lblID = "_lblDoQty"; //id of Label to compare
+            alert(gv);
+            var rowCount = $("cphMainContent_gvlistofBasicData tr").length - 1; //minus the header tand footer row
+            var prefixID = "cphMainContent_gvListofDOProduct"; // view source to get the actual prefixed id
+            var tbID = "_Text1"; //id of TextBox to compare
+            var lblID = "_lblDoQty"; //id of Label to compare
 
 
-        var theLabel;
-        var theTextBox;
-        //set the value of i to 2 as starting index since the first row id shows something like this
-        //GridView1_ctl02_Label1
-        for (var i = 2; i < rowCount - 1; i++) {
-            alert('2');
+            var theLabel;
+            var theTextBox;
+            //set the value of i to 2 as starting index since the first row id shows something like this
+            //GridView1_ctl02_Label1
+            for (var i = 2; i < rowCount - 1; i++) {
+                alert('2');
 
-            theLabel = document.getElementById(prefixID + lblID + i);
-            theTextBox = document.getElementById(prefixID + tbID + i);
+                theLabel = document.getElementById(prefixID + lblID + i);
+                theTextBox = document.getElementById(prefixID + tbID + i);
 
 
-            if (parseInt(theLabel.innerHTML) < parseInt(theTextBox.value)) {
-                alert("Label value is less than or equal to the value of TextBox");
-                theTextBox.focus();
+                if (parseInt(theLabel.innerHTML) < parseInt(theTextBox.value)) {
+                    alert("Label value is less than or equal to the value of TextBox");
+                    theTextBox.focus();
+                }
+                else
+                    calculate();
+
             }
-            else
-                calculate();
-
-        }
         }
 
         function calculate() {
@@ -601,4 +618,6 @@
         }
 
     </script>
+        </asp:Panel>
+    
 </asp:Content>

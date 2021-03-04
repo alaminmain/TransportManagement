@@ -62,7 +62,7 @@
 
             var totalAmount = (parseFloat(txtAdditionalKM) / parseFloat(kmperliter)) * parseFloat(FuelRate);
 
-            grd.rows[8].cells[2].children[0].value = totalAmount.toFixed(2);
+            grd.rows[2].cells[2].children[0].value = totalAmount.toFixed(2);
             CalculateNetIncome();
             calculate();
 
@@ -152,10 +152,12 @@
                 <asp:BoundField DataField="VoucherNo" HeaderText="VoucherNo" />
                 <asp:BoundField DataField="VoucherDate" DataFormatString="{0:dd/MMM/yyyy}" 
                     HeaderText="VoucherDate" />
-                <asp:BoundField DataField="Income" DataFormatString="{0:0.00}" 
-                    HeaderText="Income" />
-                <asp:BoundField DataField="TotExpense" DataFormatString="{0:0.00}" 
-                    HeaderText="Expense" />
+                <asp:BoundField DataField="TripNo"
+                    HeaderText="TripNo" />
+                <asp:BoundField DataField="EmpName"
+                    HeaderText="Driver" />
+                <asp:BoundField DataField="VehicleNo"
+                    HeaderText="VehicleNo" />
             </Columns>
             <EditRowStyle BackColor="#2461BF" />
             <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -339,6 +341,7 @@
                                         Text='<%# Bind("FuelRate", "{0:0.00}") %>'></asp:TextBox>
                                 </InsertItemTemplate>
                             </asp:TemplateField>
+                            <asp:BoundField DataField="CustName" HeaderText="Dealer" />
                         </Fields>
                         <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
                         <HeaderStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -364,10 +367,10 @@
            <td>
                <asp:Panel ID="Panel3" runat="server" Font-Names="Raavi">
                   
-<ajaxToolkit:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="1" ScrollBars="Auto" 
+<ajaxToolkit:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" ScrollBars="Auto" 
                         TabStripPlacement="TopRight" Width="100%" 
                        >
-                        <ajaxToolkit:TabPanel ID="TabPanel1" runat="server" HeaderText="Income" Font-Names='"Helvetica Neue", Helvetica, Arial, sans-serif'><ContentTemplate>
+                        <ajaxToolkit:TabPanel ID="TabPanel1" runat="server" HeaderText="Income" style="font-family: 'Courier New', Courier, monospace;"><ContentTemplate>
                             
 
                             <table>
@@ -409,23 +412,26 @@
                                         <asp:GridView ID="gvIncome" runat="server" AutoGenerateColumns="False" 
                                             CellPadding="4" ForeColor="#333333" GridLines="None" 
                                             OnRowDeleting="gvIncome_RowDeleting" Width="100%"><AlternatingRowStyle 
-                                                BackColor="White" /><Columns><asp:CommandField ShowDeleteButton="True" /><asp:TemplateField 
+                                                BackColor="White" /><Columns><asp:TemplateField 
                                                     HeaderText="Date" InsertVisible="False"><EditItemTemplate><asp:Label 
                                                         ID="Label1" runat="server" Text='<%# Bind("Date", "{0:dd/MMM/yyyy}") %>'></asp:Label>
                                                 </EditItemTemplate>
                                                 <ItemTemplate>
                                                     <asp:TextBox ID="TextBox1" runat="server" placeholder="dd/MMM/yyyy" 
-                                                        Text='<%# Bind("Date","{0:dd/MMM/yyyy}") %>'></asp:TextBox>
+                                                        Text='<%# Bind("Date","{0:dd/MMM/yyyy}") %>' Width="70px"></asp:TextBox>
                                                 </ItemTemplate>
-                                                <ItemStyle Width="60px" />
-                                                </asp:TemplateField><asp:BoundField DataField="Product" HeaderText="Product"><ItemStyle 
-                                                    HorizontalAlign="Left" Width="120px" /></asp:BoundField><asp:BoundField 
+                                                <ItemStyle Width="70px" />
+                                                </asp:TemplateField><asp:BoundField DataField="Product" HeaderText="Product">
+                                                <ItemStyle 
+                                                    HorizontalAlign="Left" Width="130px" Wrap="True" /></asp:BoundField><asp:BoundField 
                                                     DataField="TripFrom" HeaderText="TripFrom"><ItemStyle 
                                                     HorizontalAlign="Left" Width="100px" /></asp:BoundField><asp:BoundField 
-                                                    DataField="TripTo" HeaderText="TripTo"><ItemStyle HorizontalAlign="Left" 
-                                                    Width="100px" /></asp:BoundField><asp:BoundField DataField="Rent" 
-                                                    DataFormatString="{0:0.00}" HeaderText="Rent"><ItemStyle 
-                                                    HorizontalAlign="Right" /></asp:BoundField>
+                                                    DataField="TripTo" HeaderText="TripTo">
+                                                <ItemStyle HorizontalAlign="Left" 
+                                                    Width="120px" /></asp:BoundField><asp:BoundField DataField="Rent" 
+                                                    DataFormatString="{0:0.00}" HeaderText="Rent">
+                                                <ItemStyle 
+                                                    HorizontalAlign="Right" Width="30px" /></asp:BoundField>
                                             </Columns>
                                             <EditRowStyle BackColor="#2461BF" />
                                             <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -454,7 +460,7 @@
                                 </tr>
                             </table>
                             </ContentTemplate></ajaxToolkit:TabPanel>
-                         <ajaxToolkit:TabPanel ID="TabPanel2" runat="server" HeaderText="Expenses" Font-Names='"Helvetica Neue", Helvetica, Arial, sans-serif'><ContentTemplate>
+                         <ajaxToolkit:TabPanel ID="TabPanel2" runat="server" HeaderText="Expenses" style="font-family: 'Courier New', Courier, monospace;"><ContentTemplate>
                              
 
                              <asp:Panel ID="Panel4" runat="server"><table><tr><td colspan="4"><asp:GridView 
@@ -573,7 +579,7 @@
                                 <asp:TextBox ID="txtSearchTrip" runat="server"/>
                             </td>
                             <td style="width:90px;">
-                                <asp:Button ID="btnSearchdTrip" runat="server" Text="Search" CssClass="Button" 
+                                <asp:Button ID="btnSearchdTrip" runat="server" Text="Search" CssClass="Button" OnClick="btnSearchdTrip_Click" 
                                      />
                             </td>
                             </tr>

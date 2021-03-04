@@ -23,6 +23,13 @@
     //    }
 
   </script>
+
+    <style type="text/css">
+     
+
+    
+    </style>
+    
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cphMainContent" runat="server">
     
@@ -128,7 +135,7 @@
             </td>
             </tr>
             <tr>
-            <td align="right" class="auto-style1">
+            <td align="right" >
             Name (Bangla)
             </td>
              <td align="left">
@@ -159,7 +166,7 @@
                 </td>
                 </tr>
             <tr>
-                <td align="right" class="auto-style1">Address2
+                <td align="right" >Address2
             </td>
             <td align="left">
                 <asp:TextBox ID="txtAddress2" runat="server" Width="306px" ></asp:TextBox>
@@ -177,14 +184,26 @@
                 
             </tr>
                         <tr>
-                <td align="right" class="auto-style1">Distance
+                <td align="right" >Distance
             </td>
             <td align="left">
                 <asp:TextBox ID="txtLocDistance" runat="server" required>0</asp:TextBox>
             </td>
             </tr>
+                       <tr>
+            
+                <td align="right">
+                    Location
+                </td>
+                 <td align="left">
+                     
+                     <asp:DropDownList ID="ddlLocation" runat="server"></asp:DropDownList>
+                    
+                </td>
+                
+            </tr>
             <tr>
-            <td align="right" class="auto-style1">Contact Person  
+            <td align="right" >Contact Person  
             </td>
             <td align="left">
                 <asp:TextBox ID="txtContactPerson" runat="server" Width="306px" ></asp:TextBox>
@@ -193,7 +212,7 @@
             <tr>
             
                 <td align="right">
-                    Phone
+                    Sales Person Phone
                 </td>
                  <td align="left">
                      <asp:TextBox ID="txtPhone" runat="server"></asp:TextBox>
@@ -201,24 +220,14 @@
                 </td>
                 </tr>
             <tr>
-                <td align="right" class="auto-style1">Mobile 
+                <td align="right" >Mobile 
             </td>
             <td align="left">
                 <asp:TextBox ID="txtMobile" runat="server" ></asp:TextBox>
             </td>
             </tr>
 
-            <tr>
-            
-                <td align="right">
-                    Location
-                </td>
-                 <td align="left">
-                     <asp:TextBox ID="txtLocatione" runat="server"></asp:TextBox>
-                     
-                </td>
-            
-            </tr>
+          
             <tr>
             
                 <td align="right">
@@ -252,6 +261,23 @@
             </div>
             </ProgressTemplate>
     </asp:UpdateProgress>
+
+         <script type="text/javascript">
+
+<%--              $(document).ready(function () {
+                                                         
+                    $('#' + '<%= ddlLocation.ClientID %>').select2({
+                        width: 'resolve'
+                    });
+                                                      Sys.WebForms.PageRequestManager.getInstance().add_endRequest(EndRequestHandler);
+                                                      function EndRequestHandler(sender, args) {
+                                                          $('#' + '<%= ddlLocation.ClientID %>').select2({
+                                                              width: 'resolve'
+                                                          });
+                      
+                    }
+                   });--%>
+          </script>
    </asp:Panel>
 
 </asp:Content>

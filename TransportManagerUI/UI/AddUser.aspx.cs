@@ -81,6 +81,7 @@ namespace TransportManagerUI.UI.AdminPanel
                     txt.DataSource = null;
                     txt.DataBind();
                 }
+                hfShowList.Value = "0";
 
             }
 
@@ -187,7 +188,7 @@ namespace TransportManagerUI.UI.AdminPanel
             {
                 getGhat();
                 LoadRoles();
-               
+                hfShowList.Value = "0";
             }
         }
 
@@ -218,18 +219,34 @@ namespace TransportManagerUI.UI.AdminPanel
         {
             try
             {
+
                 string userName=txtUserName.Text;
                 int comCode=1;
                 string password = txtPassword.Text;
                 int ghat=Convert.ToInt32(ddlGhat.SelectedValue);
                 int role = Convert.ToInt32(ddlUserRole.SelectedValue);
                 DataTable dt=new DataTable();
-                dt=GetUserList(userName);
-                if (dt!=null)
+                
+                //if Insert then Check the user Name
+                if (hfShowList.Value == "0")
                 {
-                    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('User Name Taken');", true);
+                    dt = GetUserList(userName);
+                    if (dt != null)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('User Name Taken');", true);
+                    }
+                    else
+                    {
+                        using (UserGateway gatwayObj = new UserGateway())
+                        {
+                            userName = gatwayObj.InsertUpdateUser(comCode, "0", userName, password, "0", role, ghat);
+                            txtUserName.Text = userName;
+
+                        }
+                        ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Record Saved');", true);
+                    }
                 }
-                else
+                else if (hfShowList.Value == "1") //if 1 then update
                 {
                     using (UserGateway gatwayObj = new UserGateway())
                     {
@@ -239,8 +256,6 @@ namespace TransportManagerUI.UI.AdminPanel
                     }
                     ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Record Saved');", true);
                 }
-               
-               
             }
             catch (Exception ex)
             {
@@ -267,7 +282,7 @@ namespace TransportManagerUI.UI.AdminPanel
                 //Capacity, KmPerLiter, FuelCode, IsHired, VehicleStatus FROM            VehicleInfo where VehicleID=@VehicleId and comCode=@ComCode
                 if (dt != null)
                 {
-
+                    txtPassword.Text = dt.Rows[0]["UserPwd"].ToString();
                     if (String.IsNullOrEmpty(dt.Rows[0]["Store_Id"].ToString()) == false)
                     {
                         ddlGhat.SelectedValue = dt.Rows[0]["Store_Id"].ToString();
@@ -291,6 +306,7 @@ namespace TransportManagerUI.UI.AdminPanel
                     else
                         ddlUserRole.SelectedValue = dt.Rows[0]["Role_Id"].ToString();
                 }
+                hfShowList.Value = "1";
                 hfShowList_ModalPopupExtender.Hide();
             }
             catch (Exception ex)
@@ -307,7 +323,7 @@ namespace TransportManagerUI.UI.AdminPanel
             gvlistofBasicData.PageIndex = e.NewPageIndex;
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
-            upListofbasicData.Update();
+            //upListofbasicData.Update();
             hfShowList_ModalPopupExtender.Show();
         }
     }

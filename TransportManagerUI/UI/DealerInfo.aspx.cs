@@ -27,6 +27,7 @@ namespace TransportManagerUI.UI
                 //lblMessage.Text = string.Empty;
                 if (!IsPostBack && !IsCallback)
                 {
+                    loadAllLocation();
                     //ClearSession();
                     //FillChalanTypDDL();
                     //LoadChartofAccounts("");
@@ -73,6 +74,30 @@ namespace TransportManagerUI.UI
 
             }
 
+        }
+        private void loadAllLocation()
+        {
+            try
+            {
+                DataTable dt;
+
+
+                using (LocationGateway gatwayObj = new LocationGateway())
+                {
+
+                    dt = gatwayObj.GetAllLocation();
+                    ddlLocation.DataValueField = "LocSLNO";
+                    ddlLocation.DataTextField = "LocName";
+                    ddlLocation.DataSource = dt;
+                    ddlLocation.DataBind();
+                   
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.ToString(), new object[0]);
+
+            }
         }
         private DataTable loadAllDealerInfo(string searchKey)
         {
@@ -214,15 +239,16 @@ namespace TransportManagerUI.UI
                     string Add3 = txtAddress3.Text;
                     string Phone = txtPhone.Text;
                     string Mobile = txtMobile.Text;
-                    string Location = String.Empty;
+                   
                     int locDistance = Convert.ToInt32(txtLocDistance.Text);
+                    int locSLNo = Convert.ToInt32(ddlLocation.SelectedValue);
                     int status = Convert.ToInt32(ddlStatus.SelectedValue);
                     string userId = Session["UserName"].ToString();//Add in session
 
                     using (DealerGateway gatwayObj = new DealerGateway())
                     {
                         string custCode = gatwayObj.InsertUpdateCustomer(ComCode, CustId, CustName, CustNameBangla, CustAddressBang, DealerId, CustType,
-                            ContactPer, Add1, Add2, Add3, Phone, Mobile, Location, locDistance, status, userId);
+                            ContactPer, Add1, Add2, Add3, Phone, Mobile, locDistance,locSLNo, status, userId);
                         lblCustomerId.Text = custCode;
                     }
                     ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Record Saved');", true);
@@ -261,6 +287,7 @@ namespace TransportManagerUI.UI
                 txtPhone.Text = dt.Rows[0]["Phone"].ToString();
                 txtMobile.Text = dt.Rows[0]["Mobile"].ToString();
                 txtLocDistance.Text = dt.Rows[0]["LocDistance"].ToString();
+                ddlLocation.SelectedValue = dt.Rows[0]["LocSLNO"].ToString();
                 ddlStatus.SelectedValue = dt.Rows[0]["Status"].ToString();
 
 

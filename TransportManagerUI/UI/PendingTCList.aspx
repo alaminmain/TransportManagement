@@ -56,22 +56,38 @@
                      EmptyDataText="No Data To Show" GridLines="Horizontal" CellPadding="4" 
                      ForeColor="#333333" AutoGenerateColumns="False" 
                      onpageindexchanging="gvlistofBasicData_PageIndexChanging" 
-                     AllowPaging="False" Font-Size="Small" RowStyle-CssClass="GvGrid" ShowFooter="True" >
+            Font-Size="Small" RowStyle-CssClass="GvGrid" ShowFooter="True" width="100%" >
             <AlternatingRowStyle BackColor="White" />
             <Columns>
-                <asp:BoundField DataField="TCNo" HeaderText="TC No" />
-                <asp:BoundField DataField="TCDate" DataFormatString="{0:dd/MMM/yyyy}" 
-                    HeaderText="Date" />
-                <asp:BoundField DataField="TCDate" DataFormatString="{0:T}" 
-                    HeaderText="TCTime" ItemStyle-Width="100" />
-                 <asp:BoundField DataField="paymentMode" HeaderText="PayMode" />
-                <asp:BoundField DataField="DealerName" HeaderText="Dealer Name" >
-                <ItemStyle HorizontalAlign="Left" />
+                <asp:BoundField DataField="TCNo" HeaderText="TC No" >
+                <ItemStyle Wrap="False" width="140px"/>
                 </asp:BoundField>
-                <asp:BoundField DataField="CustName" HeaderText="Retailer Name" />
-                <asp:BoundField DataField="RetailerAddress" HeaderText="Delivery Location" ItemStyle-Wrap="True" />
-                <asp:BoundField DataField="Mobile" HeaderText="Retailer Phone" />
-                <asp:BoundField DataField="ProductName" HeaderText="Material Type" />
+                <asp:BoundField DataField="TCDate"  
+                    HeaderText="Date Time" >
+                <ItemStyle Wrap="True" Width="90px"/>
+                </asp:BoundField>
+              
+                
+                 <asp:BoundField DataField="paymentMode" HeaderText="Delivery Mode">
+                  <ItemStyle Wrap="True" Width="40px"/>
+                </asp:BoundField>
+                <asp:BoundField DataField="DealerName" HeaderText="Dealer Name" ItemStyle-Wrap="True">
+                <ItemStyle HorizontalAlign="Left" Width="100px" />
+                </asp:BoundField>
+                <asp:BoundField DataField="CustName" HeaderText="Retailer Name" 
+                    ItemStyle-Wrap="True">
+                <ItemStyle Wrap="True" Width="100px" />
+                </asp:BoundField>
+                <asp:BoundField DataField="RetailerAddress" HeaderText="Delivery Location" 
+                    ItemStyle-Wrap="True" >
+                <ItemStyle Wrap="True" Width="200px" />
+                </asp:BoundField>
+               <%-- <asp:BoundField DataField="Mobile" HeaderText="Retailer Phone" />--%>
+                <asp:BoundField DataField="ProductName" HeaderText="Material Type" >
+               
+                <ItemStyle Width="120px" />
+               
+                </asp:BoundField>
                 <asp:BoundField DataField="InvNo" HeaderText="DO NO" />
                 <asp:BoundField DataField="OrderQty" HeaderText="Qty" DataFormatString="{0:0}"  />
             </Columns>

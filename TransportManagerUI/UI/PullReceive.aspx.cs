@@ -314,7 +314,7 @@ namespace TransportManagerUI.UI
             Session["paramData"] = vehicleRegId;
             Session["reportOn"] = reporton;
 
-            Response.Redirect("~/UI/reportViewer.aspx");
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/reportViewer.aspx" + "','_blank')", true);
         }
 
         protected void btnVehicleSearch_Click(object sender, EventArgs e)

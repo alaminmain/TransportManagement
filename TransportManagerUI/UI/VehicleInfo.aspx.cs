@@ -121,14 +121,22 @@ namespace TransportManagerUI.UI
         {
             try
             {
-                DataTable dt;
+                DataTable dt = null;
+                DataTable dt2;
 
 
                 using (VehicleInfoGateway gatwayObj = new VehicleInfoGateway())
                 {
 
+                    dt2 = gatwayObj.GetAllVehicle(1);
+                    DataRow[] foundRows;
 
-                    dt = gatwayObj.GetAllVehicle(1);
+                    // Use the Select method to find all rows matching the filter.
+                    foundRows = dt2.Select("[IsHired]='0'");
+                    if (foundRows.Length > 0)
+                        dt = foundRows.CopyToDataTable();
+
+                    //dt = gatwayObj.GetAllVehicle(1);
                     if (String.IsNullOrEmpty(searchKey))
                     {
 
@@ -232,6 +240,7 @@ namespace TransportManagerUI.UI
             try
             {
                 int comCode = 1;
+                string VehicleType = ddlVehicleType.SelectedValue.ToString();
                 string VehicleID_1 = lblVehicleId.Text;
                 string VehicleNo_2 = txtVehicleNo.Text;
                 string ChesisNo_3 = txtChesisNo.Text;
@@ -260,7 +269,7 @@ namespace TransportManagerUI.UI
                 string Remarks_18 = txtRemarks.Text;
                 using (VehicleInfoGateway gatwayObj = new VehicleInfoGateway())
                 {
-                    VehicleID_1 = gatwayObj.InsertUpdateVehicle(comCode,VehicleID_1, VehicleNo_2, ChesisNo_3, ModelNo_4, EngineNo_5, VehicleDesc_6,
+                    VehicleID_1 = gatwayObj.InsertUpdateVehicle(comCode,VehicleType,VehicleID_1, VehicleNo_2, ChesisNo_3, ModelNo_4, EngineNo_5, VehicleDesc_6,
                         Mobile_7, Capacity_8, KmPerLiter_9, FuelCode_10, StoreCode_11, IsHired_12, VehicleStatus_13, userId,capacityUnit,EngineVolume_16,PurchaseDate_17,Remarks_18);
                     lblVehicleId.Text = VehicleID_1;
 
@@ -292,6 +301,7 @@ namespace TransportManagerUI.UI
                 //Capacity, KmPerLiter, FuelCode, IsHired, VehicleStatus FROM            VehicleInfo where VehicleID=@VehicleId and comCode=@ComCode
                 if (dt != null)
                 {
+                    ddlVehicleType.Text = dt.Rows[0]["VehicleType"].ToString();
                     lblVehicleId.Text = dt.Rows[0]["VehicleID"].ToString();
                     txtVehicleNo.Text = dt.Rows[0]["VehicleNo"].ToString();
                     txtChesisNo.Text = dt.Rows[0]["ChesisNo"].ToString();
@@ -321,9 +331,7 @@ namespace TransportManagerUI.UI
                     {
                       ddlCapacityUnit.SelectedItem.Text = dt.Rows[0]["CapacityUnit"].ToString();
                     }
-
-
-                   
+                                       
                     txtRemarks.Text= dt.Rows[0]["Remarks"].ToString();
                     ddlStatus.SelectedValue = dt.Rows[0]["VehicleStatus"].ToString();
                 }

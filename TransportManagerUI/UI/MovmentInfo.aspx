@@ -39,9 +39,7 @@
         <asp:Button ID="btnShowList" runat="server" Text="List" OnClick="btnShowList_Click" formnovalidate  />
     <asp:Button ID="btnSave" runat="server" Text="Save" OnClick="btnSave_Click" />
             <asp:Button ID="btnReport" runat="server" Text="Report" 
-                onclick="btnReport_Click"   />
-
-                <%--OnClientClick="window.open('http://localhost:3214/UI/reportViewer.aspx')"--%>
+                onclick="btnReport_Click"   />               
      <asp:Button ID="btnCancel" runat="server" Text="Cancel" formnovalidate OnClick="btnCancel_Click"  />
         <asp:HiddenField ID="hfShowList" runat="server" />
         <ajaxToolkit:ModalPopupExtender ID="hfShowList_ModalPopupExtender" runat="server" BehaviorID="hfShowList_ModalPopupExtender" DynamicServicePath="" TargetControlID="hfShowList" PopupControlID="Panel8" OkControlID="btnSearchOk" CancelControlID="btnSearchCancel" BackgroundCssClass="modalBackground">
@@ -56,7 +54,7 @@
                                 <asp:TextBox ID="txtSearch" runat="server" Width="158px" placeholder="Search" />
                             </td>
                             <td>
-                                <asp:Button ID="btnSearch" runat="server" Text="Search" 
+                                <asp:Button ID="btnSearch" runat="server" Text="Search" onclick="btnSearch_Click" 
                                      />
                             </td>
                             </tr>
@@ -111,8 +109,8 @@
             GroupingText="Movement Info" ForeColor="Black">
          <table>
              <tr>
-                 <td>
-       <table cellpadding="3px" cellspacing="1" align="left">
+                 <td valign="top">
+       <table cellpadding="3px" cellspacing="1" align="left" >
             <tr>
         <td align="right">
             Mov. No
@@ -189,7 +187,11 @@
              <td class="style1" align="left">
                  <asp:ImageButton ID="btnTcNoSearch" runat="server" 
                      ImageUrl="~/Images/1488717192_Search.png" onclick="btnTcNoSearch_Click" 
-                     CssClass="ImageButtonSytle"/>
+                     CssClass="ImageButtonSytle"/> &nbsp; &nbsp; &nbsp; &nbsp;
+                        <asp:ImageButton ID="btnRefresh" runat="server" 
+                                    ImageUrl="~/Images/1488717327_Synchronize.png" Height="22px" 
+                                    onclick="btnRefresh_Click" ToolTip="Reload TC" Width="22px" />
+                                    <br />
                  &nbsp;<asp:Label ID="lblTCInfo" runat="server" Font-Bold="True" ForeColor="#0066FF"></asp:Label>
                  <asp:HiddenField ID="hfTC" runat="server" />
                 
@@ -221,7 +223,8 @@
             <td align="right">Remarks
             </td>
             <td align="left" colspan="2">
-                <asp:TextBox ID="txtRemarks" runat="server" TextMode="MultiLine" Width="260px"></asp:TextBox>
+                <asp:TextBox ID="txtRemarks" runat="server" TextMode="MultiLine" Width="300px" 
+                    style="font-size: small; font-family: SutonnyMJ"></asp:TextBox>
             </td>
             
             </tr>
@@ -588,7 +591,7 @@
           </ContentTemplate>
 <Triggers>
  <asp:PostBackTrigger ControlID="btnSave" />
-           <asp:PostBackTrigger ControlID="btnReport" />
+        
             </Triggers>
             
            

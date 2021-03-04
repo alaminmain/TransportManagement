@@ -149,7 +149,8 @@
             </td>
             <td align="left" class="style1">
                 <asp:DropDownList ID="ddlTransportBy" runat="server" AutoPostBack="true" 
-                    Height="24px" Width="172px">
+                    Height="24px" Width="172px" 
+                    onselectedindexchanged="ddlTransportBy_SelectedIndexChanged">
                 <asp:ListItem Value="1" Text="Own"></asp:ListItem>
                 <asp:ListItem Value="2" Text="Hired"></asp:ListItem>
                 </asp:DropDownList>
@@ -189,6 +190,10 @@
                   </ajaxToolkit:ModalPopupExtender>
                         
         
+                  <asp:Button ID="btnAddHiredVehicle" runat="server" Text="Add Hired Vehicle" 
+                      onclick="btnAddHiredVehicle_Click" />
+                        
+        
             </td>
            
              
@@ -199,13 +204,19 @@
                 Driver
             </td>
              <td align="left" class="style1">
-
+                 <br />
              <asp:Label ID="lblDriverCode" runat="server" Font-Bold="True" 
                      CssClass="lblInformation1" required></asp:Label>*
              <asp:ImageButton ID="btnDriver" runat="server" ImageUrl="~/Images/1488717192_Search.png" 
                      CssClass="ImageButtonSytle" onclick="btnDriver_Click" />
                      <asp:Label ID="lblDriverName" runat="server" Font-Bold="True" 
                      CssClass="lblInformation2"></asp:Label>
+              
+                 <asp:Button ID="btnAddHDriver" runat="server"  Text="Add Hired Driver" OnClick="btnAddHDriver_Click" />
+              
+                 &nbsp;
+              
+                                  
               
             </td>
            
@@ -244,8 +255,9 @@
              <asp:DropDownList ID="ddlStatus" runat="server" AutoPostBack="True">
                 <asp:ListItem Value="0" Text="Open"></asp:ListItem>
                 <asp:ListItem Value="1" Text="On Trip"></asp:ListItem>
-               <asp:ListItem Value="2" Text="Cancel"></asp:ListItem>
-                 <asp:ListItem Value="3" Text="Billed"></asp:ListItem>
+                 <asp:ListItem Value="2" Text="Billed"></asp:ListItem>
+               <asp:ListItem Value="3" Text="Cancel"></asp:ListItem>
+                 
                  
                  </asp:DropDownList>
                                    
@@ -265,6 +277,7 @@
                      TargetControlID="hfDriverSearch" BackgroundCssClass="modalBackground" PopupControlID="plDriver" OkControlID="btnDriverOk" CancelControlID="btnDriverCancel">
                  </ajaxToolkit:ModalPopupExtender>
                     <asp:HiddenField ID="hfTC" runat="server" />
+                    
                     <asp:HiddenField ID="hfDealer1" runat="server" />
                    
                     <ajaxToolkit:ModalPopupExtender ID="hfDealer1_ModalPopupExtender" 
@@ -276,6 +289,26 @@
                      runat="server" BehaviorID="hfTC_ModalPopupExtender" DynamicServicePath="" 
                      TargetControlID="hfTC" BackgroundCssClass="modalBackground" PopupControlID="plTC" >
                  </ajaxToolkit:ModalPopupExtender>
+                    
+                 <asp:HiddenField ID="hfInsertHVehicle" runat="server" />
+                    
+
+                    <ajaxToolkit:ModalPopupExtender ID="hfInsertHVehicle_ModalPopupExtender" 
+                        runat="server" BehaviorID="hfInsertHVehicle_ModalPopupExtender" 
+                        DynamicServicePath="" PopupControlID="plHiredVehicle" 
+                        TargetControlID="hfInsertHVehicle" BackgroundCssClass="modalBackground">
+                    </ajaxToolkit:ModalPopupExtender>
+
+
+                    <asp:HiddenField ID="hfInsertDriver" runat="server" />
+                    
+
+                    <ajaxToolkit:ModalPopupExtender ID="hfInsertDriver_ModalPopupExtender" 
+                        runat="server" BehaviorID="hfInsertDriver_ModalPopupExtender" 
+                        DynamicServicePath="" PopupControlID="pnHDriver" 
+                        TargetControlID="hfInsertDriver" BackgroundCssClass="modalBackground">
+                    </ajaxToolkit:ModalPopupExtender>
+                    
 
                 </td>
                 
@@ -286,7 +319,7 @@
 
         </asp:Panel>
 
-        <asp:Panel ID="plVehicleSearch" runat="server" GroupingText="Select Vehicle" 
+    <asp:Panel ID="plVehicleSearch" runat="server" GroupingText="Select Vehicle" 
              BackColor="White" BorderWidth="2px">
         <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
@@ -312,6 +345,7 @@
                 <asp:CommandField ShowSelectButton="True" />
                 <asp:BoundField DataField="VehicleID" HeaderText="VehicleID" />
                 <asp:BoundField DataField="VehicleNo" HeaderText="VehicleNo" />
+                <asp:BoundField DataField="VehicleType" HeaderText="VehicleType" />
                 <asp:BoundField DataField="Capacity" HeaderText="Capacity" />
                 <asp:BoundField DataField="KmPerLiter" HeaderText="KmPerLiter" />
             </Columns>
@@ -344,7 +378,7 @@
         </asp:UpdatePanel>
             </asp:Panel>
 
-            <asp:Panel ID="plDriver" runat="server" GroupingText="Select Driver" 
+    <asp:Panel ID="plDriver" runat="server" GroupingText="Select Driver" 
              BackColor="White" BorderWidth="2px">
         <asp:UpdatePanel ID="UpdatePanel2" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
@@ -463,7 +497,7 @@
 
         
             </asp:Panel>
-            <asp:Panel ID="holycow" runat="server" GroupingText="Search Dealer" BackColor="White" BorderWidth="2px">
+    <asp:Panel ID="holycow" runat="server" GroupingText="Search Dealer" BackColor="White" BorderWidth="2px">
          <asp:UpdatePanel ID="UpdatePanel3" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
          <table style="width: 255px" >
@@ -530,6 +564,255 @@
             </Triggers>
         </asp:UpdatePanel>
     </asp:Panel>
+
+    <asp:Panel ID="plHiredVehicle" runat="server" ScrollBars="Horizontal" 
+        ForeColor="Black" BorderStyle="Outset" BorderWidth="1px"
+        GroupingText="Add Hired Vehicle" BackColor="White">
+         <asp:UpdatePanel ID="UpdatePanel4" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+        <div style="background-position: left; text-align: left;">
+             <asp:Button ID="btnHiredVehicle" runat="server" Text="Add" formnovalidate 
+                 onclick="btnHiredVehicle_Click"  />
+             <asp:Button ID="btnHiredVehicleCancel" runat="server" Text="Close" 
+                 formnovalidate onclick="btnHiredVehicleCancel_Click"/>
+             &nbsp; <asp:Label runat="server" ID="lblMessage"></asp:Label>
+        </div>
+       
+               <asp:Panel ID="Panel6" runat="server" GroupingText="" BackColor="#66CCFF">
+
+                   <table cellpadding="3px">
+                    <tr>
+        <td align="right">
+       Vehicle Type
+        </td>
+         <td colspan="3" align="left">
+             <asp:DropDownList ID="ddlVehicleType" runat="server" Width="200px">
+                 <asp:ListItem Text="Open Truck" Value="Open Truck"></asp:ListItem>
+                 <asp:ListItem Text="Covered Van" Value="Covered Van"></asp:ListItem>
+                 <asp:ListItem Text="Dump Truck" Value="Dump Truck"></asp:ListItem>
+                 <asp:ListItem Text="Vessel" Value="Vessel"></asp:ListItem>
+                  <asp:ListItem Text="Bulk Carrier" Value="Bulk Carrier"></asp:ListItem>
+                 <asp:ListItem Text="Trailer" Value="Trailer"></asp:ListItem>
+                 <asp:ListItem Text="Ready Mix" Value="Ready Mix"></asp:ListItem>
+             </asp:DropDownList>
+        </td>
+        </tr>
+                   <tr>
+        <td align="right">
+        Vehicle Id
+        </td>
+         <td colspan="3" align="left">
+             <asp:Label ID="lblVehicleId" runat="server" Font-Bold="True" CssClass="IdStyle"></asp:Label>
+        </td>
+        </tr>
+        <tr>
+        <td align="right">
+        Ghat
+        </td>
+         <td colspan="3" align="left">
+             <asp:DropDownList ID="ddlHGhat" runat="server" Width="200px">
+             </asp:DropDownList>
+        </td>
+        </tr>
+            <tr>
+        <td align="right">
+        Vehicle No
+        </td>
+         <td colspan="3" align="left">
+             <asp:TextBox ID="txtVehicleNo" runat="server" Width="200px"></asp:TextBox>
+        </td>
+        </tr>
+        <tr>
+            <td align="right">
+            Model No
+            </td>
+             <td align="left">
+                 <asp:TextBox ID="txtModelNo" runat="server" Width="200px" ></asp:TextBox>
+                 
+            </td>
+            </tr>
+          
+            
+           <tr>
+            
+            
+                <td align="right">Capacity
+            </td>
+            <td align="left">
+                <asp:TextBox ID="txtCapacity" runat="server" Width="200px"></asp:TextBox>
+            </td>
+            </tr>
+
+            <tr>
+                <td align="right">Capacity Unit
+            </td>
+            <td align="left">
+                <asp:DropDownList ID="ddlCapacityUnit" runat="server" Width="200px">
+                <asp:ListItem Value="0" Text="MT"></asp:ListItem>
+                <asp:ListItem Value="1" Text="BAG"></asp:ListItem>
+                </asp:DropDownList> 
+            </td>
+
+            </tr>
+            <tr>
+            
+                <td align="right">
+                    Mobile No
+                </td>
+                 <td align="left">
+                     <asp:TextBox ID="txtMobileNo" runat="server" Width="200px"></asp:TextBox>
+                     
+                </td>
+                </tr>
+            
+            
+            <tr>
+            
+                <td align="right">
+                    K.M Per Litre
+                </td>
+                 <td align="left">
+                     <asp:TextBox ID="txtKmPerLitre" runat="server" Width="200px">4.25</asp:TextBox>
+                     
+                     <ajaxToolkit:FilteredTextBoxExtender ID="txtKmPerLitre_FilteredTextBoxExtender" 
+                         runat="server" BehaviorID="txtKmPerLitre_FilteredTextBoxExtender" 
+                         TargetControlID="txtKmPerLitre" ValidChars=".0123456789" />
+                     
+                </td>
+                </tr>
+            
+            <tr>
+                <td align="right">Fuel Type
+            </td>
+            <td align="left">
+                <asp:DropDownList ID="ddlFuelType" runat="server" Width="200px">
+                </asp:DropDownList> 
+            </td>
+
+            </tr>
+            <%--<tr>
+            
+                <td align="right">
+                    &nbsp;Hired
+                </td>
+                 <td align="left">
+                     <asp:CheckBox ID="chkIsHired" runat="server" />
+                     
+                </td>
+                </tr>--%>
+             
+            <tr>
+                <td align="right">
+                    Status
+                </td>
+                 <td align="left">
+                     <asp:DropDownList ID="DropDownList2" runat="server" Width="200px">
+                     <asp:ListItem Value="0" Text="Pull"></asp:ListItem>
+                     <asp:ListItem Value="1" Text="On Trip"></asp:ListItem>
+                     <asp:ListItem Value="2" Text="Workshop"></asp:ListItem>
+                     <asp:ListItem Value="3" Text="Not In Service"></asp:ListItem>
+                     </asp:DropDownList>
+                     
+                </td>
+            </tr>
+
+           
+            
+        </table>
+               </asp:Panel>
+               </ContentTemplate>
+  
+        </asp:UpdatePanel>
+        </asp:Panel>
+
+    <asp:Panel ID="pnHDriver" runat="server" ScrollBars="Horizontal" ForeColor="Black" BorderStyle="Outset" BorderWidth="3px" BorderColor="Silver" GroupingText="Hired Driver" BackColor="#FFFFCC">
+        <asp:UpdatePanel ID="upAddDriver" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+        <div style="background-position: left; text-align: left;">
+             <asp:Button ID="btnAddDriver" runat="server" Text="Add" formnovalidate OnClick="btnAddDriver_Click" 
+                  />
+             <asp:Button ID="btnCancelAddDriver" runat="server" Text="Close" 
+                 formnovalidate OnClick="btnCancelAddDriver_Click" />
+             &nbsp; 
+             <asp:Label ID="lblMessageDriver" runat="server"></asp:Label>
+        </div>
+                    <asp:Panel ID="Panel9" runat="server">
+
+                        <table cellpadding="3px">
+                            <tr>
+                                <td align="right">Hired Driver Code</td>
+                                <td colspan="2" align="left">
+                                    <asp:Label ID="lblEmpCode" runat="server" Font-Bold="True" CssClass="IdStyle"></asp:Label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="right">Name
+                                </td>
+                                <td align="left">
+                                    <asp:TextBox ID="txtEmployeeName" runat="server" Width="306px" ></asp:TextBox>
+
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td align="right">Father Name
+                                </td>
+                                <td align="left">
+                                    <asp:TextBox ID="txtFatherName" runat="server" Width="306px"></asp:TextBox>
+                                </td>
+                            </tr>
+
+                            
+
+                            <tr>
+                                <td align="right">Mobile Phone
+                                </td>
+                                <td align="left">
+                                    <asp:TextBox ID="txtMobilePhone" runat="server"></asp:TextBox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="right">NID
+                                </td>
+                                <td align="left">
+                                    <asp:TextBox ID="txtNID" runat="server" Width="200px"></asp:TextBox>
+                                </td>
+                              
+                            </tr>
+                            <tr>
+                                <td align="right">Driving Licence
+                                </td>
+                                <td align="left">
+                                    <asp:TextBox ID="txtDrivingLisense" runat="server" Width="200px"></asp:TextBox>
+                                </td>
+                                
+                            </tr>
+                            
+
+                              
+                            <tr>
+
+                                <td align="right">Status
+                                </td>
+                                <td align="left">
+                                    <asp:DropDownList ID="ddlDriverStatus" runat="server" Width="120px">
+                                        <asp:ListItem Value="0" Text="Active" Selected="True"></asp:ListItem>
+                                        <asp:ListItem Value="1" Text="On Trip"></asp:ListItem>
+                                        <asp:ListItem Value="2" Text="InActive"></asp:ListItem>
+                                    </asp:DropDownList>
+
+                                </td>
+                            </tr>
+
+                        </table>
+                    </asp:Panel>
+
+
+            </ContentTemplate>
+  
+        </asp:UpdatePanel>
+                </asp:Panel>
+
     <asp:Panel ID="Panel4" runat="server" CssClass="entry-panel">
             <%--<asp:UpdatePanel ID="upProductList" runat="server" UpdateMode="Conditional">
                 <ContentTemplate>--%>
@@ -541,10 +824,11 @@
 
                 &nbsp;<asp:GridView ID="gvListofTCProduct" runat="server" CellPadding="4" 
                     ForeColor="#333333" GridLines="Horizontal" ShowFooter="True" 
-                    AutoGenerateColumns="False" >
+                    AutoGenerateColumns="False" onrowdeleting="gvListofTCProduct_RowDeleting" >
                  
                  <AlternatingRowStyle BackColor="White" />
                  <Columns>
+                     <asp:CommandField ShowDeleteButton="True" />
                      <asp:BoundField DataField="TCNo" HeaderText="TC No" />
                      <asp:BoundField DataField="ProductCode" HeaderText="ProductCode"  />
                      <asp:BoundField DataField="ProductName" HeaderText="ProductName" ItemStyle-Width="200px"

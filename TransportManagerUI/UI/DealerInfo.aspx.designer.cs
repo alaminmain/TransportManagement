@@ -265,6 +265,15 @@ namespace TransportManagerUI.UI {
         protected global::System.Web.UI.WebControls.TextBox txtLocDistance;
         
         /// <summary>
+        /// ddlLocation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlLocation;
+        
+        /// <summary>
         /// txtContactPerson control.
         /// </summary>
         /// <remarks>
@@ -290,15 +299,6 @@ namespace TransportManagerUI.UI {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtMobile;
-        
-        /// <summary>
-        /// txtLocatione control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLocatione;
         
         /// <summary>
         /// ddlStatus control.

@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/UI/Site.Master" AutoEventWireup="true" CodeBehind="PendingDOList.aspx.cs" Inherits="TransportManagerUI.UI.PendingDOList" %>
 <%@ Register assembly="AjaxControlToolkit" namespace="AjaxControlToolkit" tagprefix="ajaxToolkit" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="cphHeadContent" runat="server">
-    <meta http-equiv="refresh" content="30">
+   
     <script type="text/javascript">
    
      $(document).ready(function () {
@@ -98,26 +98,37 @@ width:306px;
         <asp:GridView ID="gvlistofBasicData" runat="server" RowStyle-CssClass="GvGrid"
                      EmptyDataText="No Data To Show" GridLines="Horizontal" CellPadding="4" 
                      ForeColor="#333333" AutoGenerateColumns="False" 
-                     onpageindexchanging="gvlistofBasicData_PageIndexChanging" Width="100%" 
-                     AllowPaging="False" Font-Size="Small" 
-                     onrowdatabound="gvlistofBasicData_RowDataBound"  ShowFooter="True">
+                     onpageindexchanging="gvlistofBasicData_PageIndexChanging" 
+            Width="100%" Font-Size="Small" 
+                     onrowdatabound="gvlistofBasicData_RowDataBound"  
+            ShowFooter="True">
             <AlternatingRowStyle BackColor="White" />
             <Columns>
                
-                <asp:BoundField DataField="InvNo" HeaderText="DO No" />
-                 <asp:BoundField DataField="DONo" HeaderText="SAP DO NO" />
-                <asp:BoundField DataField="InvDate" DataFormatString="{0:dd/MMM/yyyy}" 
-                    HeaderText="Date" />
+                <asp:BoundField DataField="InvNo" HeaderText="DO No" >
+                 <ItemStyle Wrap="False" />
+                </asp:BoundField>
+                 <asp:BoundField DataField="DONo" HeaderText="SAP DO NO" >
+                <ItemStyle Width="60px" />
+                </asp:BoundField>
+                <asp:BoundField DataField="InvDate" 
+                    HeaderText="Date" >
+                <ItemStyle Wrap="False" />
+                </asp:BoundField>
                 <asp:BoundField DataField="StoreName" HeaderText="Delivery from" />
-                <asp:BoundField DataField="paymentMode" HeaderText="paymentMode" />
+                <asp:BoundField DataField="paymentMode" HeaderText="Delivery Mode" />
                 <asp:BoundField DataField="CustName" HeaderText="Dealer Name" >
                 <ItemStyle HorizontalAlign="Left" />
                 </asp:BoundField>
-                <asp:BoundField DataField="Address" HeaderText="Address" />
-                <asp:BoundField DataField="ProductName" HeaderText="Material Name" />
+                <asp:BoundField DataField="Address" HeaderText="Delivery Location" >
+                <ItemStyle Width="100px" />
+                </asp:BoundField>
+                <asp:BoundField DataField="ProductName" HeaderText="Material Name" >
+                <ItemStyle Width="100px" />
+                </asp:BoundField>
                 <asp:BoundField DataField="OrderQty" HeaderText="Order Qty" DataFormatString="{0:0}" />
                 <asp:BoundField DataField="SOQty" HeaderText="SO Qty" DataFormatString="{0:0}" />
-                <asp:BoundField DataField="PendingQty" HeaderText="PendingQty" DataFormatString="{0:0}" />
+                <asp:BoundField DataField="PendingQty" HeaderText="Pending Qty" DataFormatString="{0:0}" />
                 <asp:BoundField DataField="UnitPrice" HeaderText="DO Price" DataFormatString="{0:0.00}" />
             </Columns>
             <EditRowStyle BackColor="#2461BF" />

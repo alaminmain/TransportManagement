@@ -44,8 +44,8 @@ namespace TransportManagerUI.UI
                     else
                     {
                         var filtered = dt.AsEnumerable()
-  .Where(r => r.Field<String>("InvNo").ToUpper().Contains(searchKey.ToUpper()) || r.Field<String>("DONo").ToUpper().Contains(searchKey.ToUpper()) //|| r.Field<String>("PendingQty").Contains(searchKey)
-           || r.Field<String>("CustName").ToUpper().Contains(searchKey.ToUpper()));
+  .Where(r => r.Field<String>("InvNo").ToUpper().Contains(searchKey.ToUpper()) || r.Field<String>("ProductName").ToUpper().Contains(searchKey.ToUpper())
+           || r.Field<String>("InvDate").ToUpper().Contains(searchKey.ToUpper()) || r.Field<String>("CustName").ToUpper().Contains(searchKey.ToUpper()));
                         dt = filtered.CopyToDataTable();
 
                     }
@@ -58,6 +58,23 @@ namespace TransportManagerUI.UI
                 Logger.LogError(ex.ToString(), new object[0]);
                 return null;
             }
+        }
+
+        private void GetTotal(DataTable dt)
+        {
+            decimal Qty = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"]));
+            decimal SOQty = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["SOQty"]));
+            decimal PendingQty = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["PendingQty"]));
+           
+            decimal RowCount = dt.Rows.Count;
+            
+            gvlistofBasicData.FooterRow.Cells[1].Text = "Total";
+            gvlistofBasicData.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
+            gvlistofBasicData.FooterRow.Cells[3].Text = RowCount.ToString("0");
+            gvlistofBasicData.FooterRow.Cells[9].Text = Qty.ToString("0");
+            gvlistofBasicData.FooterRow.Cells[10].Text = SOQty.ToString("0");
+            gvlistofBasicData.FooterRow.Cells[11].Text = PendingQty.ToString("0");
+           
         }
 
         private void isAuthorizeToPage()
@@ -94,9 +111,17 @@ namespace TransportManagerUI.UI
                 DataTable dt = new DataTable();
                 dt = LoadAllDO(txtSearch.Text);
 
-
-                gvlistofBasicData.DataSource = dt;
-                gvlistofBasicData.DataBind();
+                if (dt!=null )
+                {
+                    gvlistofBasicData.DataSource = dt;
+                    gvlistofBasicData.DataBind();
+                    GetTotal(dt);
+                }
+                else
+                {
+                    gvlistofBasicData.DataSource = null;
+                    gvlistofBasicData.DataBind();
+                }
                 upListofbasicData.Update();
                 ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 40 ,true); </script>", false);
 
@@ -112,6 +137,7 @@ namespace TransportManagerUI.UI
             gvlistofBasicData.PageIndex = e.NewPageIndex;
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
+            GetTotal(dt);
             upListofbasicData.Update();
            
         }
@@ -121,10 +147,21 @@ namespace TransportManagerUI.UI
             DataTable dt = new DataTable();
             dt = LoadAllDO(txtSearch.Text);
 
-           
-            gvlistofBasicData.DataSource = dt;
-            gvlistofBasicData.DataBind();
+
+            if (dt != null)
+            {
+                gvlistofBasicData.DataSource = dt;
+                gvlistofBasicData.DataBind();
+                GetTotal(dt);
+            }
+            else
+            {
+                gvlistofBasicData.DataSource = null;
+                gvlistofBasicData.DataBind();
+            }
             upListofbasicData.Update();
+
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 40 ,true); </script>", false);
         }
 
         protected void btnRefresh_Click(object sender, EventArgs e)
@@ -132,10 +169,21 @@ namespace TransportManagerUI.UI
             DataTable dt = new DataTable();
             dt = LoadAllDO(txtSearch.Text);
 
-            
-            gvlistofBasicData.DataSource = dt;
-            gvlistofBasicData.DataBind();
+
+            if (dt != null)
+            {
+                gvlistofBasicData.DataSource = dt;
+                gvlistofBasicData.DataBind();
+                GetTotal(dt);
+            }
+            else
+            {
+                gvlistofBasicData.DataSource = null;
+                gvlistofBasicData.DataBind();
+            }
             upListofbasicData.Update();
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 40 ,true); </script>", false);
+
         }
 
         protected void btnNewDO_Click(object sender, EventArgs e)
@@ -146,33 +194,26 @@ namespace TransportManagerUI.UI
         protected void btnReport_Click(object sender, EventArgs e)
         {
             TransportManagerLibrary.DAL.CommonGateway cm = new CommonGateway();
-            ReportDocument cryRpt;
-            ReportDocument nreport;
+            //ReportDocument //cryRpt;
+            
             string strReportName;
             string strPath;
 
-            string fromValue = Convert.ToDateTime(DateTime.Now.Date).ToString("yyyy,MM,dd,00,00,00");
-            string ToValue = Convert.ToDateTime(DateTime.Now.Date).ToString("yyyy,MM,dd,00,00,00"); ;
-            //cryRpt.Close();
-            //string SelectionFormula;
-            cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-            strReportName = "~//report//DOStateGhat.rpt";
-             strPath = Server.MapPath(strReportName);
-            cryRpt.Load(strPath);
+         
+            strReportName = "~//report//DOStatement.rpt";
+            strPath = Server.MapPath(strReportName);
+           
 
+            string SelectionFormula = "{SalesProducts.OrderQty}-{SalesProducts.OrderBalQty}>0";
+          
+         
 
-            //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-            //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
+            Session["strPath"] = strPath;
+            Session["SelectionFormula"] = SelectionFormula;
 
-            cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-            //cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-            nreport = cm.ConnectionInfo(cryRpt);
-            Session["nreport"] = nreport;
-
-            Response.Redirect("~/UI/ReportForStatement.aspx");
+            Session["AllStatement"] = "1";
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 40 ,true); </script>", false);
         }
 
         protected void btnCancel_Click(object sender, EventArgs e)

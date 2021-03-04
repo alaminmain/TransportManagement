@@ -153,29 +153,26 @@ namespace TransportManagerUI.UI
                 else
                 {
                     int selectedGhat = Convert.ToInt32(ddlGhat.SelectedValue);
-                    storewise = "AND StoreCode='" + selectedGhat + "'";
+                    storewise = "AND GhatCode='" + selectedGhat + "'";
                 }
-                
-                
+                           
                     
                 using (VehicleInfoGateway gatwayObj = new VehicleInfoGateway())
                 {
-                    dt2 = gatwayObj.GetAllVehicle(1);
+                    dt2 = gatwayObj.GetVehicleCurrentStatus(1, getSelectedIndex);
                     DataRow[] foundRows=null;
 
                     // Use the Select method to find all rows matching the filter.
                     if(String.IsNullOrEmpty(storewise))
                     {
-                        foundRows = dt2.Select("[VehicleStatus]='" + getSelectedIndex +"'");
+                        foundRows = dt2.Select();
                     }
                     else
-                        foundRows = dt2.Select("[VehicleStatus]='" + getSelectedIndex + "'"+storewise+"");
+                        foundRows = dt2.Select("[GhatCode]='" + ddlGhat.SelectedValue + "'");
 
                     if (foundRows.Length > 0)
                         dt = foundRows.CopyToDataTable();
 
-
-                    
                     return dt;
 
                 }
@@ -269,8 +266,7 @@ namespace TransportManagerUI.UI
             DataTable dt = null;
             if (String.IsNullOrEmpty(ddlGhat.SelectedValue))
             {
-                dt=GetCurrentVehicleStatus();
-               
+                dt=GetCurrentVehicleStatus();              
 
             }
             else
@@ -294,7 +290,7 @@ namespace TransportManagerUI.UI
                 DataTable dt=GetVehicle();
                 gvVehicleList.DataSource = dt;
                 gvVehicleList.DataBind();
-                ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvVehicleList.ClientID + "', 410,600, 30 ,true); </script>", false);
+                ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvVehicleList.ClientID + "', 500,750, 30 ,true); </script>", false);
            
             //decimal totalVehicle = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["NoofVehicles"]));
 
@@ -318,59 +314,60 @@ namespace TransportManagerUI.UI
 
         protected void btnReport_Click(object sender, EventArgs e)
         {
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvVehicleList.ClientID + "', 500,750, 30 ,true); </script>", false);
             string SelectionFormula;
-            string statuswise=String.Empty;
-            if(gvVehicleStatus.SelectedValue!=null)
+            int statuswise=0;
+            try
             {
-                GridViewRow row = gvVehicleStatus.SelectedRow;
-                statuswise = row.Cells[1].Text;
-                if(String.IsNullOrEmpty(ddlGhat.SelectedValue))
+                if (gvVehicleStatus.SelectedValue != null)
                 {
-                    SelectionFormula = "{@VehicleSt}='"+statuswise+"'";
+                    GridViewRow row = gvVehicleStatus.SelectedRow;
+                    statuswise = Convert.ToInt32(gvVehicleStatus.DataKeys[gvVehicleStatus.SelectedIndex].Value);
+                    if (String.IsNullOrEmpty(ddlGhat.SelectedValue))
+                    {
+                        SelectionFormula = "{VehicleInfo.VehicleStatus}=" + statuswise + "";
+                    }
+                    else
+                        SelectionFormula = "{VehicleInfo.VehicleStatus}=" + statuswise + " AND {StoreLocation.StoreCode}='" + ddlGhat.SelectedValue + "'";
                 }
                 else
-                    SelectionFormula = "{@VehicleSt}='"+statuswise+"' AND {StoreLocation.StoreCode}='"+ddlGhat.SelectedValue+"'";
-            }
-            else
-            {
-                 if(String.IsNullOrEmpty(ddlGhat.SelectedValue))
                 {
-                    SelectionFormula = "";
+                    if (String.IsNullOrEmpty(ddlGhat.SelectedValue))
+                    {
+                        SelectionFormula = "";
+                    }
+                    else
+                        SelectionFormula = "{StoreLocation.StoreCode}='" + ddlGhat.SelectedValue + "'";
                 }
-                else
-                    SelectionFormula = "AND {StoreLocation.StoreCode}='"+ddlGhat.SelectedValue+"'";
+                string strReportName;
+                string strPath;
+                CommonGateway cm = new CommonGateway();
+                ////cryRpt.Close();
+
+                //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                strReportName = "~//report//VehicleStatus.rpt";
+                strPath = Server.MapPath(strReportName);
+                //cryRpt.Load(strPath);
+                if (String.IsNullOrEmpty(SelectionFormula)==false)
+                {
+                    Session["strPath"] = strPath;
+                    Session["SelectionFormula"] = SelectionFormula;
+                    Session["AllStatement"] = "1";
+                    //Session["fromDate"] = fromValue;
+                    //Session["ToDate"] = ToValue;
+                    ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
+                }
             }
-            
-            ReportDocument cryRpt;
-            ReportDocument nreport;
-            string strReportName;
-            string strPath;
-           CommonGateway cm=new CommonGateway();
-            //cryRpt.Close();
-            
-            cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-            strReportName = "~//report//VehicleStatus.rpt";
-            strPath = Server.MapPath(strReportName);
-            cryRpt.Load(strPath);
-            if(String.IsNullOrEmpty(SelectionFormula))
-                cryRpt.RecordSelectionFormula=SelectionFormula;
-
-
-            //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-            //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
-
-            //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-            
-
-            nreport = cm.ConnectionInfo(cryRpt);
-            Session["nreport"] = nreport;
-
-            Response.Redirect("~/UI/ReportForStatement.aspx");
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            //ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
         }
 
         protected void btnRefresh_Click(object sender, ImageClickEventArgs e)
         {
+
             gvVehicleStatus.SelectedIndex = -1;
             getGhat();
             DataTable dt = GetCurrentVehicleStatus();
@@ -383,6 +380,7 @@ namespace TransportManagerUI.UI
             gvVehicleStatus.FooterRow.Cells[0].HorizontalAlign = HorizontalAlign.Right;
             gvVehicleStatus.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Center;
             gvVehicleStatus.FooterRow.Cells[1].Text = totalVehicle.ToString("0");
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvVehicleList.ClientID + "', 500,750, 30 ,true); </script>", false);
         }
 
         protected void gvVehicleList_PageIndexChanging(object sender, GridViewPageEventArgs e)
@@ -408,6 +406,11 @@ namespace TransportManagerUI.UI
         protected void btnPullReceived_Click(object sender, EventArgs e)
         {
             Response.Redirect("~/UI/PullReceive.aspx");
+        }
+
+        protected void btnAdvanceLoad_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("~/UI/TripAdvInfo.aspx");
         }
     }
 }

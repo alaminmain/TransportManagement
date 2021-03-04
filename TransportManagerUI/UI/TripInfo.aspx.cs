@@ -34,7 +34,8 @@ namespace TransportManagerUI.UI
                     getGhat();
                     LoadVehicleAgent();
                     txtTripDate_CalendarExtender.SelectedDate = DateTime.Now;
-
+                    btnAddHiredVehicle.Enabled = false;
+                    btnAddHiredVehicle.Visible = false;
                     //ClearSession();
                     //FillChalanTypDDL();
                     //LoadAllDO("");
@@ -106,8 +107,146 @@ namespace TransportManagerUI.UI
 
             }
         }
+
+        DataTable GetProductDataTable(GridView dtg)
+        {
+            try
+            {
+                DataTable productDt = new DataTable();
+
+                // add the columns to the datatable            
+                productDt.Columns.Add("TCNo");
+
+                productDt.Columns.Add("ProductCode");
+                productDt.Columns.Add("ProductName");
+                productDt.Columns.Add("OrderQty");
+                productDt.Columns.Add("Rent");
+                productDt.Columns.Add("TotalAmount");
+
+                //  add each of the data rows to the table
+                foreach (GridViewRow row in dtg.Rows)
+                {
+
+                    DataRow dr;
+                    dr = productDt.NewRow();
+                  
+                   
+                    dr["TCNo"] = row.Cells[1].Text;
+                    dr["ProductCode"] = row.Cells[2].Text;
+                    dr["ProductName"] = row.Cells[3].Text;
+                    dr["OrderQty"] = (row.FindControl("Label1") as Label).Text;
+                    dr["Rent"] = row.Cells[5].Text;//(row.FindControl("Rent") as TextBox).Text; //row.Cells[4].Text; ;
+                    dr["TotalAmount"] = (row.FindControl("Label2") as Label).Text; //row.Cells[5].Text;
+                                                                               //dr["TotalPrice"] = String.Empty;
+
+                    //}
+                    productDt.Rows.Add(dr);
+                    //}
+                    //else
+                    //{
+                    //    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Order Qty is Greater Then DO Qty');", true);
+                    //}
+                }
+                return productDt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        private DataTable ProductList()
+        {
+            
+            try
+            {
+                DataTable PreviousDt = GetProductDataTable(gvListofTCProduct);
+                
+                
+                    var ids = PreviousDt.AsEnumerable().Select(r => r.Field<string>("TCNo")).ToList();
+               
+
+                DataTable dt = new DataTable();
+
+
+                List<string> DOIdList = new List<string>();
+                string tcId = String.Empty;
+
+
+                DataTable productDt = new DataTable();
+                productDt.Columns.Add("TCNo");
+                productDt.Columns.Add("ProductCode");
+                productDt.Columns.Add("ProductName");
+                productDt.Columns.Add("OrderQty");
+                productDt.Columns.Add("Rent");
+                productDt.Columns.Add("TotalAmount");
+
+                //Add Previous Table
+                foreach (DataRow r in PreviousDt.Rows)
+                {
+                    DataRow dr = productDt.NewRow();
+                    dr["TCNo"] = r["tcNo"].ToString();
+
+                    dr["ProductCode"] = r["ProductCode"].ToString();
+                    dr["ProductName"] = Convert.ToString(r["ProductName"]);
+                    dr["OrderQty"] = r["OrderQty"].ToString();
+                    dr["Rent"] = String.Format("{0:0.00}", r["Rent"]);
+                    dr["TotalAmount"] = String.Format("{0:0.00}", r["TotalAmount"]);
+                    productDt.Rows.Add(dr);
+                }
+
+                //Add Selected Value
+                foreach (GridViewRow item in gvTC.Rows)
+                {
+                    if ((item.Cells[0].FindControl("cbSelectTc") as CheckBox).Checked)
+                    {
+
+                        tcId = item.Cells[1].Text;
+                        
+                        var match = ids.FirstOrDefault(stringToCheck => stringToCheck.Contains(tcId));
+
+                        if (match == null)
+                        {
+                            DataTable tcDetail = new DataTable();
+                            using (TransContactGateway gatwayObj = new TransContactGateway())
+                            {
+                                tcDetail = gatwayObj.GetAllTransContactDetail(1, tcId);
+
+                                foreach (DataRow r in tcDetail.Rows)
+                                {
+                                    DataRow dr = productDt.NewRow();
+                                    dr["TCNo"] = r["TCNo"].ToString();
+
+                                    dr["ProductCode"] = r["ProductCode"].ToString();
+                                    dr["ProductName"] = Convert.ToString(r["ProductName"]);
+                                    dr["OrderQty"] = r["OrderQty"].ToString();
+                                    dr["Rent"] = String.Format("{0:0.00}", r["Rent"]); 
+                                    dr["TotalAmount"] = String.Format("{0:0.00}", r["TotalAmount"]);
+                                    productDt.Rows.Add(dr);
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                
+               
+                
+                //Session["myDatatable"] = productDt;
+                return productDt;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         private void tcDataTable()
         {
+
             DataTable dt = new DataTable();
             List<string> tcIdList = new List<string>();
             string tcno = String.Empty;
@@ -163,12 +302,25 @@ namespace TransportManagerUI.UI
         {
             try
             {
-                DataTable dt;
+                DataTable dt = null;
+               // DataTable dt2;
 
 
                 using (PersonalGateway gatwayObj = new PersonalGateway())
                 {
 
+                    //int HiredStatus = 0;
+                    //if (ddlAgent.SelectedValue != "00001")
+                    //    vehicleHiredStatus = 1;
+                    //else
+                    //    vehicleHiredStatus = 0;
+                    //dt2 = gatwayObj.GetAllVehicle(1);
+                    //DataRow[] foundRows;
+
+                    //// Use the Select method to find all rows matching the filter.
+                    //foundRows = dt2.Select("[VehicleStatus] IN ('0','4') AND [IsHired]='" + vehicleHiredStatus + "' AND StoreCode=" + ddlGhatList.SelectedValue);
+                    //if (foundRows.Length > 0)
+                    //    dt = foundRows.CopyToDataTable();
 
                     dt = gatwayObj.GetAllDriver();
                     if (String.IsNullOrEmpty(searchKey))
@@ -213,7 +365,7 @@ namespace TransportManagerUI.UI
                     DataRow[] foundRows;
 
                     // Use the Select method to find all rows matching the filter.
-                    foundRows = dt2.Select("[VehicleStatus]= '0' AND [IsHired]='"+vehicleHiredStatus+ "'");
+                    foundRows = dt2.Select("[VehicleStatus] IN ('0','4') AND [IsHired]='"+vehicleHiredStatus+ "' AND StoreCode="+ddlGhatList.SelectedValue);
                     if (foundRows.Length > 0)
                         dt = foundRows.CopyToDataTable();
                     if (String.IsNullOrEmpty(searchKey))
@@ -269,14 +421,20 @@ namespace TransportManagerUI.UI
         {
             try
             {
-                DataTable dt;
-
+                DataTable dt=null;
+                DataTable dt2;
 
                 using (TripInfoGateway gatwayObj = new TripInfoGateway())
                 {
 
+                    dt2 = gatwayObj.GetAllTripInfoForGridView(); ;
+                    DataRow[] foundRows;
 
-                    dt = gatwayObj.GetAllTripInfoForGridView();
+                    // Use the Select method to find all rows matching the filter.
+                    foundRows = dt2.Select("IsOtherTrip=0");
+                    if (foundRows.Length > 0)
+                        dt = foundRows.CopyToDataTable();
+                    //dt = gatwayObj.GetAllTripInfoForGridView();
                     if (String.IsNullOrEmpty(searchKey))
                     {
                         
@@ -323,6 +481,58 @@ namespace TransportManagerUI.UI
             }
         }
 
+        private void getHGhat()
+        {
+            try
+            {
+                DataTable dt;
+
+
+                using (StoreLocation gatwayObj = new StoreLocation())
+                {
+                    dt = gatwayObj.GetAllStoreLocation(1);
+                    ddlHGhat.DataSource = dt;
+                    ddlHGhat.DataValueField = "StoreCode";
+                    ddlHGhat.DataTextField = "StoreName";
+                    ddlHGhat.DataBind();
+                }
+            }
+            catch (Exception ex)
+            {
+                //Logger.LogError(ex.ToString(), new object[0]);
+
+            }
+        }
+
+        private void LoadFuelType()
+        {
+            try
+            {
+                DataTable dt;
+
+
+                using (FuelInfoGateway gatwayObj = new FuelInfoGateway())
+                {
+
+
+                    dt = gatwayObj.get_Fuel_Info();
+
+                    ddlFuelType.DataSource = dt;
+                    ddlFuelType.DataTextField = "FuelName";
+                    ddlFuelType.DataValueField = "FuelCode";
+                    DataBind();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.ToString(), new object[0]);
+
+            }
+        }
+
+        
+
         public void loadTripInfo(string tripNo)
         {
             try
@@ -341,7 +551,7 @@ namespace TransportManagerUI.UI
                 lblDealerCode.Text = dtTrip.Rows[0]["DealerId"].ToString();
                 lblDealerName.Text = dtTrip.Rows[0]["CustName"].ToString();
                 hfVehicleSearch.Value= dtTrip.Rows[0]["VehicleID"].ToString();
-                
+                hfTotalCapacity.Value = dtTrip.Rows[0]["Capacity"].ToString();
                 lblCapacity.Text = dtTrip.Rows[0]["VehicleID"].ToString()+" "+ dtTrip.Rows[0]["VehicleNo"].ToString();
                 lblDriverCode.Text = dtTrip.Rows[0]["EmpCode"].ToString();
                 lblDriverName.Text = dtTrip.Rows[0]["EmpName"].ToString();
@@ -359,17 +569,26 @@ namespace TransportManagerUI.UI
                 using (TripDetail td = new TripDetail())
                 {
                     dt = td.GetTripDetailByTrip(1, lblTripNo.Text);
-                    gvListofTCProduct.DataSource = dt;
-                    gvListofTCProduct.DataBind();
-                    Session["myDatatable"] = dt;
-                }
-                decimal totalqty = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"]));
-                decimal totalAmount = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["TotalAmount"]));
-                gvListofTCProduct.FooterRow.Cells[1].Text = "Total";
-                gvListofTCProduct.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
-                gvListofTCProduct.FooterRow.Cells[3].Text = totalqty.ToString("0");
-                gvListofTCProduct.FooterRow.Cells[5].Text = totalAmount.ToString("0.00");
+                    if (dt.Rows.Count > 0)
+                    {
+                        gvListofTCProduct.DataSource = dt;
+                        gvListofTCProduct.DataBind();
+                        //Session["myDatatable"] = dt;
 
+                        decimal totalqty = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"]));
+                        decimal totalAmount = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["TotalAmount"]));
+                        gvListofTCProduct.FooterRow.Cells[1].Text = "Total";
+                        gvListofTCProduct.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
+                        gvListofTCProduct.FooterRow.Cells[3].Text = totalqty.ToString("0");
+                        gvListofTCProduct.FooterRow.Cells[5].Text = totalAmount.ToString("0.00");
+                    }
+                    else
+                    {
+                        gvListofTCProduct.DataSource = dt;
+                        gvListofTCProduct.DataBind();
+                    }
+                }
+              
             }
             catch (Exception ex)
             {
@@ -479,14 +698,77 @@ namespace TransportManagerUI.UI
 
            
         }
+
+        private void clearHirdVehicleEntryForm()
+        {
+            foreach (Control control in plHiredVehicle.Controls)
+            {
+                if (control is TextBox)
+                {
+                    TextBox txt = (TextBox)control;
+                    txt.Text = "";
+                }
+                if (control is Label)
+                {
+                    Label txt = (Label)control;
+                    txt.Text = "";
+                }
+                if (control is DropDownList)
+                {
+                    DropDownList txt = (DropDownList)control;
+                    txt.ClearSelection();
+                }
+                if (control is GridView)
+                {
+                    GridView txt = (GridView)control;
+                    txt.DataSource = null;
+                    txt.DataBind();
+                }
+                
+
+            }
+
+
+        }
+        private void clearHirdDriverEntryForm()
+        {
+            foreach (Control control in pnHDriver.Controls)
+            {
+                if (control is TextBox)
+                {
+                    TextBox txt = (TextBox)control;
+                    txt.Text = "";
+                }
+                if (control is Label)
+                {
+                    Label txt = (Label)control;
+                    txt.Text = "";
+                }
+                if (control is DropDownList)
+                {
+                    DropDownList txt = (DropDownList)control;
+                    txt.ClearSelection();
+                }
+                if (control is GridView)
+                {
+                    GridView txt = (GridView)control;
+                    txt.DataSource = null;
+                    txt.DataBind();
+                }
+
+
+            }
+
+
+        }
         private bool isMandatoryFieldValidate()
         {
             if (String.IsNullOrEmpty(hfVehicleSearch.Value))
                 return false;
             else if (String.IsNullOrEmpty(lblDriverCode.Text))
                 return false;
-            else if (gvListofTCProduct.Rows.Count <= 0)
-                return false;
+            //else if (gvListofTCProduct.Rows.Count <= 0)
+            //    return false;
             //else if (ddlStatus.SelectedValue!="0")
             //    return false;
             else
@@ -536,7 +818,7 @@ namespace TransportManagerUI.UI
                     DataTable dt = new DataTable();
                     dt = LoadAllTrip(lblTripNo.Text);
 
-                    DataTable tripdetail = (DataTable)Session["myDatatable"];
+                    DataTable tripdetail = GetProductDataTable(gvListofTCProduct);
                     int CapacityBal_17 = (int)tripdetail.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"]));
                     using (TripInfoGateway gatwayObj = new TripInfoGateway())
                     {
@@ -672,7 +954,7 @@ namespace TransportManagerUI.UI
         {
             GridViewRow row = gvVehicleList.SelectedRow;
             lblCapacity.Text =" "+ row.Cells[1].Text + " " + row.Cells[2].Text + " " + row.Cells[3].Text;
-            hfTotalCapacity.Value = row.Cells[3].Text;
+            hfTotalCapacity.Value = row.Cells[4].Text;
             hfVehicleSearch.Value = row.Cells[1].Text;
         }
 
@@ -721,28 +1003,43 @@ namespace TransportManagerUI.UI
 
         protected void btnTCProduct_Click(object sender, EventArgs e)
         {
-            Session["myDatatable"] = null;
-            hfTC_ModalPopupExtender.Hide();
-            tcDataTable();
-            DataTable dt = (DataTable)Session["myDatatable"];
-            gvListofTCProduct.DataSource = dt;
-            gvListofTCProduct.DataBind();
+            //Session["myDatatable"] = null;
+            
+            // tcDataTable();
+            DataTable PreviousDt = GetProductDataTable(gvListofTCProduct);
+            DataTable dt = ProductList();
+            
             decimal totalqty = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"]));
             decimal totalAmount = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["TotalAmount"]));
-            
+
+            if (totalqty > Convert.ToDecimal(hfTotalCapacity.Value))
+            {
+                gvListofTCProduct.DataSource = PreviousDt;
+                gvListofTCProduct.DataBind();
+                totalqty = PreviousDt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"]));
+                totalAmount = PreviousDt.AsEnumerable().Sum(x => Convert.ToDecimal(x["TotalAmount"]));
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Vehicle Capacity Overloaded');", true);
+
+            }
+            else
+            {
+                gvListofTCProduct.DataSource = dt;
+                gvListofTCProduct.DataBind();
+
+            }
             gvListofTCProduct.FooterRow.Cells[1].Text = "Total";
             gvListofTCProduct.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
             gvListofTCProduct.FooterRow.Cells[3].Text = totalqty.ToString("0");
 
             
             gvListofTCProduct.FooterRow.Cells[5].Text = totalAmount.ToString("0.00");
-            if (totalqty > Convert.ToDecimal(hfTotalCapacity.Value))
-            {
-                Session["myDatatable"] = null;
-                gvListofTCProduct.DataSource = null;
-                gvListofTCProduct.DataBind();
-                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Vehicle Capacity Overloaded');", true);
-            }
+            
+                
+                //Session["myDatatable"] = null;
+                
+                
+            
+            hfTC_ModalPopupExtender.Hide();
         }
 
         protected void btnSearchTC_Click(object sender, EventArgs e)
@@ -753,6 +1050,25 @@ namespace TransportManagerUI.UI
                 dt = LoadTransportContact(txtSearchTC.Text);
                 gvTC.DataSource = dt;
                 gvTC.DataBind();
+
+                string tcId = String.Empty;
+                if (gvListofTCProduct.Rows.Count > 0)
+                {
+                    foreach (GridViewRow item in gvListofTCProduct.Rows)
+                    {
+                        tcId = item.Cells[1].Text;
+                        foreach (GridViewRow dolist in gvTC.Rows)
+                        {
+                            if (dolist.Cells[1].Text == tcId)
+                            {
+                                (dolist.Cells[0].FindControl("cbSelectTc") as CheckBox).Checked = true;
+                            }
+
+
+                        }
+
+                    }
+                }
 
                 hfTC_ModalPopupExtender.Show();
             }
@@ -804,7 +1120,7 @@ namespace TransportManagerUI.UI
             Session["paramData"] = tripNo;
             Session["reportOn"] = reporton;
             
-            Response.Redirect("~/UI/reportViewer.aspx");
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/reportViewer.aspx" + "','_blank')", true);
             }
         else
             ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Please Select Trip No');", true);
@@ -820,10 +1136,6 @@ namespace TransportManagerUI.UI
 
             hfDealer1_ModalPopupExtender.Show();
         }
-           
-
-       
-
        
         protected void gvDealerSearch_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -858,8 +1170,6 @@ namespace TransportManagerUI.UI
             hfDealer1_ModalPopupExtender.Show();
         }
 
-       
-
         protected void btnShowDealer_Click(object sender, ImageClickEventArgs e)
         {
             DataTable dt = new DataTable();
@@ -874,6 +1184,175 @@ namespace TransportManagerUI.UI
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             Response.Redirect("~/UI/Default.aspx");
+        }
+
+        protected void btnAddHiredVehicle_Click(object sender, EventArgs e)
+        {
+             LoadFuelType();
+            getHGhat();
+            hfInsertHVehicle_ModalPopupExtender.Show();
+            clearHirdVehicleEntryForm();
+        }
+
+        protected void btnHiredVehicle_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(txtVehicleNo.Text) == false)
+                {
+                    int comCode = 1;
+                    string VehicleType = ddlVehicleType.SelectedValue.ToString();
+                    string VehicleID_1 = lblVehicleId.Text;
+                    string VehicleNo_2 = txtVehicleNo.Text;
+                    string ChesisNo_3 = String.Empty;// txtChesisNo.Text;
+                    string ModelNo_4 = String.Empty;//txtModelNo.Text;
+                    string EngineNo_5 = String.Empty;//txtEngineNo.Text;
+                    string EngineVolume_16 = String.Empty;//txtEngineVolume.Text;
+                    string PurchaseDate_17 = String.Empty;//txtPurchaseDate.Text;
+                    string VehicleDesc_6 = String.Empty;
+                    string Mobile_7 = txtMobileNo.Text;
+                    string Capacity_8 = txtCapacity.Text;
+                    decimal KmPerLiter_9;
+                    if (string.IsNullOrEmpty(txtKmPerLitre.Text))
+                        KmPerLiter_9 = 0;
+                    else
+                        KmPerLiter_9 = Convert.ToDecimal(txtKmPerLitre.Text);
+
+                    int FuelCode_10 = Convert.ToInt32(ddlFuelType.SelectedValue);
+                    int StoreCode_11 = Convert.ToInt32(ddlGhatList.SelectedValue);
+                    int IsHired_12;
+
+                    IsHired_12 = 1;
+
+                    int VehicleStatus_13 = Convert.ToInt32(ddlStatus.SelectedValue);
+                    string userId = Session["UserName"].ToString();
+                    string capacityUnit = ddlCapacityUnit.SelectedItem.Text;
+                    string Remarks_18 = String.Empty;
+                    using (VehicleInfoGateway gatwayObj = new VehicleInfoGateway())
+                    {
+                        VehicleID_1 = gatwayObj.InsertUpdateVehicle(comCode, VehicleType, VehicleID_1, VehicleNo_2, ChesisNo_3, ModelNo_4, EngineNo_5, VehicleDesc_6,
+                           Mobile_7, Capacity_8, KmPerLiter_9, FuelCode_10, StoreCode_11, IsHired_12, VehicleStatus_13, userId, capacityUnit, EngineVolume_16, PurchaseDate_17, Remarks_18);
+                        lblVehicleId.Text = VehicleID_1;
+
+                    }
+                }
+                if (String.IsNullOrEmpty(lblVehicleId.Text) == false)
+                    lblMessage.Text = "Data Saved";
+                else
+                    lblMessage.Text = "Could'nt save!!!";
+                hfInsertHVehicle_ModalPopupExtender.Show();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        protected void btnHiredVehicleCancel_Click(object sender, EventArgs e)
+        {
+            clearHirdVehicleEntryForm();
+            hfInsertHVehicle_ModalPopupExtender.Hide();
+        }
+
+        protected void ddlTransportBy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ddlTransportBy.SelectedValue == "2")
+            {
+                btnAddHiredVehicle.Enabled = true;
+                btnAddHiredVehicle.Visible = true;
+            }
+            else
+            {
+                btnAddHiredVehicle.Enabled = false;
+                btnAddHiredVehicle.Visible = false;
+            }
+        }
+
+        protected void gvListofTCProduct_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            try
+            {
+                DataTable dt = GetProductDataTable(gvListofTCProduct);
+
+
+                dt.Rows[e.RowIndex].Delete();
+
+
+                //decimal total = Convert.ToDecimal(dt.Compute("Sum(TotalPrice)", ""));
+                //txtTotalAmount.Text = total.ToString();
+
+
+                gvListofTCProduct.DataSource = dt;
+                gvListofTCProduct.DataBind();
+                decimal totalqty = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"]));
+                decimal totalAmount = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["TotalAmount"]));
+
+                gvListofTCProduct.FooterRow.Cells[1].Text = "Total";
+                gvListofTCProduct.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
+                gvListofTCProduct.FooterRow.Cells[3].Text = totalqty.ToString("0");
+
+
+                gvListofTCProduct.FooterRow.Cells[5].Text = totalAmount.ToString("0.00");
+               
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        protected void btnAddDriver_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(txtEmployeeName.Text)==false||String.IsNullOrEmpty(txtMobilePhone.Text)==false)
+                {
+                    string EmpCode = lblEmpCode.Text;
+
+                    string Cardno = "3";
+                    string EmpName = txtEmployeeName.Text;
+                    int ComCode = 1;
+                    string FatherName = txtFatherName.Text;
+                    string MotherName = String.Empty;
+                    string BloodGroup = String.Empty;
+                    string Add1 = String.Empty;
+                    string Add2 = String.Empty;
+                    string Add3 = String.Empty;
+                    string Mobile = txtMobilePhone.Text;
+                    //int IsHired = 0;
+                    int PStatus = Convert.ToInt32(ddlStatus.SelectedValue);
+                    string DrivingLicen = txtDrivingLisense.Text;
+                    string userId = Session["UserName"].ToString();
+                    int storeCode = Convert.ToInt32(ddlGhatList.SelectedValue);
+                    string nid = txtNID.Text;
+                    string drivingCapacity = String.Empty;
+                    using (PersonalGateway gatwayObj = new PersonalGateway())
+                    {
+                        string empcode = gatwayObj.InsertUpdatePersonal(EmpCode, Cardno, EmpName, ComCode, FatherName, MotherName, BloodGroup
+                            , Add1, Add2, Add3, Mobile, PStatus, DrivingLicen, userId, storeCode, nid, drivingCapacity);
+                        lblEmpCode.Text = empcode;
+                    }
+                    lblMessageDriver.Text = "Driver Added";
+                }
+                else
+                    lblMessageDriver.Text = "Cannot Save!!!";
+                hfInsertDriver_ModalPopupExtender.Show();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        protected void btnAddHDriver_Click(object sender, EventArgs e)
+        {
+            clearHirdDriverEntryForm();
+            hfInsertDriver_ModalPopupExtender.Show();
+        }
+
+        protected void btnCancelAddDriver_Click(object sender, EventArgs e)
+        {
+            clearHirdDriverEntryForm(); hfInsertDriver_ModalPopupExtender.Hide();
         }
     }
 }

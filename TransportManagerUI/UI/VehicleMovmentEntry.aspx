@@ -45,7 +45,7 @@
         </ajaxToolkit:ModalPopupExtender>
         </asp:Panel>
       <asp:Panel ID="plBasicData" runat="server" BackColor="White" BorderColor="Black" BorderWidth="1" BorderStyle="Double">
-         <asp:UpdatePanel ID="upListofbasicData" runat="server">
+         <asp:UpdatePanel ID="upListofbasicData" runat="server" UpdateMode="Conditional">
              <ContentTemplate>
      <table >
                             <tr>
@@ -200,7 +200,7 @@
                 Remarks
             </td>
              <td align="left">
-               <asp:TextBox ID="txtRemarks" runat="server" TextMode="MultiLine" Font-Names="SutonnyMJ" Width="300px" ></asp:TextBox>
+               <asp:TextBox ID="txtRemarks" runat="server" TextMode="MultiLine" Font-Names="SutonnyMJ" Width="400px" Font-Size="Medium" ></asp:TextBox>
                  
             </td>
             </tr>

@@ -44,8 +44,8 @@ namespace TransportManagerUI.UI
                     else
                     {
                         var filtered = dt.AsEnumerable()
-  .Where(r => r.Field<String>("TCNo").ToUpper().Contains(searchKey.ToUpper()) //|| r.Field<String>("OrderQty").Contains(searchKey.ToUpper())
-           || r.Field<String>("DealerName").ToUpper().Contains(searchKey.ToUpper()) || r.Field<String>("CustomerName").ToUpper().Contains(searchKey.ToUpper()));
+  .Where(r => r.Field<String>("TCNo").ToUpper().Contains(searchKey.ToUpper()) || r.Field<String>("ProductName").Contains(searchKey.ToUpper())|| r.Field<String>("TCDate").Contains(searchKey.ToUpper())
+           || r.Field<String>("DealerName").ToUpper().Contains(searchKey.ToUpper()) || r.Field<String>("CustName").ToUpper().Contains(searchKey.ToUpper()));
                         dt = filtered.CopyToDataTable();
 
                     }
@@ -76,7 +76,20 @@ namespace TransportManagerUI.UI
             }
 
         }
+        private void GetTotal(DataTable dt)
+        {
+            decimal Qty = dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"]));
+          
 
+            decimal RowCount = dt.Rows.Count;
+
+            gvlistofBasicData.FooterRow.Cells[1].Text = "Total";
+            gvlistofBasicData.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
+            gvlistofBasicData.FooterRow.Cells[3].Text = RowCount.ToString("0");
+            gvlistofBasicData.FooterRow.Cells[8].Text = Qty.ToString("00,00,000");
+           
+
+        }
 
         #endregion
         protected void Page_Load(object sender, EventArgs e)
@@ -95,8 +108,17 @@ namespace TransportManagerUI.UI
                 dt = LoadAllTC(txtSearch.Text);
 
 
-                gvlistofBasicData.DataSource = dt;
-                gvlistofBasicData.DataBind();
+                if (dt != null)
+                {
+                    gvlistofBasicData.DataSource = dt;
+                    gvlistofBasicData.DataBind();
+                    GetTotal(dt);
+                }
+                else
+                {
+                    gvlistofBasicData.DataSource = null;
+                    gvlistofBasicData.DataBind();
+                }
                 upListofbasicData.Update();
                 ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 40 ,true); </script>", false);
             }
@@ -113,9 +135,19 @@ namespace TransportManagerUI.UI
             dt = LoadAllTC(txtSearch.Text);
 
 
-            gvlistofBasicData.DataSource = dt;
-            gvlistofBasicData.DataBind();
+            if (dt != null)
+            {
+                gvlistofBasicData.DataSource = dt;
+                gvlistofBasicData.DataBind();
+                GetTotal(dt);
+            }
+            else
+            {
+                gvlistofBasicData.DataSource = null;
+                gvlistofBasicData.DataBind();
+            }
             upListofbasicData.Update();
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 40 ,true); </script>", false);
         }
 
         protected void btnSearch_Click(object sender, EventArgs e)
@@ -124,9 +156,19 @@ namespace TransportManagerUI.UI
             dt = LoadAllTC(txtSearch.Text);
 
 
-            gvlistofBasicData.DataSource = dt;
-            gvlistofBasicData.DataBind();
+            if (dt != null)
+            {
+                gvlistofBasicData.DataSource = dt;
+                gvlistofBasicData.DataBind();
+                GetTotal(dt);
+            }
+            else
+            {
+                gvlistofBasicData.DataSource = null;
+                gvlistofBasicData.DataBind();
+            }
             upListofbasicData.Update();
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 40 ,true); </script>", false);
         }
 
         protected void gvlistofBasicData_PageIndexChanging(object sender, GridViewPageEventArgs e)
@@ -136,40 +178,37 @@ namespace TransportManagerUI.UI
 
             gvlistofBasicData.PageIndex = e.NewPageIndex;
             gvlistofBasicData.DataSource = dt;
+            GetTotal(dt);
             gvlistofBasicData.DataBind();
             upListofbasicData.Update();
         }
 
         protected void btnReport_Click(object sender, EventArgs e)
         {
-            TransportManagerLibrary.DAL.CommonGateway cm = new CommonGateway();
-            ReportDocument cryRpt;
-            ReportDocument nreport;
+            //TransportManagerLibrary.DAL.CommonGateway cm = new CommonGateway();
+           
+            
             string strReportName;
             string strPath;
 
-            string fromValue = Convert.ToDateTime(DateTime.Now.Date).ToString("yyyy,MM,dd,00,00,00");
-            string ToValue = Convert.ToDateTime(DateTime.Now.Date).ToString("yyyy,MM,dd,00,00,00"); ;
-            //cryRpt.Close();
-            //string SelectionFormula;
-            cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
-            strReportName = "~//report//TCStateGhat.rpt"; 
+           
+       
+            string SelectionFormula;
+           
+            strReportName = "~//report//TCStatement.rpt"; 
             strPath = Server.MapPath(strReportName);
-            cryRpt.Load(strPath);
+         
+
+            SelectionFormula = "{TransContact.TCStatus} = 0";
+        
 
 
-            //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "DateTime(" + fromValue + ")";
-            //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "DateTime (" + ToValue + ")";
+            Session["strPath"] = strPath;
+            Session["SelectionFormula"] = SelectionFormula;
+            Session["AllStatement"] = "1";
 
-            cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-            //cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-            nreport = cm.ConnectionInfo(cryRpt);
-            Session["nreport"] = nreport;
-
-            Response.Redirect("~/UI/ReportForStatement.aspx");
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/ReportForStatement.aspx" + "','_blank')", true);
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 40 ,true); </script>", false);
 
         }
 

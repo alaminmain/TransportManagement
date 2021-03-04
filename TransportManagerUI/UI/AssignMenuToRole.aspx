@@ -60,36 +60,54 @@
                             </td>
                             </tr>
                         </table>
-        <asp:GridView ID="gvlistofBasicData" runat="server" 
-                     EmptyDataText="No Data To Show" GridLines="Horizontal" CellPadding="4" 
-                     ForeColor="#333333" AutoGenerateColumns="False" 
-                    
-                     >
-            <AlternatingRowStyle BackColor="White" />
-            <Columns>
-                <asp:TemplateField HeaderText="chkActive">
-                    <ItemTemplate>
-                        <asp:CheckBox ID="chkIsActive" runat="server" Enabled="true" />
-                    </ItemTemplate>
-                    <EditItemTemplate>
-                        <asp:CheckBox ID="CheckBox1" runat="server" />
-                    </EditItemTemplate>
-                </asp:TemplateField>
-                <asp:BoundField DataField="menuId" HeaderText="Menu Id" />
-                <asp:BoundField DataField="menuName" HeaderText="menuName" />
-                <asp:BoundField DataField="menuUrl" HeaderText="menuUrl" />
-            </Columns>
-            <EditRowStyle BackColor="#2461BF" />
-            <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
-            <HeaderStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
-            <PagerStyle BackColor="#2461BF" ForeColor="White" HorizontalAlign="Center" />
-            <RowStyle BackColor="#EFF3FB" HorizontalAlign="Left" />
-            <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
-            <SortedAscendingCellStyle BackColor="#F5F7FB" />
-            <SortedAscendingHeaderStyle BackColor="#6D95E1" />
-            <SortedDescendingCellStyle BackColor="#E9EBEF" />
-            <SortedDescendingHeaderStyle BackColor="#4870BE" />
-        </asp:GridView>
+                 <asp:GridView ID="gvRolePermission" runat="server" AutoGenerateColumns="False" 
+                     DataKeyNames="menuId" CellPadding="4" ForeColor="#333333" GridLines="Horizontal">
+                     <AlternatingRowStyle BackColor="White" />
+                     <Columns>
+                         <asp:TemplateField HeaderText="Select">
+                             <ItemTemplate>
+                                 <asp:CheckBox ID="chkSelectUnique" runat="server" OnCheckedChanged="chkSelectUnique_CheckedChanged" />
+                             </ItemTemplate>
+                         </asp:TemplateField>
+                         <asp:BoundField DataField="menuName" HeaderText="Menu Name" />
+                         <asp:BoundField DataField="menuUrl" HeaderText="Menu Url" />
+                         <asp:TemplateField HeaderText="Is View">
+                             <ItemTemplate>
+                                 <asp:CheckBox ID="cbIsView" runat="server" />
+                             </ItemTemplate>
+                         </asp:TemplateField>
+                         <asp:TemplateField HeaderText="Is Insert">
+                             <ItemTemplate>
+                                 <asp:CheckBox ID="cbIsInsert" runat="server" />
+                             </ItemTemplate>
+                         </asp:TemplateField>
+                         <asp:TemplateField HeaderText="Is Update">
+                             <ItemTemplate>
+                                 <asp:CheckBox ID="cbIsUpdate" runat="server" />
+                             </ItemTemplate>
+                         </asp:TemplateField>
+                         <asp:TemplateField HeaderText="Is Delete">
+                             <ItemTemplate>
+                                 <asp:CheckBox ID="cbIsDelete" runat="server" />
+                             </ItemTemplate>
+                         </asp:TemplateField>
+                         <asp:TemplateField HeaderText="Is Print">
+                             <ItemTemplate>
+                                 <asp:CheckBox ID="cbIsPrint" runat="server" />
+                             </ItemTemplate>
+                         </asp:TemplateField>
+                     </Columns>
+                     <EditRowStyle BackColor="#2461BF" />
+                     <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
+                     <HeaderStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
+                     <PagerStyle BackColor="#2461BF" ForeColor="White" HorizontalAlign="Center" />
+                     <RowStyle BackColor="#EFF3FB" />
+                     <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
+                     <SortedAscendingCellStyle BackColor="#F5F7FB" />
+                     <SortedAscendingHeaderStyle BackColor="#6D95E1" />
+                     <SortedDescendingCellStyle BackColor="#E9EBEF" />
+                     <SortedDescendingHeaderStyle BackColor="#4870BE" />
+                 </asp:GridView>
          <table>
             <tr>
             <td>

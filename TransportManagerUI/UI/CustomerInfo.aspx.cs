@@ -27,6 +27,7 @@ namespace TransportManagerUI.UI
                 //lblMessage.Text = string.Empty;
                 if (!IsPostBack && !IsCallback)
                 {
+                    loadAllLocation();
                     //ClearSession();
                     //FillChalanTypDDL();
                     //LoadChartofAccounts("");
@@ -52,6 +53,7 @@ namespace TransportManagerUI.UI
             dt = loadAllCustInfo(txtSearch.Text);
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
+          
             hfShowList_ModalPopupExtender.Show();
         }
 
@@ -96,12 +98,14 @@ namespace TransportManagerUI.UI
             try
             {
                 DataTable dt;
-
+                DataTable dt2;
 
                 using (DealerGateway gatwayObj = new DealerGateway())
                 {
 
-                    dt = gatwayObj.Get_All_Customer();
+                    dt = gatwayObj.Get_All_CustomerByDealerId(lblDealerCode.Text);
+                    
+                   
 
                     if (String.IsNullOrEmpty(searchKey))
                     {
@@ -124,6 +128,31 @@ namespace TransportManagerUI.UI
                 Logger.LogError(ex.ToString(), new object[0]);
                 return null;
 
+            }
+        }
+
+        private void loadAllLocation()
+        {
+            try
+            {
+                DataTable dt;
+               
+
+                using (LocationGateway gatwayObj = new LocationGateway())
+                {
+
+                    dt = gatwayObj.GetAllLocation();
+                    ddlLocation.DataValueField = "LocSLNO";
+                    ddlLocation.DataTextField = "LocName";
+                    ddlLocation.DataSource = dt;
+                    ddlLocation.DataBind();
+                   
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.ToString(), new object[0]);
+               
             }
         }
         private DataTable loadAllDealerInfo(string searchKey)
@@ -288,7 +317,8 @@ namespace TransportManagerUI.UI
                     string Add3 = txtAddress3.Text;
                     string Phone = txtPhone.Text;
                     string Mobile = txtMobile.Text;
-                    string Location = String.Empty;
+                   
+                    int locSLNo = Convert.ToInt32(ddlLocation.SelectedValue);
                     int locDistance = Convert.ToInt32(txtLocDistance.Text);
                     int status = Convert.ToInt32(ddlStatus.SelectedValue);
                     string userId = Session["UserName"].ToString();//Add in session
@@ -296,7 +326,7 @@ namespace TransportManagerUI.UI
                     using (DealerGateway gatwayObj = new DealerGateway())
                     {
                         string custCode = gatwayObj.InsertUpdateCustomer(ComCode, CustId, CustName, CustNameBangla, CustAddressBang, DealerId, CustType,
-                            ContactPer, Add1, Add2, Add3, Phone, Mobile, Location, locDistance, status, userId);
+                            ContactPer, Add1, Add2, Add3, Phone, Mobile, locDistance,locSLNo, status, userId);
                         lblCustomerId.Text = custCode;
                     }
                     ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Record Saved');", true);
@@ -337,6 +367,7 @@ namespace TransportManagerUI.UI
                 txtPhone.Text = dt.Rows[0]["Phone"].ToString();
                 txtMobile.Text = dt.Rows[0]["Mobile"].ToString();
                 txtLocDistance.Text = dt.Rows[0]["LocDistance"].ToString();
+                ddlLocation.SelectedValue= dt.Rows[0]["LocSLNO"].ToString();
                 ddlStatus.SelectedValue = dt.Rows[0]["Status"].ToString();
               
 
@@ -356,6 +387,28 @@ namespace TransportManagerUI.UI
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             Response.Redirect("~/UI/Default.aspx");
+        }
+
+        protected void btnReport_Click(object sender, EventArgs e)
+        {
+            Session["paramData"] = null;
+            Session["reportOn"] = null;
+          
+
+               
+                string reporton = "Customer";
+
+                Session["paramData"] = "";
+                Session["reportOn"] = reporton;
+            
+            //btnReport.PostBackUrl = "~/UI/reportViewer.aspx";
+            //ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/reportViewer.aspx" + "','_blank')", true);
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/reportViewer.aspx" + "','_blank')", true);
+        }
+
+        protected void gvlistofBasicData_PreRender(object sender, EventArgs e)
+        {
+            
         }
     }
 }

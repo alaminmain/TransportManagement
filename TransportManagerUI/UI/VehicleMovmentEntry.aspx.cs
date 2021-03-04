@@ -227,7 +227,7 @@ namespace TransportManagerUI.UI
 
         private bool isMandatoryFieldValidate()
         {
-            if (String.IsNullOrEmpty(lblDriverCode.Text))
+            if (String.IsNullOrEmpty(lblDriverCode.Text)&& String.IsNullOrEmpty(hfShowList.Value))
                 return false;
          
             else
@@ -251,6 +251,7 @@ namespace TransportManagerUI.UI
                     txtTime.Text = DateTime.Now.ToString("hh:mm:ss tt");
                     gvVehicleStatus.DataSource = GetCurrentVehicleStatus();
                     gvVehicleStatus.DataBind();
+                    hfShowList.Value = String.Empty;
 
                 }
             }
@@ -314,7 +315,7 @@ namespace TransportManagerUI.UI
             Session["paramData"] = vehicleRegId;
             Session["reportOn"] = reporton;
 
-            Response.Redirect("~/UI/reportViewer.aspx");
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/reportViewer.aspx" + "','_blank')", true);
         }
 
         protected void btnVehicleSearch_Click(object sender, EventArgs e)
@@ -435,6 +436,7 @@ namespace TransportManagerUI.UI
 
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
+            upListofbasicData.Update();
             hfShowList_ModalPopupExtender.Show();
         }
 
@@ -464,7 +466,7 @@ namespace TransportManagerUI.UI
                     dvVehicle.DataSource = objGateway.GetVehicleById(1, dt.Rows[0]["VehicleID"].ToString()); ;
                     dvVehicle.DataBind();
                 }
-
+                txtSearch.Text = String.Empty;
                
                 hfShowTrip_ModalPopupExtender.Hide();
             }
@@ -481,6 +483,7 @@ namespace TransportManagerUI.UI
             gvlistofBasicData.PageIndex = e.NewPageIndex;
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
+            upListofbasicData.Update();
             hfShowList_ModalPopupExtender.Show();
         }
 

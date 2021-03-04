@@ -102,7 +102,7 @@ namespace TransportManagerUI.UI
                     DataRow[] foundRows;
 
                     // Use the Select method to find all rows matching the filter.
-                    foundRows = dt2.Select("[FuelSlipNo]= '' and [TripStatus]='0'");
+                    foundRows = dt2.Select("[TripStatus]='0' and Totalkm<>0 and TransportBy='1'", "TripDate DESC");
                     if (foundRows.Length > 0)
                         dt = foundRows.CopyToDataTable();
 
@@ -140,7 +140,7 @@ namespace TransportManagerUI.UI
                     dt2 = gatwayObj.GetAllTripInfoForGridView();
                     DataRow[] foundRows;
 
-                    foundRows = dt2.Select("FuelSlipNo<>null or FuelSlipNo<>''");
+                    foundRows = dt2.Select("FuelSlipNo<>null or FuelSlipNo<>''", "TripDate DESC");
 
                     if (foundRows.Length > 0)
                         dt = foundRows.CopyToDataTable();
@@ -185,9 +185,10 @@ namespace TransportManagerUI.UI
             string Remarks_16 = Convert.ToString(dt.Rows[0]["Remarks"]); ;
             decimal totalKm_17 = Convert.ToDecimal(dt.Rows[0]["Totalkm"]); ;
 
-            //txtAdditionalFuel.Text = Convert.ToString(dt.Rows[0]["Additionalkm"]);
-            decimal additionalKm_18 = 0;
-            additionalKm_18 = Convert.ToDecimal(dvTrip.Rows[8].Cells[1].Text);
+            txtExtraKm.Text = Convert.ToString(dt.Rows[0]["ExtraKM"]);
+            txtExtraFuelQty.Text = (Convert.ToDecimal(txtExtraKm.Text) / kmPerLiter_10).ToString("0.00");
+            //decimal additionalKm_18 = 0;
+            //additionalKm_18 = Convert.ToDecimal(dvTrip.Rows[8].Cells[1].Text);
             if (String.IsNullOrEmpty(dt.Rows[0]["AdjFuelQty"].ToString()))
             {
                 txtAdjustedFuelQty.Text = "0";
@@ -196,11 +197,23 @@ namespace TransportManagerUI.UI
             {
                 txtAdjustedFuelQty.Text = String.Format("{0:0.00}", Convert.ToDecimal(dt.Rows[0]["AdjFuelQty"]));
             }
-            decimal fuelQty_15 = ((totalKm_17 + additionalKm_18) / kmPerLiter_10);// - Convert.ToDecimal(txtAdjustedFuelQty.Text);
-            txtfuelQty.Text = String.Format("{0:0.00}", fuelQty_15);
+            decimal fuelQty_15 = ((totalKm_17) / kmPerLiter_10);// - Convert.ToDecimal(txtAdjustedFuelQty.Text);
+            txtfuelQty.Text = String.Format("{0:0.00}", Math.Round(fuelQty_15));
             
             lblFuelSlipNo.Text = Convert.ToString(dt.Rows[0]["FuelSlipNo"]);
+            NetFuelQty();
             hfShowTrip.Value = row.Cells[1].Text;
+        }
+
+        private void NetFuelQty()
+        {
+            decimal fuelQty = Convert.ToDecimal(txtfuelQty.Text);
+            decimal AdjustedFuelQty = Convert.ToDecimal(txtAdjustedFuelQty.Text);
+            decimal ExtraFuelQty = Convert.ToDecimal(txtExtraFuelQty.Text);
+
+            decimal netQty = (fuelQty + ExtraFuelQty) - AdjustedFuelQty;
+            lblNetFuelQty.Text = String.Format("{0:0.00}", Math.Round(netQty)); ;
+
         }
         #endregion
         protected void Page_Load(object sender, EventArgs e)
@@ -236,6 +249,7 @@ namespace TransportManagerUI.UI
             dt = LoadAllFuelSlip(txtSearchTrip.Text);
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
+            upListofbasicData.Update();
             hfShowList_ModalPopupExtender.Show();
         }
 
@@ -245,6 +259,7 @@ namespace TransportManagerUI.UI
             dt = LoadAllPendingTrip(txtSearchTrip.Text);
             gvTrip.DataSource = dt;
             gvTrip.DataBind();
+            upTrip.Update();
             hfShowTrip_ModalPopupExtender.Show();
         }
 
@@ -266,10 +281,11 @@ namespace TransportManagerUI.UI
             hfStatus.Value = Convert.ToString(dt.Rows[0]["TripStatus"]);
             string Remarks_16 = Convert.ToString(dt.Rows[0]["Remarks"]); ;
             decimal totalKm_17 = Convert.ToDecimal(dt.Rows[0]["Totalkm"]); ;
-
+            txtExtraKm.Text = Convert.ToString(dt.Rows[0]["ExtraKM"]);
+            txtExtraFuelQty.Text = (Convert.ToDecimal(txtExtraKm.Text) / kmPerLiter_10).ToString("0.00");
             //txtAdditionalFuel.Text = Convert.ToString(dt.Rows[0]["Additionalkm"]);
-            decimal additionalKm_18 = 0;
-            additionalKm_18= Convert.ToDecimal(dvTrip.Rows[8].Cells[1].Text);
+            //decimal additionalKm_18 = 0;
+            //additionalKm_18= Convert.ToDecimal(dvTrip.Rows[8].Cells[1].Text);
             if (String.IsNullOrEmpty(dt.Rows[0]["AdjFuelQty"].ToString()))
             {
                 txtAdjustedFuelQty.Text = "0";
@@ -278,11 +294,12 @@ namespace TransportManagerUI.UI
             {
                 txtAdjustedFuelQty.Text = String.Format("{0:0.00}", Convert.ToDecimal(dt.Rows[0]["AdjFuelQty"]));
             }
-            decimal fuelQty_15 = ((totalKm_17 + additionalKm_18) / kmPerLiter_10);
-            txtfuelQty.Text = String.Format("{0:0.00}", fuelQty_15);
+            decimal fuelQty_15 = ((totalKm_17 ) / kmPerLiter_10);
+            txtfuelQty.Text = String.Format("{0:0.00}", Math.Round(fuelQty_15));
 
             lblFuelSlipNo.Text = Convert.ToString(dt.Rows[0]["FuelSlipNo"]);
             hfShowTrip.Value = row.Cells[1].Text;
+            NetFuelQty();
         }
 
         protected void gvTrip_PageIndexChanging(object sender, GridViewPageEventArgs e)
@@ -311,6 +328,7 @@ namespace TransportManagerUI.UI
 
             
                 decimal? fuelQty_5 = Convert.ToDecimal(txtfuelQty.Text);
+                decimal extrakm= Convert.ToDecimal(txtExtraKm.Text);
                 decimal? adjFuelQty_6 = Convert.ToDecimal(txtAdjustedFuelQty.Text);
                 int tripStatus_7 = 1;
                 if (Convert.ToInt32(hfStatus.Value) != 0)
@@ -321,7 +339,7 @@ namespace TransportManagerUI.UI
 
             using (TripInfoGateway gatwayObj = new TripInfoGateway())
             {
-                string fuelSlipNo = gatwayObj.InsertUpdateFuelInfo(comcode_1, tripNo_2, fuelSlipNo_3, supplierName_4, fuelQty_5, adjFuelQty_6, tripStatus_7,
+                string fuelSlipNo = gatwayObj.InsertUpdateFuelInfo(comcode_1, tripNo_2, fuelSlipNo_3, supplierName_4, fuelQty_5,extrakm, adjFuelQty_6, tripStatus_7,
                     userCode_8);
 
                 lblFuelSlipNo.Text = fuelSlipNo;
@@ -335,12 +353,17 @@ namespace TransportManagerUI.UI
         {
             string fuelno = lblFuelSlipNo.Text;
 
+            if(String.IsNullOrEmpty(fuelno)==false)
+            {
             string reporton = "FuelSlip";
 
             Session["paramData"] = fuelno;
             Session["reportOn"] = reporton;
             //btnReport.PostBackUrl = "~/UI/reportViewer.aspx";
-            Response.Redirect("~/UI/reportViewer.aspx");
+            ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/reportViewer.aspx" + "','_blank')", true);
+            }
+            else
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Please Select FuelSlip No');", true);
         }
 
         protected void btnAddNew_Click(object sender, EventArgs e)
@@ -350,7 +373,12 @@ namespace TransportManagerUI.UI
 
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-
+            DataTable dt = new DataTable();
+            dt = LoadAllFuelSlip(txtSearch.Text);
+            gvlistofBasicData.DataSource = dt;
+            gvlistofBasicData.DataBind();
+            upListofbasicData.Update();
+            hfShowList_ModalPopupExtender.Show();
         }
 
         protected void gvlistofBasicData_SelectedIndexChanged(object sender, EventArgs e)
@@ -384,20 +412,27 @@ namespace TransportManagerUI.UI
         protected void txtAdjustedFuelQty_TextChanged(object sender, EventArgs e)
         {
 
-            //decimal kmPerLiter_10 = Convert.ToDecimal(dvTrip.Rows[6].Cells[1].Text.ToString());
-            //decimal totalKm_17 = Convert.ToDecimal(dvTrip.Rows[7].Cells[1].Text.ToString()); ;
-            //decimal additionalKm_18 = 0;
-            //decimal adjustedFuelQty = 0;
-            //if (Decimal.TryParse(txtAdditionalFuel.Text, out additionalKm_18) && (Decimal.TryParse(txtAdjustedFuelQty.Text, out adjustedFuelQty)))
-            //{
-            //    decimal? fuelQty_15 = ((totalKm_17 + additionalKm_18) / kmPerLiter_10) - adjustedFuelQty;
-            //    txtfuelQty.Text = String.Format("{0:0.00}", fuelQty_15);
-            //}
-            //else
-            //{
-            //    decimal? fuelQty_15 = ((totalKm_17 + additionalKm_18) / kmPerLiter_10) - adjustedFuelQty;
-            //    txtfuelQty.Text = String.Format("{0:0.00}", fuelQty_15);
-            //}
+            NetFuelQty();
+        }
+
+        protected void txtExtraKm_TextChanged(object sender, EventArgs e)
+        {
+            decimal kmPerLiter_10 = Convert.ToDecimal(dvTrip.Rows[6].Cells[1].Text.ToString());
+            
+            decimal ExtrafuelQty_15 = (Convert.ToDecimal(txtExtraKm.Text) / kmPerLiter_10);
+            txtExtraFuelQty.Text = String.Format("{0:0.00}", Math.Round(ExtrafuelQty_15));
+            NetFuelQty();
+            
+        }
+
+        protected void btnSearchdTrip_Click(object sender, EventArgs e)
+        {
+            DataTable dt = new DataTable();
+            dt = LoadAllPendingTrip(txtSearchTrip.Text);
+            gvTrip.DataSource = dt;
+            gvTrip.DataBind();
+            upTrip.Update();
+            hfShowTrip_ModalPopupExtender.Show();
         }
     }
        

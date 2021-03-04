@@ -645,7 +645,7 @@ namespace TransportManagerUI.UI
                 Session["paramData"] = dono;
                 Session["reportOn"] = reporton;
                 //btnReport.PostBackUrl = "~/UI/reportViewer.aspx";
-                Response.Redirect("~/UI/reportViewer.aspx");
+                ScriptManager.RegisterStartupScript(Page, Page.GetType(), "popup", "window.open('" + "/UI/reportViewer.aspx" + "','_blank')", true);
             }
             else
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Please Select DO No');", true);

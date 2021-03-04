@@ -52,7 +52,7 @@
                             </td>
                             <td>
                                 <asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" 
-                                     />
+                                   formnovalidate  />
                             </td>
                             </tr>
                         </table>
@@ -110,12 +110,28 @@
     </asp:Panel>
 
        <asp:Panel ID="Panel2" runat="server" ScrollBars="Horizontal" 
-        ForeColor="Black" BorderStyle="Outset" BorderWidth="1px" BorderColor="Silver" 
-        GroupingText="Hired Vehicle" CssClass="entry-panel">
+        ForeColor="Black" BorderStyle="Outset" BorderWidth="1px" BorderColor="#99CCFF" 
+        GroupingText="Hired Vehicle">
         
-               <asp:Panel ID="Panel6" runat="server" GroupingText="">
+               <asp:Panel ID="Panel6" runat="server" GroupingText="" BackColor="#99CCFF">
 
                    <table cellpadding="3px">
+                    <tr>
+        <td align="right">
+       Vehicle Type
+        </td>
+         <td colspan="3" align="left">
+             <asp:DropDownList ID="ddlVehicleType" runat="server" Width="200px">
+                 <asp:ListItem Text="Open Truck" Value="Open Truck"></asp:ListItem>
+                 <asp:ListItem Text="Covered Van" Value="Covered Van"></asp:ListItem>
+                 <asp:ListItem Text="Dump Truck" Value="Dump Truck"></asp:ListItem>
+                 <asp:ListItem Text="Vessel" Value="Vessel"></asp:ListItem>
+                  <asp:ListItem Text="Bulk Carrier" Value="Bulk Carrier"></asp:ListItem>
+                 <asp:ListItem Text="Trailer" Value="Trailer"></asp:ListItem>
+                 <asp:ListItem Text="Ready Mix" Value="Ready Mix"></asp:ListItem>
+             </asp:DropDownList>
+        </td>
+        </tr>
                    <tr>
         <td align="right">
         Vehicle Id
@@ -150,7 +166,7 @@
                  
             </td>
             </tr>
-             <tr>
+           <%--  <tr>
             <td align="right">
                Engine No
             </td>
@@ -186,24 +202,16 @@
                      <asp:TextBox ID="txtPurchaseDate" runat="server"></asp:TextBox>
                      <ajaxToolkit:CalendarExtender ID="txtPurchaseDate_CalendarExtender" runat="server" BehaviorID="txtPurchaseDate_CalendarExtender" TargetControlID="txtPurchaseDate" Format="dd/MMM/yyyy" />
                 </td>
-                </tr>
+                </tr>--%>
             
             
-           
+           <tr>
             
-            <tr>
-            <td align="right">
-           Vehicle Description
-            </td>
-             <td align="left">
-                <asp:TextBox ID="txtVehicleDescription" runat="server" Width="200px" ></asp:TextBox>
-            </td>
-            </tr>
-            <tr>
+            
                 <td align="right">Capacity
             </td>
             <td align="left">
-                <asp:TextBox ID="txtCapacity" runat="server" Width="200px" required  ></asp:TextBox>
+                <asp:TextBox ID="txtCapacity" runat="server" Width="200px" required  >400</asp:TextBox>
             </td>
             </tr>
 
@@ -213,7 +221,7 @@
             <td align="left">
                 <asp:DropDownList ID="ddlCapacityUnit" runat="server" Width="200px">
                 <asp:ListItem Value="0" Text="MT"></asp:ListItem>
-                <asp:ListItem Value="1" Text="BAG"></asp:ListItem>
+                <asp:ListItem Value="1" Text="BAG" Selected="True"></asp:ListItem>
                 </asp:DropDownList> 
             </td>
 
@@ -236,7 +244,7 @@
                     K.M Per Litre
                 </td>
                  <td align="left">
-                     <asp:TextBox ID="txtKmPerLitre" runat="server" Width="200px"  required>0</asp:TextBox>
+                     <asp:TextBox ID="txtKmPerLitre" runat="server" Width="200px"  required>4.25</asp:TextBox>
                      
                      <ajaxToolkit:FilteredTextBoxExtender ID="txtKmPerLitre_FilteredTextBoxExtender" 
                          runat="server" BehaviorID="txtKmPerLitre_FilteredTextBoxExtender" 
@@ -264,16 +272,7 @@
                      
                 </td>
                 </tr>--%>
-             <tr>
-            
-                <td align="right">
-                    Remarks
-                </td>
-                 <td align="left">
-                     <asp:TextBox ID="txtRemarks" runat="server" Width="200px" TextMode="MultiLine"></asp:TextBox>
-                     
-                </td>
-                </tr>
+             
             <tr>
                 <td align="right">
                     Status

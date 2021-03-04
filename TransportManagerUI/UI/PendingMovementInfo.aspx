@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/UI/Site.Master" AutoEventWireup="true" CodeBehind="PendingMovementInfo.aspx.cs" Inherits="TransportManagerUI.UI.PendingMovementInfo" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="cphHeadContent" runat="server">
-      <meta http-equiv="refresh" content="30">
+    
     <style type="text/css">
      .FixedHeader {
             position:relative;
@@ -55,23 +55,36 @@
         <asp:GridView ID="gvlistofBasicData" runat="server" 
                      EmptyDataText="No Data To Show" GridLines="Horizontal" CellPadding="4" 
                      ForeColor="#333333" AutoGenerateColumns="False" 
-                     onpageindexchanging="gvlistofBasicData_PageIndexChanging" 
-                     AllowPaging="False" Font-Size="Small" RowStyle-CssClass="GvGrid" ShowFooter="True" >
+                     onpageindexchanging="gvlistofBasicData_PageIndexChanging" Font-Size="Small" RowStyle-CssClass="GvGrid" ShowFooter="True" >
             <AlternatingRowStyle BackColor="White" />
             <Columns>
-                <asp:BoundField DataField="TripNo" HeaderText="TripNo" />
-                <asp:BoundField DataField="MovementNo" HeaderText="MovementNo" />
-                <asp:BoundField DataField="TransportDate" DataFormatString="{0:dd/MMM/yyyy}" 
+                <asp:BoundField DataField="TripNo" HeaderText="TripNo" >
+                <ItemStyle Wrap="False" />
+                </asp:BoundField>
+                <asp:BoundField DataField="MovementNo" HeaderText="MovementNo" >
+                <ItemStyle Wrap="False" />
+                </asp:BoundField>
+                <asp:BoundField DataField="TransportDate"
                     HeaderText="Date" />
                 
                  
                 <asp:BoundField DataField="DealerName" HeaderText="Dealer Name" >
-                <ItemStyle HorizontalAlign="Left" />
+                <ItemStyle HorizontalAlign="Left" Width="100px" />
                 </asp:BoundField>
-                <asp:BoundField DataField="CustName" HeaderText="Retailer Name" />
-                <asp:BoundField DataField="RetailerAddress" HeaderText="Delivery Location" />
-                <asp:BoundField DataField="VehicleNo" HeaderText="VehicleNo" />
-                <asp:BoundField DataField="EmpName" HeaderText="Driver" />
+                <asp:BoundField DataField="CustName" HeaderText="Retailer Name" >
+                <ItemStyle Width="100px" />
+                </asp:BoundField>
+                <asp:BoundField DataField="RetailerAddress" HeaderText="Delivery Location" >
+                <ItemStyle Width="100px" />
+                </asp:BoundField>
+                <asp:BoundField DataField="LocDistance" HeaderText="Distance (KM)" DataFormatString="{0:00}" />
+                <asp:BoundField DataField="VehicleNo" HeaderText="VehicleNo" >
+                <ItemStyle Wrap="False" />
+                </asp:BoundField>
+                <asp:BoundField DataField="EmpName" HeaderText="Driver" >
+              
+                <ItemStyle Width="100px" />
+                </asp:BoundField>
               
             </Columns>
             <EditRowStyle BackColor="#2461BF" />
