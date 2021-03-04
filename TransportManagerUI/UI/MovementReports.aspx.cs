@@ -24,6 +24,7 @@ namespace TransportManagerUI.UI
             {
                 txtFromDate_CalendarExtender.SelectedDate = DateTime.Now.Date;
                 txtToDate_CalendarExtender.SelectedDate = DateTime.Now.Date;
+                POtherOptions.Visible = false;
             }
         }
 
@@ -194,7 +195,7 @@ namespace TransportManagerUI.UI
                             btnSearchInfo.Enabled = true;
                             SelectionFormula = "{Transport.TransportDate} in Date(" + fromValue + ")   to Date (" +
                                                             ToValue + ") and" +
-                                                                       " {VehicleInfo.VehicleNo} = '" + lblName.Text + "' and {Transport.TranStatus} <> 2";
+                                                                       " {VehicleInfo.VehicleNo} = '" + lblName.Text + "' and {Transport.TranStatus} <> 3";
 
                         }
 

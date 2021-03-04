@@ -31,6 +31,7 @@
                             <td class="auto-style1">
                                 <asp:RadioButtonList ID="rblReports" runat="server" ForeColor="Black" OnSelectedIndexChanged="rblReports_SelectedIndexChanged" AutoPostBack="True">
                                    <asp:ListItem Text="Workshop Statement" Value="VehicleWorkshopStatement"></asp:ListItem>
+                                    <asp:ListItem Text="Pull Statement" Value="VehiclePullStatement"></asp:ListItem>
                                     <asp:ListItem Text="Vehicle Movement Register" Value="VehicleMovement"></asp:ListItem>
                                     <asp:ListItem Text="Vehicle Current Status" Value="VehicleStatus"></asp:ListItem>
                                     

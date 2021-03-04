@@ -806,5 +806,17 @@ namespace TransportManagerUI.UI
             upTrip.Update();
             hfTC_ModalPopupExtender.Show();
         }
+
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            DataTable dt = new DataTable();
+            dt = LoadAllVoucher(txtSearch.Text);
+
+            //gvlistofBasicData.PageIndex = e.NewPageIndex;
+            gvlistofBasicData.DataSource = dt;
+            gvlistofBasicData.DataBind();
+            upListofbasicData.Update();
+            hfShowList_ModalPopupExtender.Show();
+        }
     }
 }

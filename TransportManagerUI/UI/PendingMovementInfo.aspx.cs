@@ -61,6 +61,19 @@ namespace TransportManagerUI.UI
             }
         }
 
+        private void GetTotal(DataTable dt)
+        {
+          
+
+            decimal RowCount = dt.Rows.Count;
+
+            gvlistofBasicData.FooterRow.Cells[1].Text = "Total";
+            gvlistofBasicData.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
+            gvlistofBasicData.FooterRow.Cells[3].Text = string.Format("{0:0}", RowCount);
+         
+
+        }
+
         private void isAuthorizeToPage()
         {
             string url = Path.GetFileName(Request.Path);
@@ -96,6 +109,7 @@ namespace TransportManagerUI.UI
 
                 gvlistofBasicData.DataSource = dt;
                 gvlistofBasicData.DataBind();
+                GetTotal(dt);
                 upListofbasicData.Update();
                 ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 39 ,true); </script>", false);
             }
@@ -109,6 +123,7 @@ namespace TransportManagerUI.UI
 
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
+            GetTotal(dt);
             upListofbasicData.Update();
             ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 39 ,true); </script>", false);
         }
@@ -168,6 +183,7 @@ namespace TransportManagerUI.UI
 
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
+            GetTotal(dt);
             upListofbasicData.Update();
             ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 39 ,true); </script>", false);
         }

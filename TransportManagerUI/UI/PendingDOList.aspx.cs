@@ -70,10 +70,10 @@ namespace TransportManagerUI.UI
             
             gvlistofBasicData.FooterRow.Cells[1].Text = "Total";
             gvlistofBasicData.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
-            gvlistofBasicData.FooterRow.Cells[3].Text = RowCount.ToString("0");
-            gvlistofBasicData.FooterRow.Cells[9].Text = Qty.ToString("0");
-            gvlistofBasicData.FooterRow.Cells[10].Text = SOQty.ToString("0");
-            gvlistofBasicData.FooterRow.Cells[11].Text = PendingQty.ToString("0");
+            gvlistofBasicData.FooterRow.Cells[3].Text = string.Format("{0:0}", RowCount); 
+            gvlistofBasicData.FooterRow.Cells[9].Text = string.Format("{0:n}", Qty); 
+            gvlistofBasicData.FooterRow.Cells[10].Text = string.Format("{0:n}", SOQty); 
+            gvlistofBasicData.FooterRow.Cells[11].Text = string.Format("{0:n}", PendingQty); 
            
         }
 

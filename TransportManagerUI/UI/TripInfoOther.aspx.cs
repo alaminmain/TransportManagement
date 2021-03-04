@@ -38,6 +38,7 @@ namespace TransportManagerUI.UI
                     txtTripDate_CalendarExtender.SelectedDate = DateTime.Now;
                     btnAddHiredVehicle.Enabled = false;
                     btnAddHiredVehicle.Visible = false;
+                    btnAddHDriver.Visible = false;
                     //ClearSession();
                     //FillChalanTypDDL();
                     //LoadAllDO("");
@@ -1027,11 +1028,13 @@ namespace TransportManagerUI.UI
             {
                 btnAddHiredVehicle.Enabled = true;
                 btnAddHiredVehicle.Visible = true;
+                btnAddHDriver.Visible = true;
             }
             else
             {
                 btnAddHiredVehicle.Enabled = false;
                 btnAddHiredVehicle.Visible = false;
+                btnAddHDriver.Visible = false;
             }
         }
 

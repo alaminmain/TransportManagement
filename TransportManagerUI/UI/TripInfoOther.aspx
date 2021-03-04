@@ -117,7 +117,7 @@
     </asp:Panel>
 
          <asp:Panel ID="Panel2" runat="server" ScrollBars="Auto" ForeColor="Black" 
-             BorderStyle="Outset" BorderWidth="3px" BorderColor="Silver" GroupingText="Other Trip" 
+             BorderStyle="Outset" BorderWidth="3px" BorderColor="Silver" GroupingText="Additional Trip" 
              CssClass="entry-panel" BackColor="#D3DCBE">
         <table cellpadding="3px" cellspacing="1">
             <tr>
@@ -261,13 +261,13 @@
             <tr>
                    <td>Status</td>
             <td align="left" >
-             <asp:DropDownList ID="ddlStatus" runat="server" AutoPostBack="True">
-                <asp:ListItem Value="0" Text="Open"></asp:ListItem>
-                <asp:ListItem Value="1" Text="On Trip"></asp:ListItem>
-                 <asp:ListItem Value="2" Text="Billed"></asp:ListItem>
-               <asp:ListItem Value="3" Text="Cancel"></asp:ListItem>
-                 
-                 </asp:DropDownList>
+                <asp:DropDownList ID="ddlStatus" runat="server" AutoPostBack="True">
+                    <asp:ListItem Value="0" Text="Open"></asp:ListItem>
+                    <asp:ListItem Value="1" Text="On Trip"></asp:ListItem>
+                    <asp:ListItem Value="2" Text="Billed"></asp:ListItem>
+                    <asp:ListItem Value="3" Text="Cancel"></asp:ListItem>
+
+                </asp:DropDownList>
                                    
             </td>
               </tr>

@@ -73,6 +73,18 @@ namespace TransportManagerUI.UI
                 return null;
             }
         }
+
+        private void GetTotal(DataTable dt)
+        {
+           
+            decimal RowCount = dt.Rows.Count;
+
+            gvlistofBasicData.FooterRow.Cells[1].Text = "Total";
+            gvlistofBasicData.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
+            gvlistofBasicData.FooterRow.Cells[3].Text = string.Format("{0:0}", RowCount);
+          
+
+        }
         #endregion
 
         protected void Page_Load(object sender, EventArgs e)
@@ -95,6 +107,7 @@ namespace TransportManagerUI.UI
 
                     gvlistofBasicData.DataSource = dt;
                     gvlistofBasicData.DataBind();
+                    GetTotal(dt);
                     upListofbasicData.Update();
                     ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 30 ,true); </script>", false);
                 }
@@ -119,6 +132,7 @@ namespace TransportManagerUI.UI
             gvlistofBasicData.PageIndex = e.NewPageIndex;
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
+            GetTotal(dt);
             upListofbasicData.Update();
 
         }
@@ -131,6 +145,7 @@ namespace TransportManagerUI.UI
 
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
+            GetTotal(dt);
             upListofbasicData.Update();
             ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 30 ,true); </script>", false);
         }
@@ -143,6 +158,7 @@ namespace TransportManagerUI.UI
 
             gvlistofBasicData.DataSource = dt;
             gvlistofBasicData.DataBind();
+            GetTotal(dt);
             upListofbasicData.Update();
             ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 20 ,true); </script>", false);
         }

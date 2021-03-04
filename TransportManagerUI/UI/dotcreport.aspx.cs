@@ -146,11 +146,11 @@ namespace TransportManagerUI.UI
                 {
                     case "DoStatmentDealerwise":
 
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                       
                         strReportName = "~//report//DOStateDealer.rpt";
                         strPath = Server.MapPath(strReportName);
                         
-                        cryRpt.Load(strPath);
+                      
                         if (String.IsNullOrEmpty(lblCode.Text))
                         {
 
@@ -168,27 +168,18 @@ namespace TransportManagerUI.UI
                                                                        " {Sales.CustId} = '" + lblCode.Text + "'";
 
                         }
+                                         
 
-
-
-                         cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                         cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-                       
                         ////cryRpt.Close();
                         break;
 
                     case "DoStatmentGhatwise":
 
 
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                       
                         strReportName = "~//report//DOStateGhat.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                        
                         if (String.IsNullOrEmpty(lblCode2.Text))
                         {
 
@@ -203,72 +194,41 @@ namespace TransportManagerUI.UI
 
                             SelectionFormula = "{Sales.InvDate} in Date(" + fromValue + ")   to Date (" +
                                                             ToValue + ") and" +
-                                                                       " {Sales.StoreCode} = '" + lblCode2.Text + "'";
+                                                                       " {Sales.StoreCode} = " + lblCode2.Text + "";
 
                         }
 
-                         cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                         cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-                        
-                        Session["nreport"] = cryRpt;
+                       
                         //cryRpt.Close();
                         break;
 
                     case "DoStatmentProductwise":
                         
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                       
                         strReportName = "~//report//DOStateProd.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                        
                        
                             SelectionFormula = "{Sales.InvDate} in Date(" +
                                                fromValue + ")   to Date (" +
                                                ToValue + ")";
                                        
-                                                
-
-                         cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                         cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-                        
-                        
-                        Session["nreport"] = cryRpt;
+                      
                         //cryRpt.Close();
                         break;
 
                     case "DoStatement":
                         
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                       
                         strReportName = "~//report//DOStatement.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                        
 
                         SelectionFormula = "{Sales.InvDate} in Date(" +
                                            fromValue + ")   to Date (" +
                                            ToValue + ")";
 
 
-
-                         cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                         cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-
-                        
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-                        
-                        Session["nreport"] = cryRpt;
-                        //cryRpt.Close();
                         break;
 
                     

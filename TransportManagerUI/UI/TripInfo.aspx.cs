@@ -36,6 +36,7 @@ namespace TransportManagerUI.UI
                     txtTripDate_CalendarExtender.SelectedDate = DateTime.Now;
                     btnAddHiredVehicle.Enabled = false;
                     btnAddHiredVehicle.Visible = false;
+                    btnAddHDriver.Visible = false;
                     //ClearSession();
                     //FillChalanTypDDL();
                     //LoadAllDO("");
@@ -309,19 +310,7 @@ namespace TransportManagerUI.UI
                 using (PersonalGateway gatwayObj = new PersonalGateway())
                 {
 
-                    //int HiredStatus = 0;
-                    //if (ddlAgent.SelectedValue != "00001")
-                    //    vehicleHiredStatus = 1;
-                    //else
-                    //    vehicleHiredStatus = 0;
-                    //dt2 = gatwayObj.GetAllVehicle(1);
-                    //DataRow[] foundRows;
-
-                    //// Use the Select method to find all rows matching the filter.
-                    //foundRows = dt2.Select("[VehicleStatus] IN ('0','4') AND [IsHired]='" + vehicleHiredStatus + "' AND StoreCode=" + ddlGhatList.SelectedValue);
-                    //if (foundRows.Length > 0)
-                    //    dt = foundRows.CopyToDataTable();
-
+                   
                     dt = gatwayObj.GetAllDriver();
                     if (String.IsNullOrEmpty(searchKey))
                     {
@@ -442,7 +431,8 @@ namespace TransportManagerUI.UI
                     else
                     {
                         var filtered = dt.AsEnumerable()
-    .Where(r => r.Field<String>("TripNo").Contains(searchKey));
+    .Where(r => r.Field<String>("TripNo").Contains(searchKey)|| r.Field<String>("VehicleNo").ToUpper().Contains(searchKey.ToUpper())
+    || r.Field<String>("CustName").ToUpper().Contains(searchKey.ToUpper()));
                         dt = filtered.CopyToDataTable();
                         
                     }
@@ -1260,11 +1250,13 @@ namespace TransportManagerUI.UI
             {
                 btnAddHiredVehicle.Enabled = true;
                 btnAddHiredVehicle.Visible = true;
+                btnAddHDriver.Visible = true;
             }
             else
             {
                 btnAddHiredVehicle.Enabled = false;
                 btnAddHiredVehicle.Visible = false;
+                btnAddHDriver.Visible = false;
             }
         }
 

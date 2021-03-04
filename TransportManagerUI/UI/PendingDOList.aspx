@@ -110,6 +110,7 @@ width:306px;
                 </asp:BoundField>
                  <asp:BoundField DataField="DONo" HeaderText="SAP DO NO" >
                 <ItemStyle Width="60px" />
+                     <FooterStyle Width="60px" />
                 </asp:BoundField>
                 <asp:BoundField DataField="InvDate" 
                     HeaderText="Date" >
@@ -122,14 +123,16 @@ width:306px;
                 </asp:BoundField>
                 <asp:BoundField DataField="Address" HeaderText="Delivery Location" >
                 <ItemStyle Width="100px" />
+                    <FooterStyle Width="100px" />
                 </asp:BoundField>
                 <asp:BoundField DataField="ProductName" HeaderText="Material Name" >
                 <ItemStyle Width="100px" />
+                    <FooterStyle Width="100px" />
                 </asp:BoundField>
-                <asp:BoundField DataField="OrderQty" HeaderText="Order Qty" DataFormatString="{0:0}" />
-                <asp:BoundField DataField="SOQty" HeaderText="SO Qty" DataFormatString="{0:0}" />
-                <asp:BoundField DataField="PendingQty" HeaderText="Pending Qty" DataFormatString="{0:0}" />
-                <asp:BoundField DataField="UnitPrice" HeaderText="DO Price" DataFormatString="{0:0.00}" />
+                <asp:BoundField DataField="OrderQty" HeaderText="Order Qty"  />
+                <asp:BoundField DataField="SOQty" HeaderText="SO Qty"  />
+                <asp:BoundField DataField="PendingQty" HeaderText="Pending Qty" />
+                <asp:BoundField DataField="UnitPrice" HeaderText="DO Price" />
             </Columns>
             <EditRowStyle BackColor="#2461BF" />
             <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />

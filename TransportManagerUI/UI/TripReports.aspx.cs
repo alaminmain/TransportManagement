@@ -348,7 +348,7 @@ namespace TransportManagerUI.UI
                             btnSearchInfo.Enabled = false;
                             SelectionFormula = "{TripInfo.TripDate} in Date(" +
                                                fromValue + ")   to Date (" +
-                                               ToValue + ")and {TripInfo.TripStatus} <> 2";
+                                               ToValue + ")and {TripInfo.TripStatus} <> 3";
 
 
                         }
@@ -358,26 +358,14 @@ namespace TransportManagerUI.UI
                             btnSearchInfo.Enabled = true;
                             SelectionFormula = "{TripInfo.TripDate} in Date(" + fromValue + ")   to Date (" +
                                                             ToValue + ") and" +
-                                                                       " {TripInfo.StoreCode} = '" + lblName.Text + "' and {TripInfo.TripStatus} <> 2";
+                                                                       " {TripInfo.StoreCode} = " + lblCode.Text + " and {TripInfo.TripStatus} <> 3";
 
                         }
 
                         //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
                         strReportName = "~//report//TripStateGhat.rpt";
                         strPath = Server.MapPath(strReportName);
-                        //cryRpt.Load(strPath);
-
-
-                         //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-
-                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        //cryRpt.RecordSelectionFormula = SelectionFormula;
-
-                        //nreport = ConnectionInfo(//cryRpt);
-
-                        ////cryRpt.Close();
+                        
                         break;
 
 
@@ -391,18 +379,7 @@ namespace TransportManagerUI.UI
                                                 fromValue + ")   to Date (" +
                                                 ToValue + ") and {TripInfo.TripStatus} = 1";
 
-                        //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-
-                        ////cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-
-                        //cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-                        //nreport = ConnectionInfo(//cryRpt);
-                        //Session["nreport"] = //cryRpt;
-                        ////cryRpt.Close();
+                       
                         break;
 
 
@@ -432,36 +409,20 @@ namespace TransportManagerUI.UI
                             btnSearchInfo.Enabled = true;
                             SelectionFormula = "{TripInfo.TripDate} in Date(" + fromValue + ")   to Date(" +
                                                             ToValue + ") and" +
-                                                                       " {TripInfo.VehicleID} = '" + lblCode.Text + "' and {TripDate.TripStatus} = 1";
+                                                                       " {TripInfo.VehicleID} = '" + lblCode.Text + "' and {TripInfo.TripStatus} = 1";
 
                         }
 
-                         //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-                        //cryRpt.RecordSelectionFormula = SelectionFormula;
-                        //cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-
-                        //nreport = ConnectionInfo(//cryRpt);
-                        //Session["nreport"] = //cryRpt;
-                        ////cryRpt.Close();
+                      
                         break;
                                                         
                    
 
                     case "VehicleWorkshopStatement": //Workshop Statement
-                        //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                        
                         strReportName = "~//report//VehicleMoveState.rpt";
                         strPath = Server.MapPath(strReportName);
-                        //cryRpt.Load(strPath);
-
-
-
-                        //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                        //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-
-                        ////cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
+                        
                       
 
                             SelectionFormula = "{VehicleMovement.MoveDate} in Date(" +
@@ -474,15 +435,7 @@ namespace TransportManagerUI.UI
                         //cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
                         strReportName = "~//report//VehicleMovement.rpt";
                         strPath = Server.MapPath(strReportName);
-                        //cryRpt.Load(strPath);
-
-
-
-                         //cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                         //cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-
-                        ////cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
+                        
                         if (String.IsNullOrEmpty(lblCode.Text))
                         {
 

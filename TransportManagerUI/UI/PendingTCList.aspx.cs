@@ -86,7 +86,7 @@ namespace TransportManagerUI.UI
             gvlistofBasicData.FooterRow.Cells[1].Text = "Total";
             gvlistofBasicData.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
             gvlistofBasicData.FooterRow.Cells[3].Text = RowCount.ToString("0");
-            gvlistofBasicData.FooterRow.Cells[8].Text = Qty.ToString("00,00,000");
+            gvlistofBasicData.FooterRow.Cells[8].Text = string.Format("{0:n}", Qty); 
            
 
         }

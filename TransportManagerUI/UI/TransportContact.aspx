@@ -233,7 +233,7 @@
         <td align="left" >
             <asp:DropDownList ID="ddlStatus" runat="server" AutoPostBack="True">
             <asp:ListItem Value="0" Text="Open"></asp:ListItem>
-            <asp:ListItem Value="1" Text="Confirm"></asp:ListItem>
+            <asp:ListItem Value="1" Text="Trip Advice"></asp:ListItem>
             <asp:ListItem Value="2" Text="On Trip"></asp:ListItem>
             <asp:ListItem Value="3" Text="Cancel"></asp:ListItem>
                 

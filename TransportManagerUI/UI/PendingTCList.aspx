@@ -61,35 +61,42 @@
             <Columns>
                 <asp:BoundField DataField="TCNo" HeaderText="TC No" >
                 <ItemStyle Wrap="False" width="140px"/>
+                    <FooterStyle Wrap="False" width="140px"/>
                 </asp:BoundField>
                 <asp:BoundField DataField="TCDate"  
                     HeaderText="Date Time" >
                 <ItemStyle Wrap="True" Width="90px"/>
+                    <FooterStyle Wrap="True" width="90px"/>
                 </asp:BoundField>
               
                 
                  <asp:BoundField DataField="paymentMode" HeaderText="Delivery Mode">
                   <ItemStyle Wrap="True" Width="40px"/>
+                     <FooterStyle Wrap="True" width="40px"/>
                 </asp:BoundField>
                 <asp:BoundField DataField="DealerName" HeaderText="Dealer Name" ItemStyle-Wrap="True">
                 <ItemStyle HorizontalAlign="Left" Width="100px" />
+                    <FooterStyle HorizontalAlign="Left" Width="100px" />
+
                 </asp:BoundField>
                 <asp:BoundField DataField="CustName" HeaderText="Retailer Name" 
                     ItemStyle-Wrap="True">
                 <ItemStyle Wrap="True" Width="100px" />
+                    <FooterStyle Wrap="True" width="100px"/>
                 </asp:BoundField>
                 <asp:BoundField DataField="RetailerAddress" HeaderText="Delivery Location" 
                     ItemStyle-Wrap="True" >
                 <ItemStyle Wrap="True" Width="200px" />
+                    <FooterStyle Wrap="True" width="200px"/>
                 </asp:BoundField>
                <%-- <asp:BoundField DataField="Mobile" HeaderText="Retailer Phone" />--%>
                 <asp:BoundField DataField="ProductName" HeaderText="Material Type" >
                
                 <ItemStyle Width="120px" />
-               
+               <FooterStyle  width="120px"/>
                 </asp:BoundField>
                 <asp:BoundField DataField="InvNo" HeaderText="DO NO" />
-                <asp:BoundField DataField="OrderQty" HeaderText="Qty" DataFormatString="{0:0}"  />
+                <asp:BoundField DataField="OrderQty" HeaderText="Qty"  />
             </Columns>
             <EditRowStyle BackColor="#2461BF" />
             <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />

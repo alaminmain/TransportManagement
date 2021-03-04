@@ -196,6 +196,18 @@ width:306px;
             </tr>
              <tr>
                 <td  align="right">
+           Sales Type
+            </td>
+             <td align="left" colspan="3">
+                <asp:DropDownList ID="ddlSalesType" runat="server" AutoPostBack="True" 
+                     Height="24px" Width="150px">
+                <asp:ListItem Value="0" Text="TCS"></asp:ListItem>
+                <asp:ListItem Value="1" Text="TDS"></asp:ListItem>
+                 </asp:DropDownList>
+            </td>
+            </tr>
+             <tr>
+                <td  align="right">
             Ghat
             </td>
              <td align="left" colspan="3">

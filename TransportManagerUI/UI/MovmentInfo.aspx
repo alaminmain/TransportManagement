@@ -26,6 +26,13 @@
   </script>
   
    
+    <style type="text/css">
+        .auto-style2 {
+            height: 20px;
+        }
+    </style>
+  
+   
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cphMainContent" runat="server">
    
@@ -148,7 +155,7 @@
                  
                  <asp:ImageButton ID="btnTripSearch" runat="server" 
                      ImageUrl="~/Images/1488717192_Search.png" onclick="btnTripSearch_Click" 
-                     CssClass="ImageButtonSytle" />
+                     CssClass="auto-style2" />
                  
                  &nbsp;<asp:Label ID="lblTripInfo" runat="server" Font-Bold="True" ForeColor="#0066FF"></asp:Label>
                  <asp:HiddenField ID="hfTrip" runat="server" />
@@ -219,6 +226,16 @@
             </td>
 
             </tr>
+                <tr>
+                    <td>
+                        Customer Distance
+                    </td>
+                    <td align="left">
+                        <asp:TextBox ID="txtCustomerDistance" runat="server" Width="40px">0</asp:TextBox>
+
+                    </td>
+                </tr>
+                
             <tr>
             <td align="right">Remarks
             </td>

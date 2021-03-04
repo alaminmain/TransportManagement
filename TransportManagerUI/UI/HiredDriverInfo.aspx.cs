@@ -226,7 +226,7 @@ namespace TransportManagerUI.UI
                 {
                     string EmpCode = lblEmpCode.Text;
 
-                    string Cardno = "1";
+                    string Cardno = "3";
                     string EmpName = txtEmployeeName.Text;
                     int ComCode = 1;
                     string FatherName = txtFatherName.Text;
@@ -236,7 +236,7 @@ namespace TransportManagerUI.UI
                     string Add2 = txtAddress2.Text;
                     string Add3 = txtAddress3.Text;
                     string Mobile = txtMobilePhone.Text;
-                    int IsHired = 1;
+                    //int IsHired = 1;
                     int PStatus = Convert.ToInt32(ddlStatus.SelectedValue);
                     string DrivingLicen = txtDrivingLisense.Text;
                     string userId = Session["UserName"].ToString();
@@ -247,7 +247,7 @@ namespace TransportManagerUI.UI
                     using (PersonalGateway gatwayObj = new PersonalGateway())
                     {
                         string empcode = gatwayObj.InsertUpdatePersonal(EmpCode, Cardno, EmpName, ComCode, FatherName, MotherName, BloodGroup
-                            , Add1, Add2, Add3, Mobile,IsHired, PStatus, DrivingLicen, userId, storeCode, nid, drivingCapacity);
+                            , Add1, Add2, Add3, Mobile, PStatus, DrivingLicen, userId, storeCode, nid, drivingCapacity);
                         lblEmpCode.Text = empcode;
                     }
                     ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Alert", "alert('Record Saved');", true);

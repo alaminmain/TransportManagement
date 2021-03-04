@@ -31,7 +31,8 @@
                             <td class="auto-style1">
                                 <asp:RadioButtonList ID="rblReports" runat="server" ForeColor="Black" OnSelectedIndexChanged="rblReports_SelectedIndexChanged" AutoPostBack="True">
                                     <asp:ListItem Text="Trip Statement" Value="TripStatementRpt" Selected="True"></asp:ListItem>
-                                   
+                                    <asp:ListItem Text="Trip Statement(Additional)" Value="TripStatmentAdditional"></asp:ListItem>
+                                     <asp:ListItem Text="Trip Detail(Additional)" Value="TripDetailAdditional"></asp:ListItem>
                                     <asp:ListItem Text="Agentwise" Value="TripAgentwise"></asp:ListItem>
                                     <asp:ListItem Text="Ghatwise" Value="TripGhatwise"></asp:ListItem>
                                     <asp:ListItem Text="PendingTrip (Not Billed)" Value="NotBilledTrip"></asp:ListItem>

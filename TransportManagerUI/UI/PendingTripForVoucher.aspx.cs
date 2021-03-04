@@ -168,7 +168,7 @@ namespace TransportManagerUI.UI
                 gvlistofBasicData.DataSource = dt;
 
                 gvlistofBasicData.DataBind();
-                
+                GetTotal(dt);
                 upListofbasicData.Update();
                 Session["PendingType"] = "0";
                 ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData.ClientID + "', 410,1070, 39 ,true); </script>", false);
@@ -210,6 +210,18 @@ namespace TransportManagerUI.UI
                 Session["PendingType"] = "2";
                 ScriptManager.RegisterStartupScript(Page, this.GetType(), "Key", "<script>MakeStaticHeader('" + gvlistofBasicData2.ClientID + "', 410,1070, 39 ,true); </script>", false);
             }
+        }
+
+        private void GetTotal(DataTable dt)
+        {
+           
+
+            decimal RowCount = dt.Rows.Count;
+
+            gvlistofBasicData.FooterRow.Cells[1].Text = "Total";
+            gvlistofBasicData.FooterRow.Cells[1].HorizontalAlign = HorizontalAlign.Right;
+            gvlistofBasicData.FooterRow.Cells[3].Text = string.Format("{0:0}", RowCount);
+           
         }
         #endregion
 
@@ -255,7 +267,9 @@ namespace TransportManagerUI.UI
 
             gvlistofBasicData.PageIndex = e.NewPageIndex;
             gvlistofBasicData.DataSource = dt;
+
             gvlistofBasicData.DataBind();
+            GetTotal(dt);
             upListofbasicData.Update();
 
         }

@@ -136,7 +136,7 @@
                                 <asp:TextBox ID="txtSearch" runat="server" Width="158px" placeholder="Search" />
                             </td>
                             <td>
-                                <asp:Button ID="btnSearch" runat="server" Text="Search" 
+                                <asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" 
                                      />
                             </td>
                             </tr>
@@ -367,7 +367,7 @@
            <td>
                <asp:Panel ID="Panel3" runat="server" Font-Names="Raavi">
                   
-<ajaxToolkit:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" ScrollBars="Auto" 
+<ajaxToolkit:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="1" ScrollBars="Auto" 
                         TabStripPlacement="TopRight" Width="100%" 
                        >
                         <ajaxToolkit:TabPanel ID="TabPanel1" runat="server" HeaderText="Income" style="font-family: 'Courier New', Courier, monospace;"><ContentTemplate>
@@ -375,16 +375,11 @@
 
                             <table>
                                 <tr>
-                                    <th>
-                                        Products</th>
-                                    <th>
-                                        Trip From</th>
-                                    <th>
-                                        Trip To</th>
-                                    <th>
-                                        Rent Amount</th>
-                                    <th>
-                                    </th>
+                                    <th>Products</th>
+                                    <th>Trip From</th>
+                                    <th>Trip To</th>
+                                    <th>Rent Amount</th>
+                                    <th></th>
                                 </tr>
                                 <tr>
                                     <td>
@@ -398,40 +393,21 @@
                                     </td>
                                     <td>
                                         <asp:TextBox ID="txtRentAmount" runat="server"></asp:TextBox>
-                                        <ajaxToolkit:FilteredTextBoxExtender ID="txtRentAmount_FilteredTextBoxExtender" 
-                                            runat="server" BehaviorID="txtRentAmount_FilteredTextBoxExtender" 
-                                            FilterType="Numbers" TargetControlID="txtRentAmount" />
+                                        <ajaxToolkit:FilteredTextBoxExtender ID="txtRentAmount_FilteredTextBoxExtender" runat="server" BehaviorID="txtRentAmount_FilteredTextBoxExtender" FilterType="Numbers" TargetControlID="txtRentAmount" />
                                     </td>
                                     <td>
-                                        <asp:Button ID="btnAddIncome" runat="server" OnClick="btnAddIncome_Click" 
-                                            Text="Add" />
+                                        <asp:Button ID="btnAddIncome" runat="server" OnClick="btnAddIncome_Click" Text="Add" />
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="5">
-                                        <asp:GridView ID="gvIncome" runat="server" AutoGenerateColumns="False" 
-                                            CellPadding="4" ForeColor="#333333" GridLines="None" 
-                                            OnRowDeleting="gvIncome_RowDeleting" Width="100%"><AlternatingRowStyle 
-                                                BackColor="White" /><Columns><asp:TemplateField 
-                                                    HeaderText="Date" InsertVisible="False"><EditItemTemplate><asp:Label 
-                                                        ID="Label1" runat="server" Text='<%# Bind("Date", "{0:dd/MMM/yyyy}") %>'></asp:Label>
-                                                </EditItemTemplate>
-                                                <ItemTemplate>
-                                                    <asp:TextBox ID="TextBox1" runat="server" placeholder="dd/MMM/yyyy" 
-                                                        Text='<%# Bind("Date","{0:dd/MMM/yyyy}") %>' Width="70px"></asp:TextBox>
-                                                </ItemTemplate>
-                                                <ItemStyle Width="70px" />
-                                                </asp:TemplateField><asp:BoundField DataField="Product" HeaderText="Product">
-                                                <ItemStyle 
-                                                    HorizontalAlign="Left" Width="130px" Wrap="True" /></asp:BoundField><asp:BoundField 
-                                                    DataField="TripFrom" HeaderText="TripFrom"><ItemStyle 
-                                                    HorizontalAlign="Left" Width="100px" /></asp:BoundField><asp:BoundField 
-                                                    DataField="TripTo" HeaderText="TripTo">
-                                                <ItemStyle HorizontalAlign="Left" 
-                                                    Width="120px" /></asp:BoundField><asp:BoundField DataField="Rent" 
-                                                    DataFormatString="{0:0.00}" HeaderText="Rent">
-                                                <ItemStyle 
-                                                    HorizontalAlign="Right" Width="30px" /></asp:BoundField>
+                                        <asp:GridView ID="gvIncome" runat="server" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" OnRowDeleting="gvIncome_RowDeleting" Width="100%"><AlternatingRowStyle BackColor="White" /><Columns><asp:TemplateField HeaderText="Date" InsertVisible="False"><EditItemTemplate><asp:Label ID="Label1" runat="server" Text='<%# Bind("Date", "{0:dd/MMM/yyyy}") %>'></asp:Label>
+                                            </EditItemTemplate>
+                                            <ItemTemplate>
+                                                <asp:TextBox ID="TextBox1" runat="server" placeholder="dd/MMM/yyyy" Text='<%# Bind("Date","{0:dd/MMM/yyyy}") %>' Width="70px"></asp:TextBox>
+                                            </ItemTemplate>
+                                            <ItemStyle Width="70px" />
+                                            </asp:TemplateField><asp:BoundField DataField="Product" HeaderText="Product"><ItemStyle HorizontalAlign="Left" Width="130px" Wrap="True" /></asp:BoundField><asp:BoundField DataField="TripFrom" HeaderText="TripFrom"><ItemStyle HorizontalAlign="Left" Width="100px" /></asp:BoundField><asp:BoundField DataField="TripTo" HeaderText="TripTo"><ItemStyle HorizontalAlign="Left" Width="120px" /></asp:BoundField><asp:BoundField DataField="Rent" DataFormatString="{0:0.00}" HeaderText="Rent"><ItemStyle HorizontalAlign="Right" Width="30px" /></asp:BoundField>
                                             </Columns>
                                             <EditRowStyle BackColor="#2461BF" />
                                             <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -447,14 +423,11 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td bgcolor="#0066FF">
-                                    </td>
-                                    <td bgcolor="#0066FF" style="font-weight: bold; color: #FFFFFF">
-                                        Total</td>
+                                    <td bgcolor="#0066FF"></td>
+                                    <td bgcolor="#0066FF" style="font-weight: bold; color: #FFFFFF">Total</td>
                                     <td bgcolor="#0066FF" style="font-weight: bold; color: #FFFFFF">
                                         <td bgcolor="#0066FF" style="font-weight: bold; color: #FFFFFF">
-                                            <asp:TextBox ID="txtIncome" runat="server" AutoPostBack="True" 
-                                                onkeyup="CalculateNetIncome()" ReadOnly="True"></asp:TextBox>
+                                            <asp:TextBox ID="txtIncome" runat="server" AutoPostBack="True" onkeyup="CalculateNetIncome()"   ReadOnly="True"></asp:TextBox>
                                         </td>
                                     </td>
                                 </tr>
@@ -463,30 +436,19 @@
                          <ajaxToolkit:TabPanel ID="TabPanel2" runat="server" HeaderText="Expenses" style="font-family: 'Courier New', Courier, monospace;"><ContentTemplate>
                              
 
-                             <asp:Panel ID="Panel4" runat="server"><table><tr><td colspan="4"><asp:GridView 
-                                     ID="gvExpenses" runat="server" AutoGenerateColumns="False" CellPadding="4" 
-                                     ForeColor="#333333" GridLines="None" OnRowDeleting="gvExpenses_RowDeleting"><AlternatingRowStyle 
-                                     BackColor="White" /><Columns><asp:BoundField DataField="AccountCode" 
-                                         HeaderText="AccountCode" ReadOnly="True"><ItemStyle HorizontalAlign="Left" 
-                                         Width="60px" /></asp:BoundField><asp:BoundField DataField="AccountDesc" 
-                                         HeaderText="AccountDesc" ReadOnly="True"><ItemStyle HorizontalAlign="Left" 
-                                         Width="150px" /></asp:BoundField><asp:TemplateField HeaderText="Amount"><EditItemTemplate><asp:TextBox 
-                                             ID="TextBox1" runat="server" Text='<%# Bind("Amount") %>'></asp:TextBox>
-                                     </EditItemTemplate>
-                                     <ItemTemplate>
-                                         <asp:TextBox ID="txtAmount" runat="server" class="calculate" 
-                                             onchange="calculate()" style="text-align: right" 
-                                             Text='<%# Bind("Amount","{0:0.00}") %>' Width="100px"></asp:TextBox>
-                                     </ItemTemplate>
-                                     <ItemStyle HorizontalAlign="Right" />
-                                     </asp:TemplateField><asp:TemplateField HeaderText="Comments"><EditItemTemplate><asp:TextBox 
-                                             ID="TextBox2" runat="server" Text='<%# Bind("Comments") %>'></asp:TextBox>
-                                     </EditItemTemplate>
-                                     <ItemTemplate>
-                                         <asp:TextBox ID="txtComments" runat="server" Text='<%# Bind("Comments") %>'></asp:TextBox>
-                                     </ItemTemplate>
-                                     <ItemStyle HorizontalAlign="Left" Width="200px" />
-                                     </asp:TemplateField>
+                             <asp:Panel ID="Panel4" runat="server"><table><tr><td colspan="4"><asp:GridView ID="gvExpenses" runat="server" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" OnRowDeleting="gvExpenses_RowDeleting"><AlternatingRowStyle BackColor="White" /><Columns><asp:BoundField DataField="AccountCode" HeaderText="AccountCode" ReadOnly="True"><ItemStyle HorizontalAlign="Left" Width="60px" /></asp:BoundField><asp:BoundField DataField="AccountDesc" HeaderText="AccountDesc" ReadOnly="True"><ItemStyle HorizontalAlign="Left" Width="150px" /></asp:BoundField><asp:TemplateField HeaderText="Amount"><EditItemTemplate><asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Amount") %>'></asp:TextBox>
+                                 </EditItemTemplate>
+                                 <ItemTemplate>
+                                     <asp:TextBox ID="txtAmount" runat="server" class="calculate" onchange="calculate()" style="text-align: right" Text='<%# Bind("Amount","{0:0.00}") %>' Width="100px"></asp:TextBox>
+                                 </ItemTemplate>
+                                 <ItemStyle HorizontalAlign="Right" />
+                                 </asp:TemplateField><asp:TemplateField HeaderText="Comments"><EditItemTemplate><asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("Comments") %>'></asp:TextBox>
+                                 </EditItemTemplate>
+                                 <ItemTemplate>
+                                     <asp:TextBox ID="txtComments" runat="server" Text='<%# Bind("Comments") %>'></asp:TextBox>
+                                 </ItemTemplate>
+                                 <ItemStyle HorizontalAlign="Left" Width="200px" />
+                                 </asp:TemplateField>
                                  </Columns>
                                  <EditRowStyle BackColor="#2461BF" />
                                  <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -498,12 +460,7 @@
                                  <sortedascendingheaderstyle backcolor="#6D95E1" />
                                  <sorteddescendingcellstyle backcolor="#E9EBEF" />
                                  <sorteddescendingheaderstyle backcolor="#4870BE" />
-                                 </asp:GridView></td></tr><tr><td bgcolor="#0066FF"></td><td bgcolor="#0066FF" 
-                                         style="font-weight: bold; color: #FFFFFF">Total</td><td bgcolor="#0066FF" 
-                                         style="font-weight: bold; color: #FFFFFF"><asp:TextBox ID="txtTotalAmount" 
-                                             runat="server" onchange="CalculateNetIncome()" ReadOnly="True" 
-                                             Style="text-align: Center;font-weight: bold; " Width="110px">0</asp:TextBox></td><td 
-                                         bgcolor="#0066FF" style="font-weight: bold; color: #FFFFFF"></td></tr></table></asp:Panel>
+                                 </asp:GridView></td></tr><tr><td bgcolor="#0066FF"></td><td bgcolor="#0066FF" style="font-weight: bold; color: #FFFFFF">Total</td><td bgcolor="#0066FF" style="font-weight: bold; color: #FFFFFF"><asp:TextBox ID="txtTotalAmount" runat="server" onchange="CalculateNetIncome()" ReadOnly="True" Style="text-align: Center; font-weight: bold;" Width="110px">0</asp:TextBox></td><td bgcolor="#0066FF" style="font-weight: bold; color: #FFFFFF"></td></tr></table></asp:Panel>
                              </ContentTemplate></ajaxToolkit:TabPanel>
                     </ajaxToolkit:TabContainer>
                      

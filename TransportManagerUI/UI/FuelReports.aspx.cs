@@ -27,6 +27,7 @@ namespace TransportManagerUI.UI
             {
                 txtFromDate_CalendarExtender.SelectedDate = DateTime.Now.Date;
                 txtToDate_CalendarExtender.SelectedDate = DateTime.Now.Date;
+                POtherOptions.Visible = false;
             }
         }
 

@@ -404,6 +404,7 @@ namespace TransportManagerUI.UI
                 lblCustomerCode.Text = dt.Rows[0]["DealerId"].ToString();
                 lblCustomerName.Text = dt.Rows[0]["DealerName"].ToString();
                 lblDealerMobile.Text = loadTrip.Rows[0]["DealerMobile"].ToString();
+                txtCustomerDistance.Text= dt.Rows[0]["LocDistance"].ToString();
                 //lblsnmMobileNo.Text = loadTrip.Rows[0]["Phone"].ToString();
 
                 hfDealer.Value = dt.Rows[0]["DealerId"].ToString();
@@ -581,6 +582,7 @@ namespace TransportManagerUI.UI
                 lblCustomerName1.Text = row.Cells[5].Text;
                 lblCustomerMobile.Text = loadTC.Rows[0]["Mobile"].ToString();
                 lblsnmMobileNo.Text= loadTC.Rows[0]["Phone"].ToString();
+                txtCustomerDistance.Text= loadTC.Rows[0]["LocDistance"].ToString();
                 DataTable dt = new DataTable();
                 dt = LoadTCProduct(tcno);
                 //lblCurrentCapacity.Text = Convert.ToString(dt.AsEnumerable().Sum(x => Convert.ToDecimal(x["OrderQty"])));
@@ -645,10 +647,12 @@ namespace TransportManagerUI.UI
                     string custLocDistance;
                     using (DealerGateway gt = new DealerGateway())
                     {
-                        custdt = gt.GetCustomerById(1, CustId_7);
-                        custLocDistance = custdt.Rows[0]["LocDistance"].ToString();
-                        if (String.IsNullOrEmpty(custLocDistance))
-                            custLocDistance = "0";
+                        //custdt = gt.GetCustomerById(1, CustId_7);
+                        //custLocDistance = custdt.Rows[0]["LocDistance"].ToString();
+                        //if (String.IsNullOrEmpty(custLocDistance))
+                        //    custLocDistance = "0";
+                        //else
+                            custLocDistance = txtCustomerDistance.Text;
                     }
                     DataTable dtTrip = new DataTable();
 
@@ -893,9 +897,9 @@ namespace TransportManagerUI.UI
                 int count = 0;
                 foreach (var mono in ToPhoneNo)
                 {
-
+                    //mono="1921414664"
                     string mo = "+88" +mono;
-                string remoteUri ="https://vas.banglalinkgsm.com/sendSMS/sendSMS?msisdn="+mo.Trim()+"&message="+smsBody.Trim()+"&userID=McementBLsms&passwd=c8a8495667aae60f4b1f42d816889b05&sender=Madina Cement";
+                string remoteUri ="https://vas.banglalink.net/sendSMS/sendSMS?msisdn="+mo.Trim()+"&message="+smsBody.Trim()+"&userID=McementBLsms&passwd=b794f8e3ad4ad5d75d85e444e03736cd&sender=Madina Cement";
                     WebClient MyClient = new WebClient();
                     byte[] myDataBuffer = MyClient.DownloadData(remoteUri);
 

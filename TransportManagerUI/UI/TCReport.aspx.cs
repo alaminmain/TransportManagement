@@ -142,10 +142,10 @@ namespace TransportManagerUI.UI
                     case "TCStatmentDealerwise":
 
 
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                       
                         strReportName = "~//report//TCStateDealer.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                       
                         if (String.IsNullOrEmpty(lblCode.Text))
                         {
 
@@ -164,25 +164,16 @@ namespace TransportManagerUI.UI
 
                         }
 
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-
-                        Session["nreport"] = cryRpt;
-                        //cryRpt.Close();
+                     
                         break;
 
                     case "TCStatmentGhatwise":
 
 
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                       
                         strReportName = "~//report//TCStateGhat.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                       
                         if (String.IsNullOrEmpty(lblCode2.Text))
                         {
 
@@ -197,72 +188,39 @@ namespace TransportManagerUI.UI
 
                             SelectionFormula = "{TransContact.TCDate} in Date(" + fromValue + ")   to Date(" +
                                                             ToValue + ") and" +
-                                                                       " {TransContact.StoreCode} = '" + Convert.ToInt32(lblCode2.Text) + "'";
+                                                                       " {TransContact.StoreCode} = " + Convert.ToInt32(lblCode2.Text) ;
 
                         }
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-                        Session["nreport"] = cryRpt;
-                        //cryRpt.Close();
+                       
                         break;
 
                     case "TCStatmentProductWise":
 
 
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                       
                         strReportName = "~//report//TCStateProd.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                       
 
                         SelectionFormula = "{TransContact.TCDate} in Date(" +
                                            fromValue + ")   to Date(" +
                                            ToValue + ")";
 
-
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-
-                        Session["nreport"] = cryRpt;
-                        //cryRpt.Close();
                         break;
 
                     case "TCStatement":
 
 
-                        cryRpt = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+                       
                         strReportName = "~//report//TCStatement.rpt";
                         strPath = Server.MapPath(strReportName);
-                        cryRpt.Load(strPath);
+                       
 
                         SelectionFormula = "{TransContact.TCDate} in Date(" +
                                            fromValue + ")   to Date(" +
                                            ToValue + ")";
 
 
-
-                        cryRpt.DataDefinition.FormulaFields["DateFrom"].Text = "Date(" + fromValue + ")";
-                        cryRpt.DataDefinition.FormulaFields["DateTo"].Text = "Date (" + ToValue + ")";
-
-                        cryRpt.DataDefinition.FormulaFields["FTrace"].Text = "0";
-
-                        cryRpt.RecordSelectionFormula = SelectionFormula;
-
-
-
-                        Session["nreport"] = cryRpt;
-                        //cryRpt.Close();
                         break;
                     default:
                         throw new ArgumentException

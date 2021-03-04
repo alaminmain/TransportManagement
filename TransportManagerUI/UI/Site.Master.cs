@@ -23,12 +23,12 @@ namespace TransportManagerUI.UI
                 string RoleId = (string)Session["RoleId"];
                 if (RoleId == "1")
                 {
-                    divadmin.Visible = true;
+                    //divadmin.Visible = true;
                     Admin.Visible = true;
                 }
                 else
                 {
-                    divadmin.Visible = false;
+                    //divadmin.Visible = false;
                     Admin.Visible = false;
                 }
                 litMessage.Text = "Welcome back <b>Mr. " + Convert.ToString(Session["userName"]+"</b>");

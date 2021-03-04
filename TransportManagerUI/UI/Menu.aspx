@@ -44,7 +44,7 @@
         </ajaxToolkit:ModalPopupExtender>
         </asp:Panel>
       <asp:Panel ID="Panel7" runat="server" BackColor="White"  BorderStyle="Double" BorderWidth="3px" ScrollBars="Auto" >
-         <asp:UpdatePanel ID="upListofbasicData" runat="server">
+         <asp:UpdatePanel ID="upListofbasicData" runat="server" UpdateMode="Conditional">
              <ContentTemplate>
      <table >
                             <tr>

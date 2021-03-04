@@ -62,7 +62,8 @@
 
                         <asp:Button ID="btnReport" runat="server" Text="Report"
                             OnClick="btnReport_Click"  />
-
+                              <asp:Button ID="btnCancelTrip" runat="server" Text="Cancel Trip" onclick="btnCancelTrip_Click" 
+               />
                         <asp:Button ID="btnCancel" runat="server" Text="Cancel" formnovalidate OnClick="btnCancel_Click" />
 
                     </asp:Panel>
