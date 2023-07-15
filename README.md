@@ -27,24 +27,14 @@ git clone https://github.com/alaminmain/TransportManagement.git
 cd TransportManagement
 ```
 
-2. Install the required dependencies:
 
-```bash
-# Assuming you have Node.js and npm installed
-npm install
-```
+2. Configure the database settings:
 
-3. Configure the database settings:
+   - Change database credential
 
-   - Create a `.env` file in the root directory and add your database credentials.
 
-4. Run the application:
 
-```bash
-npm start
-```
-
-5. Access the application in your web browser:
+3. Access the application in your web browser:
 
 ```text
 http://localhost:3000
@@ -68,9 +58,9 @@ _[Add any acknowledgments here]_
 
 ## Contact
 
-For any inquiries or support, please contact us at [your-email@example.com].
+For any inquiries or support, please contact us at [alaminmain@gmail.com].
 
 ---
-_Replace [your-email@example.com] with your contact email._
+_Replace [alaminmain@gmail.com] with your contact email._
 
-Please make sure to update the information in this template according to your actual project details. The README is essential for helping others understand your project and encouraging collaboration. It should contain information about the project, its purpose, features, installation instructions, usage guidelines, license, and how to contribute.
+
