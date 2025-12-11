@@ -1,0 +1,45 @@
+@page "/vehicles"
+@using TransportManagerModern.Shared.Models
+@inject HttpClient Http
+
+<PageTitle>Vehicles</PageTitle>
+
+<h1>Vehicles</h1>
+
+@if (vehicles == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Vehicle No</th>
+                <th>Model</th>
+                <th>Driver/Mobile</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vehicle in vehicles)
+            {
+                <tr>
+                    <td>@vehicle.VehicleNo</td>
+                    <td>@vehicle.ModelNo</td>
+                    <td>@vehicle.MobileNo</td>
+                    <td>@vehicle.VehicleStatus</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private VehicleDto[]? vehicles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        vehicles = await Http.GetFromJsonAsync<VehicleDto[]>("api/vehicles");
+    }
+}
